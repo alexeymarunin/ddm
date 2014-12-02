@@ -1,14 +1,19 @@
 #ifndef DDMOBJECTMODEL_H
 #define DDMOBJECTMODEL_H
 
+#include<QObject>
 #include<QString>
 
-class ddmObjectModel
+
+class ddmObjectModel: public QObject
 {
+    Q_OBJECT
+
 public:
+
     ddmObjectModel();
 
-    ~ddmObjectModel();
+    virtual ~ddmObjectModel();
 
     void setCurentState(  const QString state );
 
@@ -17,6 +22,12 @@ public:
     QString CurentState();
 
     QString CurentCounty();
+
+signals:
+    void updateState( const QString& state );
+
+    void updateCounty( const QString& county );
+
 
 private:
    QString m_state;

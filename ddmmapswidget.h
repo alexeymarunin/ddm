@@ -16,16 +16,34 @@ class ddmMapsWidget : public QWidget
 
 public:
     explicit ddmMapsWidget(QWidget *parent = 0 );
-    ~ddmMapsWidget();
+    virtual ~ddmMapsWidget();
+
+private:
+    // инициализировать обработчики событий
+    void installEvents();
+
+    // обновить список графств, в зависимости от штата
+    void updateCountiesList( const QString& state );
 
 private slots:
-    void slotSetCurentState( const QString& text );
+    // установить текуший штат для модели
+    void slotSetCurentState( const QString&  text );
 
+    // установить текушее графство для модели
     void slotSetCurentCounty( const QString& text );
 
+    // установить текуший штат для модели
     void slotSetCurentState();
 
+    // установить текушее графство для модели
     void slotSetCurentCounty();
+
+    // обновить штат на карте
+    void updateStateOnMap(  const QString& state );
+
+    // обновить графство на карте
+    void updateCountyOnMap( const QString& county );
+
 private:
     Ui::ddmMapsWidget *ui;
 
