@@ -23,3 +23,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     ddmmapswidget.ui
+
+
+include(xlsx/qtxlsx.pri)
