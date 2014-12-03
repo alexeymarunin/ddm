@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+// для проверки
+#include "xlsxdocument.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

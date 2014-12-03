@@ -33,13 +33,10 @@ ddmMapsWidget::~ddmMapsWidget()
 void ddmMapsWidget::installEvents()
 {
   connect( ui->m_cmbState,  SIGNAL( activated ( const QString& ) ), this,  SLOT( slotSetCurentState( const QString& ) ));
-  connect( ui->m_cmbCounty, SIGNAL( activated ( const QString& ) ),  this, SLOT( slotSetCurentState( const QString& ) ) );
+  connect( ui->m_cmbCounty, SIGNAL( activated ( const QString& ) ),  this, SLOT( slotSetCurentCounty( const QString& ) ) );
 
-  connect( m_leState,  SIGNAL( editingFinished() ),  this,  SLOT(  slotSetCurentState() ));
-  connect( m_leCounty, SIGNAL( editingFinished() ),  this,  SLOT(  slotSetCurentCounty() ) );
-
-  connect( m_model, SIGNAL( updateState( const QString& ) ), this, SLOT( updateStateOnMap( const QString&  ) ),   Qt::UniqueConnection );
-  connect( m_model, SIGNAL( updateCounty( const QString& ) ), this, SLOT( updateCountyOnMap( const QString&  ) ));
+  connect( m_model, SIGNAL( updateState( const QString& ) ), this, SLOT( updateState( const QString&  ) ),   Qt::UniqueConnection );
+  connect( m_model, SIGNAL( updateCounty( const QString& ) ), this, SLOT( updateCounty( const QString&  ) ));
 
 }
 
@@ -60,21 +57,7 @@ void ddmMapsWidget::slotSetCurentCounty( const QString& text )
 }
 
 
-void ddmMapsWidget::slotSetCurentState()
-{
-    QString text = m_leState->text();
-    this->slotSetCurentState( text );
-
-}
-
-void ddmMapsWidget::slotSetCurentCounty()
-{
-    QString text = m_leCounty->text();
-    this->slotSetCurentCounty( text );
-}
-
-
-void ddmMapsWidget::updateStateOnMap( const QString &state )
+void ddmMapsWidget::updateState( const QString &state )
 {
     QString message = QObject::tr( "Выбран штат %1" ).arg( state );
     QMessageBox mb;
@@ -83,10 +66,12 @@ void ddmMapsWidget::updateStateOnMap( const QString &state )
     // возможно должен вызываться как слот,
     // а не как простая функция
     updateCountiesList( state );
+    QString county = ui->m_cmbCounty->itemText( 0 );
+    slotSetCurentCounty( county );
 }
 
 
-void ddmMapsWidget::updateCountyOnMap( const QString &county )
+void ddmMapsWidget::updateCounty( const QString &county )
 {
     QString message = QObject::tr( "Выбрано гравство %1" ).arg( county );
     QMessageBox mb;

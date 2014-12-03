@@ -32,17 +32,11 @@ private slots:
     // установить текушее графство для модели
     void slotSetCurentCounty( const QString& text );
 
-    // установить текуший штат для модели
-    void slotSetCurentState();
+    // обновить штат
+    void updateState(  const QString& state );
 
-    // установить текушее графство для модели
-    void slotSetCurentCounty();
-
-    // обновить штат на карте
-    void updateStateOnMap(  const QString& state );
-
-    // обновить графство на карте
-    void updateCountyOnMap( const QString& county );
+    // обновить гравство на карте
+    void updateCounty(  const QString& state );
 
 private:
     Ui::ddmMapsWidget *ui;
