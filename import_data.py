@@ -1,6 +1,14 @@
 #!/bin/env/python
 # -*- coding: utf-8 -*-
 
+#########################################################################
+###  Импорт данных по графствам США в единую локальную базу SQLite      #
+###                                                                     #
+###  Автор: Марунин Алексей                                             #
+###  Дата: 04.12.2014                                                   #
+###                                                                     #
+#########################################################################
+ 
 import os
 import os.path
 import xlrd
@@ -11,7 +19,7 @@ from xml.dom.minidom import parseString as parseXML
 class DDM_Model() :
 
 	########################################################################################################################
-	# 
+	# Конструктор
 	def __init__( self ) :
 		self.connect_db( 'ddm.sqlite' )
 		self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ) )
@@ -22,6 +30,7 @@ class DDM_Model() :
 		self.conn = sqlite3.connect( filename )
 		self.cursor = self.conn.cursor()
 		self.init_db()
+
 
 	########################################################################################################################
 	# 
@@ -40,7 +49,7 @@ class DDM_Model() :
 		row_count = sheet.nrows
 		for row in range( 1, row_count - 1 ) :
 		
-			
+			# Выбираем нужные значения из ячеек
 			county_name     = sheet.cell_value( row, 0  )
 			state_abbr      = sheet.cell_value( row, 3  )
 			xml_coordinates = sheet.cell_value( row, 4 )
@@ -91,6 +100,7 @@ class DDM_Model() :
 			else :
 				print( 'WARNING! No boundaries found!' )
 
+		# Вставляем данные в БД
 		print( 'Inserting points (%d)...' % len( self.points ) )
 		self.cursor.executemany( 'INSERT INTO ddm_points ( id, x, y ) VALUES ( :id, :x, :y )', self.points )
 		self.conn.commit()
@@ -106,11 +116,12 @@ class DDM_Model() :
 		print( 'Inserting county boundaries...(%d)...' % len( self.county_boundaries ) )
 		self.cursor.executemany( 'INSERT INTO ddm_county_boundaries ( county_id, boundary_id ) VALUES ( :county_id, :boundary_id )', self.county_boundaries )
 		self.conn.commit()
-		
+
+
 	########################################################################################################################
 	# 
 	def parse_county_coordinates( self, county_id, xml ) :
-		if county_id == 69 : return ( 0, 0 ) 
+		# if county_id == 69 : return ( 0, 0 ) 
 		
 		dom = parseXML( xml )
 		polygons = dom.getElementsByTagName( 'Polygon' )
@@ -135,7 +146,7 @@ class DDM_Model() :
 						self.points.append({ 'id':point_id, 'x':x, 'y':y })
 						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
 						point_count = point_count + 1
-			
+
 			# Границы "вырезов" внутри графства
 			innerBoundaries = polygon.getElementsByTagName( 'innerBoundaryIs' )
 			if innerBoundaries :
@@ -158,6 +169,7 @@ class DDM_Model() :
 
 		return ( point_count, boundary_count )
 
+
 	########################################################################################################################
 	# 
 	def insert_state( self, state ) :
@@ -169,6 +181,7 @@ class DDM_Model() :
 			self.cursor.execute( 'INSERT INTO ddm_states ( name, abbr, title ) VALUES ( :name, :abbr, :title )', state )
 			self.conn.commit()
 			return self.cursor.lastrowid 
+
 
 	########################################################################################################################
 	# 
@@ -187,6 +200,7 @@ class DDM_Model() :
 			self.conn.commit()
 			return self.cursor.lastrowid 
 
+
 	########################################################################################################################
 	# 
 	def insert_point( self, point ) :
@@ -199,50 +213,11 @@ class DDM_Model() :
 			self.conn.commit()
 			return self.cursor.lastrowid 
 
-	########################################################################################################################
-	# 
-	def insert_boundary_point( self, boundary_point ) :
-		self.cursor.execute( 'SELECT id FROM ddm_boundary_points WHERE point_id = :point_id AND boundary_id = :boundary_id', boundary_point )
-		res = self.cursor.fetchone()
-		if res :
-			return res[0]
-		else :
-			self.cursor.execute( 'INSERT INTO ddm_boundary_points ( point_id, boundary_id ) VALUES ( :point_id, :boundary_id )', boundary_point )
-			self.conn.commit()
-			return self.cursor.lastrowid 
-
-	########################################################################################################################
-	# 
-	def insert_boundary( self, boundary ) :
-		self.cursor.execute( 'SELECT id FROM ddm_boundaries WHERE hash = :hash', boundary )
-		res = self.cursor.fetchone()
-		if res :
-			return res[0]
-		else :
-			self.cursor.execute( 'INSERT INTO ddm_boundaries ( outer, hash ) VALUES ( :outer, :hash )', boundary )
-			self.conn.commit()
-			boundary_id = self.cursor.lastrowid
-			
-			county_boundary = { 'county_id':boundary['county_id'], 'boundary_id':boundary_id }
-			self.cursor.execute( 'INSERT INTO ddm_county_boundaries ( county_id, boundary_id ) VALUES ( :county_id, :boundary_id )', county_boundary )
-			self.conn.commit()
-			return boundary_id 
-
-	########################################################################################################################
-	# 
-	def insert_boundary_point( self, boundary_point ) :
-		self.cursor.execute( 'SELECT id FROM ddm_boundary_points WHERE boundary_id = :boundary_id AND point_id = :point_id', boundary_point )
-		res = self.cursor.fetchone()
-		if res :
-			return res[0]
-		else :
-			self.cursor.execute( 'INSERT INTO ddm_boundary_points ( boundary_id, point_id ) VALUES ( :boundary_id, :point_id )', boundary_point )
-			self.conn.commit()
-			return self.cursor.lastrowid 
 
 	########################################################################################################################
 	# 
 	def init_db( self ) :
+		self.cursor.execute( 'PRAGMA foreign_keys = ON' )
 		
 		# Таблица ddm_states
 		self.cursor.execute( '''
@@ -270,7 +245,8 @@ class DDM_Model() :
 				value           VARCHAR(20), 
 				geoid           VARCHAR(20), 
 				geoid2          VARCHAR(20), 
-				error           VARCHAR(100)
+				error           VARCHAR(100),
+				FOREIGN KEY(state_id) REFERENCES ddm_states(id)
 			)
 		''' )
 		
@@ -298,7 +274,9 @@ class DDM_Model() :
 			CREATE TABLE IF NOT EXISTS ddm_boundary_points (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
 				boundary_id     INTEGER NOT NULL,
-				point_id        INTEGER NOT NULL
+				point_id        INTEGER NOT NULL,
+				FOREIGN KEY(boundary_id) REFERENCES ddm_boundaries(id),
+				FOREIGN KEY(point_id)    REFERENCES ddm_points(id)
 			)
 		''' )
 		# CREATE INDEX boundary_point_idx ON ddm_boundary_points(boundary_id,point_id)
@@ -308,13 +286,16 @@ class DDM_Model() :
 			CREATE TABLE IF NOT EXISTS ddm_county_boundaries (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
 				county_id       INTEGER NOT NULL,
-				boundary_id     INTEGER NOT NULL
+				boundary_id     INTEGER NOT NULL,
+				FOREIGN KEY(county_id)   REFERENCES ddm_counties(id),
+				FOREIGN KEY(boundary_id) REFERENCES ddm_boundaries(id)
 			)
 		''' )
 		
 
+
 	########################################################################################################################
-	# 
+	# Деструктор
 	def __del__( self ) :
 		if ( self.conn ) :
 			self.conn.close()
