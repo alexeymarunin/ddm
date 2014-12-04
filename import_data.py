@@ -134,25 +134,28 @@ class DDM_Model() :
 			if outerBoundaries :
 				for boundary in outerBoundaries :
 					boundary_id = len( self.boundaries ) + 1
-					self.boundaries.append({ 'id':boundary_id, 'outer':1, 'square':0, 'center_id':0 });
-					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
-					boundary_count = boundary_count + 1
-					
 					coordinates = boundary.getElementsByTagName( 'coordinates' )[0].childNodes[0].data.split()
+					vertices = []
 					for point in coordinates :
 						point_count = point_count + 1
 						point_id = len( self.points ) + 1
 						( x, y ) = point.split( ',' )
 						self.points.append({ 'id':point_id, 'x':x, 'y':y })
 						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
-						point_count = point_count + 1
+						vertices.append({ 'x':x, 'y':y })
+					square = self.calc_polygon_square( vertices )
+					#print( 's=%s' % ( square ) )
+
+					self.boundaries.append({ 'id':boundary_id, 'outer':1, 'square':square, 'center_id':0, 'vertices':vertices });
+					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
+					boundary_count = boundary_count + 1
 
 			# Границы "вырезов" внутри графства
 			innerBoundaries = polygon.getElementsByTagName( 'innerBoundaryIs' )
 			if innerBoundaries :
 				for boundary in innerBoundaries :
 					boundary_id = len( self.boundaries ) + 1
-					self.boundaries.append({ 'id':boundary_id, 'outer':0, 'square':0, 'center_id':0 });
+					self.boundaries.append({ 'id':boundary_id, 'outer':0, 'square':0, 'center_id':0, 'points':[] });
 					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
 					boundary_count = boundary_count + 1
 					
@@ -163,7 +166,6 @@ class DDM_Model() :
 						point_id = len( self.points ) + 1
 						self.points.append({ 'id':point_id, 'x':x, 'y':y })
 						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
-						point_count = point_count + 1
 			
 			# TODO: здесь мы вычисляем центр графства и его площадь
 
@@ -216,6 +218,24 @@ class DDM_Model() :
 
 	########################################################################################################################
 	# 
+	def calc_polygon_square( self, vertices ) :
+		nvetrices = len( vertices )
+		n = nvetrices - 1
+		s1 = 0
+		s2 = 0
+		for i in range( 0, n ) :
+			x1 = float( vertices[i]['x'] )
+			y1 = float( vertices[i+1]['y'] if i < n else vertices[0]['y'] )
+			x2 = float( vertices[i+1]['x'] if i < n else vertices[0]['x'] )
+			y2 = float( vertices[i]['y'] )
+			s1 = s1 + x1 * y1
+			s2 = s2 + x2 * y2
+		s = s1 - s2
+		return s
+
+
+	########################################################################################################################
+	# 
 	def init_db( self ) :
 		self.cursor.execute( 'PRAGMA foreign_keys = ON' )
 		
@@ -246,6 +266,8 @@ class DDM_Model() :
 				geoid           VARCHAR(20), 
 				geoid2          VARCHAR(20), 
 				error           VARCHAR(100),
+				square          DOUBLE NOT NULL DEFAULT 0,
+				center_id       INTEGER NOT NULL DEFAULT 0,
 				FOREIGN KEY(state_id) REFERENCES ddm_states(id)
 			)
 		''' )
@@ -287,8 +309,21 @@ class DDM_Model() :
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
 				county_id       INTEGER NOT NULL,
 				boundary_id     INTEGER NOT NULL,
-				FOREIGN KEY(county_id)   REFERENCES ddm_counties(id),
-				FOREIGN KEY(boundary_id) REFERENCES ddm_boundaries(id)
+				FOREIGN KEY(county_id)      REFERENCES ddm_counties(id),
+				FOREIGN KEY(boundary_id)    REFERENCES ddm_boundaries(id)
+			)
+		''' )
+		
+		# Issue #3
+		# Таблица ddm_county_distances
+		self.cursor.execute( '''
+			CREATE TABLE IF NOT EXISTS ddm_county_distances (
+				id              INTEGER PRIMARY KEY AUTOINCREMENT,
+				county_from     INTEGER NOT NULL,
+				county_to       INTEGER NOT NULL,
+				distance        DOUBLE NOT NULL DEFAULT 0,
+				FOREIGN KEY(county_from)    REFERENCES ddm_counties(id),
+				FOREIGN KEY(county_to)      REFERENCES ddm_counties(id)
 			)
 		''' )
 		
