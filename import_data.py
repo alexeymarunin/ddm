@@ -4,8 +4,8 @@
 #########################################################################
 ###  Импорт данных по графствам США в единую локальную базу SQLite      #
 ###                                                                     #
-###  Автор: Марунин Алексей                                             #
-###  Дата: 04.12.2014                                                   #
+###  Авторы: Марунин Алексей, Цалко Тарас                               #
+###  Дата:   04.12.2014                                                 #
 ###                                                                     #
 #########################################################################
  
@@ -14,6 +14,7 @@ import os.path
 import xlrd
 import sqlite3
 import hashlib
+import math
 from xml.dom.minidom import parseString as parseXML
 
 class DDM_Model() :
@@ -22,7 +23,22 @@ class DDM_Model() :
 	# Конструктор
 	def __init__( self ) :
 		self.connect_db( 'ddm.sqlite' )
-		self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ) )
+		
+		# Если не находим таблицу с графствами, то запускаем парсер
+		self.load_counties()
+		if len( self.counties ) == 0 :
+			self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ) )
+			self.load_counties()
+		
+		# Вычисляем расстояния между графствами
+		print( 'Calculating county distances...' )
+		self.calc_county_distances()
+		print( 'Inserting county distances...(%d)' % len( self.county_distances ) )
+		self.cursor.executemany( 'INSERT INTO ddm_county_distances ( county_from, county_to, distance ) VALUES ( :county_from, :county_to, :distance )', self.county_distances )
+		self.conn.commit()
+
+		#center = self.find_county_center( 2 )
+		#print( 'center: %s' % center )
 
 	########################################################################################################################
 	# 
@@ -30,6 +46,19 @@ class DDM_Model() :
 		self.conn = sqlite3.connect( filename )
 		self.cursor = self.conn.cursor()
 		self.init_db()
+
+
+	########################################################################################################################
+	# 
+	def load_counties( self ) :
+		self.counties = []
+		self.cursor.execute( 'SELECT id, name FROM ddm_counties' )
+		rows = self.cursor.fetchall()
+		for row in rows :
+			county_id = int( row[0] )
+			county_name = row[1]
+			self.counties.append({ 'id':county_id, 'name':county_name, 'center':None })
+		return len( self.counties )
 
 
 	########################################################################################################################
@@ -48,9 +77,9 @@ class DDM_Model() :
 		print( 'Parsing rows...' )
 		row_count = sheet.nrows
 		for row in range( 1, row_count - 1 ) :
-		
+			
 			# Выбираем нужные значения из ячеек
-			county_name     = sheet.cell_value( row, 0  )
+			county_name     = sheet.cell_value( row, 8  )
 			state_abbr      = sheet.cell_value( row, 3  )
 			xml_coordinates = sheet.cell_value( row, 4 )
 			county_value    = sheet.cell_value( row, 5  )
@@ -62,12 +91,12 @@ class DDM_Model() :
 			fips_formula    = sheet.cell_value( row, 11 )
 			county_error    = sheet.cell_value( row, 12 )
 			
-			if len( geographic_name ) == 0 : continue # 91 строка
+			if len( geographic_name ) == 0 : raise # Это уникальное имя, оно должно быть!
 			
 			county_title = geographic_name.split( ',' )[0]
 			state_name = geographic_name.split( ',' )[1].strip()
 			
-			print( '[ROW %d]: %s' % ( row+1, county_title ) )
+			print( '[ROW %d]: %s' % ( row + 1, geographic_name ) )
 			
 			# Добавляем штат
 			state_id = self.insert_state({
@@ -105,71 +134,100 @@ class DDM_Model() :
 		self.cursor.executemany( 'INSERT INTO ddm_points ( id, x, y ) VALUES ( :id, :x, :y )', self.points )
 		self.conn.commit()
 		
-		print( 'Inserting boundaries...(%d)...' % len( self.boundaries ) )
+		print( 'Inserting boundaries...(%d)' % len( self.boundaries ) )
 		self.cursor.executemany( 'INSERT INTO ddm_boundaries ( id, outer, square, center_id ) VALUES ( :id, :outer, :square, :center_id )', self.boundaries )
 		self.conn.commit()
 		
-		print( 'Inserting boundary points...(%d)...' % len( self.boundary_points ) )
+		print( 'Inserting boundary points...(%d)' % len( self.boundary_points ) )
 		self.cursor.executemany( 'INSERT INTO ddm_boundary_points ( point_id, boundary_id ) VALUES ( :point_id, :boundary_id )', self.boundary_points )
 		self.conn.commit()
 		
-		print( 'Inserting county boundaries...(%d)...' % len( self.county_boundaries ) )
+		print( 'Inserting county boundaries...(%d)' % len( self.county_boundaries ) )
 		self.cursor.executemany( 'INSERT INTO ddm_county_boundaries ( county_id, boundary_id ) VALUES ( :county_id, :boundary_id )', self.county_boundaries )
 		self.conn.commit()
-
+		
 
 	########################################################################################################################
 	# 
 	def parse_county_coordinates( self, county_id, xml ) :
-		# if county_id == 69 : return ( 0, 0 ) 
+		total_boundaries = 0 # число найденных контуров
+		total_points     = 0 # число найденных вершин
 		
 		dom = parseXML( xml )
 		polygons = dom.getElementsByTagName( 'Polygon' )
-		point_count = 0 # возвращаемое значение
-		boundary_count = 0 # возвращаемое значение
 		
 		for polygon in polygons :
 			# Внешние границы графства
-			outerBoundaries = polygon.getElementsByTagName( 'outerBoundaryIs' )
-			if outerBoundaries :
-				for boundary in outerBoundaries :
-					boundary_id = len( self.boundaries ) + 1
-					coordinates = boundary.getElementsByTagName( 'coordinates' )[0].childNodes[0].data.split()
-					vertices = []
-					for point in coordinates :
-						point_count = point_count + 1
-						point_id = len( self.points ) + 1
-						( x, y ) = point.split( ',' )
-						self.points.append({ 'id':point_id, 'x':x, 'y':y })
-						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
-						vertices.append({ 'x':x, 'y':y })
-					square = self.calc_polygon_square( vertices )
-					#print( 's=%s' % ( square ) )
-
-					self.boundaries.append({ 'id':boundary_id, 'outer':1, 'square':square, 'center_id':0, 'vertices':vertices });
-					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
-					boundary_count = boundary_count + 1
-
-			# Границы "вырезов" внутри графства
-			innerBoundaries = polygon.getElementsByTagName( 'innerBoundaryIs' )
-			if innerBoundaries :
-				for boundary in innerBoundaries :
-					boundary_id = len( self.boundaries ) + 1
-					self.boundaries.append({ 'id':boundary_id, 'outer':0, 'square':0, 'center_id':0, 'points':[] });
-					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
-					boundary_count = boundary_count + 1
-					
-					coordinates = boundary.getElementsByTagName( 'coordinates' )[0].childNodes[0].data.split( ' ' )
-					for point in coordinates :
-						point_count = point_count + 1
-						( x, y ) = point.split( ',' )
-						point_id = len( self.points ) + 1
-						self.points.append({ 'id':point_id, 'x':x, 'y':y })
-						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
+			outer_boundaries = polygon.getElementsByTagName( 'outerBoundaryIs' )
+			( boundary_count, point_count ) = self.parse_boundaries( county_id, outer_boundaries, 1 )
+			total_boundaries += boundary_count
+			total_points += point_count
 			
+			# Границы "вырезов" внутри графства
+			inner_boundaries = polygon.getElementsByTagName( 'innerBoundaryIs' )
+			( boundary_count, point_count ) = self.parse_boundaries( county_id, inner_boundaries, 0 )
+			total_boundaries += boundary_count
+			total_points += point_count
+
 			# TODO: здесь мы вычисляем центр графства и его площадь
 
-		return ( point_count, boundary_count )
+		return ( total_points, total_boundaries )
+
+
+	########################################################################################################################
+	# 
+	def append_point( self, x, y ) :
+		point_id = len( self.points ) + 1
+		self.points.append({ 'id':point_id, 'x':x, 'y':y })
+		return point_id
+
+	def get_point( self, point_id ) :
+		return self.points[point_id - 1]
+
+	########################################################################################################################
+	# 
+	def append_boundary( self, county_id, outer ) :
+		boundary_id = len( self.boundaries ) + 1
+		self.boundaries.append({ 'id':boundary_id, 'outer':outer, 'square':0, 'center_id':0, 'points':[] });
+		self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
+		return boundary_id
+
+	def get_boundary( self, boundary_id ) :
+		return self.boundaries[boundary_id - 1]
+
+	def set_boundary( self, boundary_id, center_id = 0, square = 0 ) :
+		if center_id > 0 : 
+			self.boundaries[boundary_id - 1]['center_id'] = center_id
+		if square > 0 : 
+			self.boundaries[boundary_id - 1]['square'] = square
+
+	########################################################################################################################
+	# 
+	def parse_boundaries( self, county_id, xml_boundaries, outer ) :
+		point_count = 0
+		boundary_count = 0
+		if xml_boundaries :
+			for boundary in xml_boundaries :
+				boundary_id = self.append_boundary( county_id, outer )
+				coordinates = boundary.getElementsByTagName( 'coordinates' )[0].childNodes[0].data.split( ' ' )
+				vertices = []
+				for point in coordinates :
+					#print( '[%s]' % point )
+					( x, y ) = point.split( ',' )
+					point_id = self.append_point( x, y )
+					self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
+					vertices.append({ 'x':x, 'y':y })
+				
+				( x, y ) = self.calc_centroid( vertices )
+				center_id = self.append_point( x, y )
+				square = self.calc_polygon_square( vertices )
+				self.set_boundary( boundary_id, center_id, square )
+				
+				point_count += len( coordinates );
+			
+			boundary_count = len( xml_boundaries )
+		
+		return ( boundary_count, point_count )
 
 
 	########################################################################################################################
@@ -217,22 +275,137 @@ class DDM_Model() :
 
 
 	########################################################################################################################
-	# 
+	# Вычисляет площадь полигона по координатам его вершин
+	# Взято отсюда - http://ru.wikihow.com/%D0%BD%D0%B0%D0%B9%D1%82%D0%B8-%D0%BF%D0%BB%D0%BE%D1%89%D0%B0%D0%B4%D1%8C-%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE%D1%83%D0%B3%D0%BE%D0%BB%D1%8C%D0%BD%D0%B8%D0%BA%D0%B0
 	def calc_polygon_square( self, vertices ) :
-		nvetrices = len( vertices )
-		n = nvetrices - 1
-		s1 = 0
-		s2 = 0
-		for i in range( 0, n ) :
-			x1 = float( vertices[i]['x'] )
-			y1 = float( vertices[i+1]['y'] if i < n else vertices[0]['y'] )
-			x2 = float( vertices[i+1]['x'] if i < n else vertices[0]['x'] )
-			y2 = float( vertices[i]['y'] )
-			s1 = s1 + x1 * y1
-			s2 = s2 + x2 * y2
-		s = s1 - s2
-		return s
 
+		v = list( vertices )
+		v.append( v[0] )
+		nvetrices = len( v )
+		n = nvetrices - 1
+		s = 0.0
+		for i in range( n ) :
+			x1 = float( v[i]['x'] )
+			y1 = float( v[i]['y'] ) 
+			x2 = float( v[i+1]['x'] if i < n else v[0]['x'] )
+			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
+			s += ( x1 * y2 - x2 * y1 )
+
+		return abs( 0.5 * s )
+
+
+	########################################################################################################################
+	# Вычисляет центр полигона по координатам его вершин
+	def calc_centroid( self, vertices ):
+	
+		# Дальше работаем с копией массива
+		v = list( vertices )
+		v.append( v[0] )
+		Cx = 0.0
+		Cy = 0.0
+
+		n = len( v ) - 1
+		for i in range( n ) :
+			x1 = float( v[i]['x'] )
+			y1 = float( v[i]['y'] ) 
+			x2 = float( v[i+1]['x'] if i < n else v[0]['x'] )
+			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
+			Cx += ( x1 + x2 ) * ( x1 * y2 - x2 * y1 )
+			Cy += ( y1 + y2 ) * ( x1 * y2 - x2 * y1 )
+
+		# Вычисляем площадь
+		S = self.calc_polygon_square( vertices )
+		x = Cx / ( 6 * S )
+		y = Cy / ( 6 * S )
+		
+		return ( x, y )
+
+
+	########################################################################################################################
+	# Вычисляет расстояние между двумя точками
+	# Результат - в метрах 
+	# Взято отсюда - http://www.kobzarev.com/programming/calculation-of-distances-between-cities-on-their-coordinates.html
+	def calc_point_distance( self, p1, p2 ) :
+		x1    = float( p1['x'] )
+		y1    = float( p1['y'] )
+		lat1  = x1 * math.pi / 180.0
+		long1 = y1 * math.pi / 180.0
+		sinl1 = math.sin( lat1 )
+		cosl1 = math.cos( lat1 )
+		
+		x2    = float( p2['x'] )
+		y2    = float( p2['y'] )
+		lat2  = x2 * math.pi / 180.0
+		long2 = y2 * math.pi / 180.0
+		sinl2 = math.sin( lat2 )
+		cosl2 = math.cos( lat2 )
+		
+		dl    = long2 - long1
+		sindl = math.sin( dl )
+		cosdl = math.cos( dl )
+		
+		a = cosl2 * sindl
+		b = cosl1 * sinl2 - sinl1 * cosl2 * cosdl
+		y = math.sqrt( a*a + b*b )
+		x = sinl1 * sinl2 + cosl1 * cosl2 * cosdl
+		d = math.atan2( y, x ) * 6372795 # радиус Земли
+		
+		#print( "d=%d" % ( d ) )
+		return d
+
+
+	########################################################################################################################
+	# Находит центр графства
+	# Выбирает точку - центр наибольшего внешнего контура графства
+	def find_county_center( self, county_id ) :
+		self.cursor.execute( '''
+			SELECT p.x, p.y FROM ddm_county_boundaries AS cb
+			LEFT JOIN ddm_counties AS c ON c.id = cb.county_id
+			LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id
+			LEFT JOIN ddm_points AS p ON p.id = b.center_id
+			WHERE c.id = :county_id AND b.outer = 1
+			ORDER BY b.square DESC
+			LIMIT 1
+		''', { 'county_id':county_id } )
+		row = self.cursor.fetchone()
+		
+		point = None
+		if row :
+			x = float( row[0] )
+			y = float( row[1] )
+			point = { 'x':x, 'y':y } 
+		#print( "center=%d" % ( point ) )
+		return point
+
+
+	########################################################################################################################
+	# Вычисляет расстояния между графствами
+	def calc_county_distances( self ) :
+
+		centers = []
+		ncounties = len( self.counties )
+		for county in self.counties :
+			county_id = county['id']
+			county_name = county['name']
+			center = self.find_county_center( county_id )
+			centers.append({ 'county_id':county_id, 'center':center })
+		
+		self.county_distances = []
+		for i in range( ncounties - 1 ) :
+			county_from = centers[i]['county_id']
+			p1 = centers[i]['center']
+			for j in range( i + 1, ncounties ) :
+				if i == j : continue
+				county_to = centers[j]['county_id']
+				p2 = centers[j]['center']
+				distance = self.calc_point_distance( p1, p2 )
+				self.county_distances.append({
+					'county_from':county_from,
+					'county_to':county_to,
+					'distance':distance
+				})
+				
+		return ncounties
 
 	########################################################################################################################
 	# 
@@ -248,7 +421,6 @@ class DDM_Model() :
 				abbr            VARCHAR(2) NOT NULL UNIQUE
 			)
 		''' )
-		# CREATE INDEX state_id_idx ON ddm_counties(state_id)
 		
 		# Таблица ddm_counties
 		self.cursor.execute( '''
@@ -301,7 +473,6 @@ class DDM_Model() :
 				FOREIGN KEY(point_id)    REFERENCES ddm_points(id)
 			)
 		''' )
-		# CREATE INDEX boundary_point_idx ON ddm_boundary_points(boundary_id,point_id)
 		
 		# Таблица ddm_county_boundaries
 		self.cursor.execute( '''
@@ -316,6 +487,7 @@ class DDM_Model() :
 		
 		# Issue #3
 		# Таблица ddm_county_distances
+		self.cursor.execute( '''DROP TABLE IF EXISTS ddm_county_distances''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_county_distances (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -327,6 +499,10 @@ class DDM_Model() :
 			)
 		''' )
 		
+		# Создаем индексы для более быстрого доступа
+		self.cursor.executescript( '''
+			CREATE UNIQUE INDEX IF NOT EXISTS geographic_name_idx ON ddm_counties( geographic_name );
+		''' )
 
 
 	########################################################################################################################
@@ -334,5 +510,6 @@ class DDM_Model() :
 	def __del__( self ) :
 		if ( self.conn ) :
 			self.conn.close()
+
 
 model = DDM_Model()
