@@ -143,8 +143,11 @@ class DDM_Model() :
 						self.points.append({ 'id':point_id, 'x':x, 'y':y })
 						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
 						vertices.append({ 'x':x, 'y':y })
+					# TODO: здесь мы вычисляем центр графства и его площадь
 					square = self.calc_polygon_square( vertices )
 					#print( 's=%s' % ( square ) )
+					center = self.calc_centroid( vertices )
+					#print( 'x=%s y=%s' % ( center[0],center[1] ) )
 
 					self.boundaries.append({ 'id':boundary_id, 'outer':1, 'square':square, 'center_id':0, 'vertices':vertices });
 					self.county_boundaries.append({ 'boundary_id':boundary_id, 'county_id':county_id });
@@ -167,7 +170,6 @@ class DDM_Model() :
 						self.points.append({ 'id':point_id, 'x':x, 'y':y })
 						self.boundary_points.append({ 'point_id':point_id, 'boundary_id':boundary_id })
 			
-			# TODO: здесь мы вычисляем центр графства и его площадь
 
 		return ( point_count, boundary_count )
 
@@ -233,6 +235,33 @@ class DDM_Model() :
 		s = s1 - s2
 		return s
 
+	def calc_centroid( self, vertices ):
+
+		vertices.append( vertices[0] )
+		s = 0.0
+		n = len(vertices) - 1
+		for i in xrange( n ):
+			x1 = float( vertices[i]['x'] )
+			y1 = float( vertices[i]['y'] )
+			x2 = float( vertices[i+1]['x'] if i < n else vertices[0]['x'] )
+			y2 = float( vertices[i+1]['y'] if i < n else vertices[0]['y'] )
+			s += x1*y2 - x2*y1
+			
+		A = s*0.5
+		Cx = 0.0
+		Cy = 0.0
+		
+		for i in xrange( n ):
+			x1 = float( vertices[i]['x'] )
+			y1 = float( vertices[i]['y'] ) 
+			x2 = float( vertices[i+1]['x'] if i < n else vertices[0]['x'] )
+			y2 = float( vertices[i+1]['y'] if i < n else vertices[0]['y'] )
+			Cy += (x1  + x2)*(x1*y2 - x2*y1)
+			Cx += (y1  + y2)*(x1*y2 - x2*y1)
+			
+		Cx = Cx/(6*A)
+		Cy = Cy/(6*A)
+		return( Cx, Cy )
 
 	########################################################################################################################
 	# 
