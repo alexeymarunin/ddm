@@ -251,8 +251,9 @@ class DDM_Model() :
 					vertices.append({ 'x':x, 'y':y })
 				
 				( x, y ) = self.calc_centroid( vertices )
+				#print( x, y ) тест результатов работы функции
 				center_id = self.append_point( x, y )
-				square = self.calc_polygon_square( vertices )
+				square = abs( self.calc_polygon_square( vertices ) )
 				self.set_boundary( boundary_id, center_id, square )
 				
 				point_count += len( coordinates );
@@ -322,8 +323,8 @@ class DDM_Model() :
 			x2 = float( v[i+1]['x'] if i < n else v[0]['x'] )
 			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
 			s += ( x1 * y2 - x2 * y1 )
-
-		return abs( 0.5 * s )
+		# необхадимо значение площади со знаком для корректной работы функции calc_centroid
+		return 0.5 * s
 
 
 	########################################################################################################################
@@ -342,8 +343,8 @@ class DDM_Model() :
 			y1 = float( v[i]['y'] ) 
 			x2 = float( v[i+1]['x'] if i < n else v[0]['x'] )
 			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
-			Cx += ( x1 + x2 ) * ( x1 * y2 - x2 * y1 )
-			Cy += ( y1 + y2 ) * ( x1 * y2 - x2 * y1 )
+			Cy += ( x1 + x2 ) * ( x1 * y2 - x2 * y1 )
+			Cx += ( y1 + y2 ) * ( x1 * y2 - x2 * y1 )
 
 		# Вычисляем площадь
 		S = self.calc_polygon_square( vertices )
