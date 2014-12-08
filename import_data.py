@@ -16,20 +16,58 @@ import sqlite3
 import hashlib
 import math
 from xml.dom.minidom import parseString as parseXML
+from optparse import OptionParser
+
+
+parser = OptionParser()
+parser.add_option( "-f", "--force", dest= "force", default = False )
+parser.add_option( "-i", "--id",type="int", dest= "id", default = - 1 )
+( options, args ) = parser.parse_args()
 
 class DDM_Model() :
 
 	########################################################################################################################
 	# Конструктор
-	def __init__( self ) :
-		self.connect_db( 'ddm.sqlite' )
-		
-		# Если не находим таблицу с графствами, то запускаем парсер
-		self.load_counties()
-		if len( self.counties ) == 0 :
-			self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ) )
+	def __init__( self, force, id ) :
+		if force == True:
+			print( 'Full rebuild database.' )
+			# перестроение с перещётом всех данных
+			if os.path.isfile( 'ddm.sqlite' ):
+				os.remove( 'ddm.sqlite' )
+			self.connect_db( 'ddm.sqlite' )
+			self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ), -1 )
 			self.load_counties()
-		
+			self.insert_ounty_distances_in_base()
+		elif id > 0:
+			print( 'Rebuild database to county with id = %s.' ) % id
+			# перестраиваем базу для конкретного графства
+			if os.path.isfile( 'ddm.sqlite' ):
+				os.remove( 'ddm.sqlite' )
+			self.connect_db( 'ddm.sqlite' )
+			self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ), id )
+			self.load_counties()
+			self.insert_ounty_distances_in_base()
+		elif force == False and id <= 0:
+			# Если не находим таблицу с графствами, то запускаем парсер
+			self.connect_db( 'ddm.sqlite' )
+			self.load_counties()
+			if len( self.counties ) == 0 :
+				print( ' Database not found. Full rebuild data base.' )
+				self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ), -1 )
+				self.load_counties()
+				self.insert_ounty_distances_in_base
+			else:
+				print( 'Database alredy exists.' )
+
+	########################################################################################################################
+	# 
+	def connect_db( self, filename = 'ddm.sqlite' ) :
+		self.conn = sqlite3.connect( filename )
+		self.cursor = self.conn.cursor()
+		self.init_db()
+	########################################################################################################################
+	# 	
+	def insert_ounty_distances_in_base( self ) :
 		# Вычисляем расстояния между графствами
 		print( 'Calculating county distances...' )
 		self.calc_county_distances()
@@ -39,13 +77,6 @@ class DDM_Model() :
 
 		#center = self.find_county_center( 2 )
 		#print( 'center: %s' % center )
-
-	########################################################################################################################
-	# 
-	def connect_db( self, filename = 'ddm.sqlite' ) :
-		self.conn = sqlite3.connect( filename )
-		self.cursor = self.conn.cursor()
-		self.init_db()
 
 
 	########################################################################################################################
@@ -63,7 +94,7 @@ class DDM_Model() :
 
 	########################################################################################################################
 	# 
-	def load_counties_base( self, filename ) :
+	def load_counties_base( self, filename, id ) :
 		print( os.path.abspath( filename ) )
 		print( 'Loading...' )
 		book = xlrd.open_workbook( filename )
@@ -75,9 +106,10 @@ class DDM_Model() :
 		self.county_boundaries = []
 		
 		print( 'Parsing rows...' )
-		row_count = sheet.nrows
-		for row in range( 1, row_count - 1 ) :
-			
+		start_index = 1 if id == -1 else id
+		row_count = sheet.nrows - 1 if id == -1  else id + 1
+		
+		for row in range( start_index, row_count ) :
 			# Выбираем нужные значения из ячеек
 			county_name     = sheet.cell_value( row, 8  )
 			state_abbr      = sheet.cell_value( row, 3  )
@@ -511,5 +543,6 @@ class DDM_Model() :
 		if ( self.conn ) :
 			self.conn.close()
 
-
-model = DDM_Model()
+force = True if options.force == "True" else False
+id = int(options.id) 
+model = DDM_Model( force, id )
