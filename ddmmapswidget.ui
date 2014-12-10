@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>844</width>
-    <height>597</height>
+    <width>1020</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,13 @@
         </spacer>
        </item>
        <item>
-        <widget class="QWebView" name="m_WvMap">
+        <widget class="ddmMap" name="m_map">
+         <property name="minimumSize">
+          <size>
+           <width>800</width>
+           <height>600</height>
+          </size>
+         </property>
          <property name="url">
           <url>
            <string>about:blank</string>
@@ -125,6 +131,11 @@
    <class>QWebView</class>
    <extends>QWidget</extends>
    <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+  <customwidget>
+   <class>ddmMap</class>
+   <extends>QWebView</extends>
+   <header>ddmMap.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

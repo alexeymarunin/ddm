@@ -14,15 +14,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ddmmapswidget.cpp \
-    ddmObjectModel.cpp
+    ddmObjectModel.cpp \
+    ddmMap.cpp \
+    ddmMapsWidget.cpp
 
 HEADERS  += mainwindow.h \
-    ddmmapswidget.h \
-    ddmObjectModel.h
+    ddmObjectModel.h \
+    ddmMap.h \
+    ddmMapsWidget.h
 
 FORMS    += mainwindow.ui \
     ddmmapswidget.ui
 
+DESTDIR = $$PWD
 
 include(xlsx/qtxlsx.pri)

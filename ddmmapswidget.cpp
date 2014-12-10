@@ -2,6 +2,7 @@
 #include "ui_ddmmapswidget.h"
 #include "ddmObjectModel.h"
 
+#include <QDir>
 #include <QLineEdit>
 #include <QMessageBox>
 
@@ -19,6 +20,11 @@ ddmMapsWidget::ddmMapsWidget(QWidget *parent) :
 
     ui->m_cmbState->setLineEdit(  m_leState );
     ui->m_cmbCounty->setLineEdit( m_leCounty );
+
+    // страница для отображения google maps
+    QString path = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
+    QUrl url = QUrl::fromLocalFile( path );
+    ui->m_map->setUrl( url );
 
     installEvents();
 }
