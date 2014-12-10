@@ -9,20 +9,51 @@
 ###                                                                     #
 #########################################################################
  
+import sys
 import os
 import os.path
 import xlrd
 import sqlite3
 import hashlib
 import math
+import time
 from xml.dom.minidom import parseString as parseXML
+from optparse import OptionParser
+
+# Имя файла с БД
+DB_FILE = 'ddm.sqlite'
 
 class DDM_Model() :
 
 	########################################################################################################################
 	# Конструктор
-	def __init__( self ) :
-		self.connect_db( 'ddm.sqlite' )
+	def __init__( self, options ) :
+		self.conn = None # чтобы корректно отрабатывал деструктор в случае ошибки
+
+		rebuild_db = options.rebuild_db == True
+		drop_counties = rebuild_db or options.drop_counties == True
+		drop_county_distances = drop_counties or options.drop_county_distances == True
+		drop_residences = drop_counties or options.drop_residences == True
+		drop_migrations = drop_counties or options.drop_migrations == True
+		county_id = int( options.county_id )
+		verbose = options.verbose
+		
+		self.config = {
+			'county_id'             : county_id,
+			'drop_counties'         : drop_counties,
+			'drop_county_distances' : drop_county_distances,
+			'drop_residences'       : drop_residences,
+			'drop_migrations'       : drop_migrations
+		}
+		self.verbose = verbose
+		
+		if rebuild_db :
+			print( 'Full rebuild database.' )
+			if os.path.isfile( DB_FILE ) :
+				os.remove( DB_FILE )
+		
+		# Подключаемся к БД
+		self.connect_db( DB_FILE )
 		
 		# Если не находим таблицу с графствами, то запускаем парсер
 		self.load_counties()
@@ -30,19 +61,24 @@ class DDM_Model() :
 			self.load_counties_base( os.path.join( 'data', 'United States Counties.xlsx' ) )
 			self.load_counties()
 		
-		# Вычисляем расстояния между графствами
-		print( 'Calculating county distances...' )
-		self.calc_county_distances()
-		print( 'Inserting county distances...(%d)' % len( self.county_distances ) )
-		self.cursor.executemany( 'INSERT INTO ddm_county_distances ( county_from, county_to, distance ) VALUES ( :county_from, :county_to, :distance )', self.county_distances )
-		self.conn.commit()
+		if drop_county_distances :
+			# Вычисляем расстояния между графствами
+			print( 'Calculating county distances...' )
+			self.calc_county_distances()
+			print( 'Inserting county distances...(%d)' % len( self.county_distances ) )
+			self.cursor.executemany( 'INSERT INTO ddm_county_distances ( county_from, county_to, distance ) VALUES ( :county_from, :county_to, :distance )', self.county_distances )
+			self.conn.commit()
 
-		#center = self.find_county_center( 2 )
-		#print( 'center: %s' % center )
+		if drop_residences :
+			self.load_counties_residences( os.path.join( 'data', 'County-to-County 2008-2012 - Current Residence Sort.xlsx' ) )
+		
+		if drop_migrations :
+			self.load_counties_migrations( os.path.join( 'data', 'County-to-County 2008-2012 - Ins Outs Nets Gross.xlsx' ) )
+
 
 	########################################################################################################################
 	# 
-	def connect_db( self, filename = 'ddm.sqlite' ) :
+	def connect_db( self, filename ) :
 		self.conn = sqlite3.connect( filename )
 		self.cursor = self.conn.cursor()
 		self.init_db()
@@ -64,7 +100,7 @@ class DDM_Model() :
 	########################################################################################################################
 	# 
 	def load_counties_base( self, filename ) :
-		print( os.path.abspath( filename ) )
+		print( 'File: %s' % os.path.abspath( filename ) )
 		print( 'Loading...' )
 		book = xlrd.open_workbook( filename )
 		sheet = book.sheet_by_index( 0 )
@@ -74,9 +110,10 @@ class DDM_Model() :
 		self.boundary_points = []
 		self.county_boundaries = []
 		
-		print( 'Parsing rows...' )
-		row_count = sheet.nrows
-		for row in range( 1, row_count - 1 ) :
+		print( 'Parsing counties...' )
+		target_county = self.config['county_id']
+		rows_range = range( target_county, target_county + 1 ) if target_county > 0 else range( 1, sheet.nrows )
+		for row in rows_range :
 			
 			# Выбираем нужные значения из ячеек
 			county_name     = sheet.cell_value( row, 8  )
@@ -95,8 +132,6 @@ class DDM_Model() :
 			
 			county_title = geographic_name.split( ',' )[0]
 			state_name = geographic_name.split( ',' )[1].strip()
-			
-			print( '[ROW %d]: %s' % ( row + 1, geographic_name ) )
 			
 			# Добавляем штат
 			state_id = self.insert_state({
@@ -124,28 +159,182 @@ class DDM_Model() :
 			# Получаем координаты
 			if len( xml_coordinates.strip() ) > 0 :
 				( point_count, boundary_count ) = self.parse_county_coordinates( county_id, xml_coordinates )
-				print( '%d points, %d boundaries parsed' % ( point_count, boundary_count ) )
-				
+				if self.verbose :
+					print( '%s: %d points, %d boundaries' % ( geographic_name, point_count, boundary_count ) )
 			else :
-				print( 'WARNING! No boundaries found!' )
+				print( 'WARNING! No boundaries found for %s (row %d)!' % ( geographic_name, row + 1 ) )
 
+		# Освобождаем память
+		book.release_resources()
+		
 		# Вставляем данные в БД
 		print( 'Inserting points (%d)...' % len( self.points ) )
 		self.cursor.executemany( 'INSERT INTO ddm_points ( id, x, y ) VALUES ( :id, :x, :y )', self.points )
 		self.conn.commit()
 		
-		print( 'Inserting boundaries...(%d)' % len( self.boundaries ) )
+		print( 'Inserting boundaries (%d)...' % len( self.boundaries ) )
 		self.cursor.executemany( 'INSERT INTO ddm_boundaries ( id, outer, square, center_id ) VALUES ( :id, :outer, :square, :center_id )', self.boundaries )
 		self.conn.commit()
 		
-		print( 'Inserting boundary points...(%d)' % len( self.boundary_points ) )
+		print( 'Inserting boundary points (%d)...' % len( self.boundary_points ) )
 		self.cursor.executemany( 'INSERT INTO ddm_boundary_points ( point_id, boundary_id ) VALUES ( :point_id, :boundary_id )', self.boundary_points )
 		self.conn.commit()
 		
-		print( 'Inserting county boundaries...(%d)' % len( self.county_boundaries ) )
+		print( 'Inserting county boundaries (%d)...' % len( self.county_boundaries ) )
 		self.cursor.executemany( 'INSERT INTO ddm_county_boundaries ( county_id, boundary_id ) VALUES ( :county_id, :boundary_id )', self.county_boundaries )
 		self.conn.commit()
+
+
+	########################################################################################################################
+	# 
+	def load_counties_residences( self, filename ) :
 		
+		self.residences = []
+		
+		print( 'File: %s' % os.path.abspath( filename ) )
+		print( 'Loading...' )
+		book = xlrd.open_workbook( filename, on_demand = True )
+		for sheet in book.sheets() :
+			state_name = sheet.name
+			row_count = sheet.nrows
+			print( 'Parsing %s (%d rows)...' % ( state_name, row_count ) )
+			prev_county = None
+			for row in range( row_count ) :
+				ph = sheet.cell_value( row, 0 )
+				if not ph.isnumeric() : continue
+				
+				state_name = sheet.cell_value( row, 4 )
+				county_title = sheet.cell_value( row, 5 )
+				
+				if prev_county == county_title : continue 
+				
+				( county_id, county_name ) = self.find_county( state_name, county_title )
+				if not county_id :
+					print( '[ROW %d]: Undefined %s, %s' % ( row + 1, county_name, state_name ) )
+					raise 
+				else :
+					popul_est = int( sheet.cell_value( row, 6 ) )
+					popul_moe = int( sheet.cell_value( row, 7 ) )
+					if self.verbose : 
+						print( '[ROW %d]: County - %s(%d), population - %d/%d' % ( row + 1, county_name, county_id, popul_est, popul_moe ) )
+					self.residences.append({ 'county_id':county_id, 'popul_est':popul_est, 'popul_moe':popul_moe })
+				
+				prev_county = county_title
+				
+		# Освобождаем память
+		book.release_resources()
+		
+		print( 'Inserting county residences (%d)...' % len( self.residences ) )
+		self.cursor.executemany( 'INSERT INTO ddm_residences ( county_id, popul_est, popul_moe ) VALUES ( :county_id, :popul_est, :popul_moe )', self.residences )
+		self.conn.commit()
+
+
+	########################################################################################################################
+	# 
+	def load_counties_migrations( self, filename ) :
+		
+		self.migrations = []
+		
+		print( 'File: %s' % os.path.abspath( filename ) )
+		print( 'Loading...' )
+		book = xlrd.open_workbook( filename, on_demand = True )
+		for sheet in book.sheets() :
+			state_name = sheet.name
+			row_count = sheet.nrows
+			print( 'Parsing %s (%d rows)...' % ( state_name, row_count ) )
+			for row in range( row_count ) :
+				ph = sheet.cell_value( row, 0 )
+				if not ph.isnumeric() : continue
+				ph = sheet.cell_value( row, 2 )
+				if not ph.isnumeric() : continue
+				
+				state1  = sheet.cell_value( row, 4 )
+				county1 = sheet.cell_value( row, 5 )
+				state2  = sheet.cell_value( row, 6 )
+				county2 = sheet.cell_value( row, 7 )
+
+				( county_id1, county_name1 ) = self.find_county( state1, county1 )
+				if not county_id1 :
+					print( '[ROW %d]: Undefined county A (%s, %s)!' % ( row + 1, county_name1, state1 ) )
+					raise 
+				( county_id2, county_name2 ) = self.find_county( state2, county2 )
+				if not county_id2 :
+					print( '[ROW %d]: Undefined county B (%s, %s)!' % ( row + 1, county_name2, state2 ) )
+					raise 
+				
+				county_a       = county_id1
+				county_b       = county_id2
+				in_estimate    = int( sheet.cell_value( row, 8  ) )
+				in_moe         = int( sheet.cell_value( row, 9  ) )
+				out_estimate   = int( sheet.cell_value( row, 10 ) )
+				out_moe        = int( sheet.cell_value( row, 11 ) )
+				net_migr_est   = int( sheet.cell_value( row, 12 ) )
+				net_migr_moe   = int( sheet.cell_value( row, 13 ) )
+				gross_migr_est = int( sheet.cell_value( row, 14 ) )
+				gross_migr_moe = int( sheet.cell_value( row, 15 ) )
+				
+				if self.verbose :
+					print( '[ROW %d]:' % ( row + 1 ) )
+					print( '    County A - %s(%d)' % ( county_name1, county_id1 ) )
+					print( '    County B - %s(%d)' % ( county_name2, county_id2 ) )
+					print( '    Flow from B to A: %d/%d' % ( in_estimate, in_moe ) )
+					print( '    Flow from B to A: %d/%d' % ( out_estimate, out_moe ) )
+					print( '    Net Migration from B to A: %d/%d' % ( net_migr_est, net_migr_moe ) )
+					print( '    Gross Migration between A and B: %d/%d' % ( gross_migr_est, gross_migr_moe ) )
+					print( ' ' )
+				
+				self.migrations.append({ 
+					'county_a'       : county_a, 
+					'county_b'       : county_b, 
+					'in_estimate'    : in_estimate, 
+					'in_moe'         : in_moe, 
+					'out_estimate'   : out_estimate, 
+					'out_moe'        : out_moe, 
+					'net_migr_est'   : net_migr_est, 
+					'net_migr_moe'   : net_migr_moe, 
+					'gross_migr_est' : gross_migr_est, 
+					'gross_migr_moe' : gross_migr_moe 
+				})
+				
+		# Освобождаем память
+		book.release_resources()
+		
+		print( 'Inserting county migrations (%d)...' % len( self.migrations ) )
+		self.cursor.executemany( '''
+			INSERT INTO ddm_mirgations ( 
+				county_a, county_b, 
+				in_estimate, in_moe, 
+				out_estimate, out_moe, 
+				net_migr_est, net_migr_moe, 
+				gross_migr_est, gross_migr_moe 
+			) 
+			VALUES ( 
+				:county_a, :county_b, 
+				:in_estimate, :in_moe,  
+				:out_estimate, :out_moe,  
+				:net_migr_est, :net_migr_moe,  
+				:gross_migr_est, :gross_migr_moe
+			)''', self.migrations )
+		self.conn.commit()
+
+
+	########################################################################################################################
+	# 
+	def find_county( self, state_name, county_raw_title ) :
+		county_title = county_raw_title.replace( 'ñ', 'n' ).replace( 'ó', 'o' ).replace( 'á', 'a' ).replace( 'í', 'i' ).replace( 'ü', 'u' )
+		self.cursor.execute( '''
+			SELECT c.id, c.title FROM ddm_counties AS c
+			LEFT JOIN ddm_states AS s ON s.id = c.state_id
+			WHERE s.name = :state_name AND c.title = :county_title
+		''', { 'state_name':state_name, 'county_title':county_title }
+		)
+		row = self.cursor.fetchone()
+		if not row : return ( 0, county_title )
+		
+		county_id = int( row[0] )
+		county_name = row[1]
+		return ( county_id, county_name )
+
 
 	########################################################################################################################
 	# 
@@ -219,8 +408,9 @@ class DDM_Model() :
 					vertices.append({ 'x':x, 'y':y })
 				
 				( x, y ) = self.calc_centroid( vertices )
+				#print( x, y ) # тест результатов работы функции
 				center_id = self.append_point( x, y )
-				square = self.calc_polygon_square( vertices )
+				square = abs( self.calc_polygon_square( vertices ) )
 				self.set_boundary( boundary_id, center_id, square )
 				
 				point_count += len( coordinates );
@@ -291,7 +481,7 @@ class DDM_Model() :
 			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
 			s += ( x1 * y2 - x2 * y1 )
 
-		return abs( 0.5 * s )
+		return 0.5 * s
 
 
 	########################################################################################################################
@@ -310,8 +500,8 @@ class DDM_Model() :
 			y1 = float( v[i]['y'] ) 
 			x2 = float( v[i+1]['x'] if i < n else v[0]['x'] )
 			y2 = float( v[i+1]['y'] if i < n else v[0]['y'] )
-			Cx += ( x1 + x2 ) * ( x1 * y2 - x2 * y1 )
-			Cy += ( y1 + y2 ) * ( x1 * y2 - x2 * y1 )
+			Cy += ( x1 + x2 ) * ( x1 * y2 - x2 * y1 )
+			Cx += ( y1 + y2 ) * ( x1 * y2 - x2 * y1 )
 
 		# Вычисляем площадь
 		S = self.calc_polygon_square( vertices )
@@ -423,7 +613,13 @@ class DDM_Model() :
 		''' )
 		
 		# Таблица ddm_counties
-		self.cursor.execute( '''
+		if self.config['drop_counties'] == True :
+			self.cursor.executescript( '''
+				DROP TABLE IF EXISTS ddm_counties;
+				DROP INDEX IF EXISTS county_title_state_idx;
+				DROP INDEX IF EXISTS geographic_name_idx;
+			''' )
+		self.cursor.executescript( '''
 			CREATE TABLE IF NOT EXISTS ddm_counties (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
 				title           VARCHAR(50) NOT NULL DEFAULT "",
@@ -441,10 +637,14 @@ class DDM_Model() :
 				square          DOUBLE NOT NULL DEFAULT 0,
 				center_id       INTEGER NOT NULL DEFAULT 0,
 				FOREIGN KEY(state_id) REFERENCES ddm_states(id)
-			)
+			);
+			CREATE UNIQUE INDEX IF NOT EXISTS county_title_state_idx ON ddm_counties( title, state_id );
+			CREATE UNIQUE INDEX IF NOT EXISTS geographic_name_idx ON ddm_counties( geographic_name );
 		''' )
 		
 		# Таблица ddm_points
+		if self.config['drop_counties'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_points''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_points (
 				id              INTEGER PRIMARY KEY,
@@ -454,6 +654,8 @@ class DDM_Model() :
 		''' )
 		
 		# Таблица ddm_boundaries
+		if self.config['drop_counties'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_boundaries''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_boundaries (
 				id              INTEGER PRIMARY KEY,
@@ -464,6 +666,8 @@ class DDM_Model() :
 		''' )
 		
 		# Таблица ddm_boundary_points
+		if self.config['drop_counties'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_boundary_points''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_boundary_points (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -475,6 +679,8 @@ class DDM_Model() :
 		''' )
 		
 		# Таблица ddm_county_boundaries
+		if self.config['drop_counties'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_county_boundaries''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_county_boundaries (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -487,7 +693,8 @@ class DDM_Model() :
 		
 		# Issue #3
 		# Таблица ddm_county_distances
-		self.cursor.execute( '''DROP TABLE IF EXISTS ddm_county_distances''' )
+		if self.config['drop_county_distances'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_county_distances''' )
 		self.cursor.execute( '''
 			CREATE TABLE IF NOT EXISTS ddm_county_distances (
 				id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -499,9 +706,56 @@ class DDM_Model() :
 			)
 		''' )
 		
-		# Создаем индексы для более быстрого доступа
+		# Issue #6
+		# Таблица ddm_residences
+		if self.config['drop_residences'] == True :
+			self.cursor.executescript( '''
+				DROP TABLE IF EXISTS ddm_residences;
+				DROP INDEX IF EXISTS county_id_idx;
+			''' )
 		self.cursor.executescript( '''
-			CREATE UNIQUE INDEX IF NOT EXISTS geographic_name_idx ON ddm_counties( geographic_name );
+			CREATE TABLE IF NOT EXISTS ddm_residences (
+				id              INTEGER PRIMARY KEY AUTOINCREMENT,
+				county_id       INTEGER NOT NULL,
+				popul_est       INTEGER NOT NULL DEFAULT 0,
+				popul_moe       INTEGER NOT NULL DEFAULT 0,
+				FOREIGN KEY(county_id)       REFERENCES ddm_counties(id)
+			);
+			CREATE UNIQUE INDEX IF NOT EXISTS county_id_idx ON ddm_residences( county_id );
+		''' )
+		
+		# Issue #7
+		# Таблица ddm_mirgations
+		if self.config['drop_migrations'] == True :
+			self.cursor.execute( '''DROP TABLE IF EXISTS ddm_mirgations''' )
+		self.cursor.execute( '''
+			CREATE TABLE IF NOT EXISTS ddm_mirgations (
+				id              INTEGER PRIMARY KEY AUTOINCREMENT,
+				county_a        INTEGER NOT NULL,
+				county_b        INTEGER NOT NULL,
+				in_estimate     INTEGER NOT NULL DEFAULT 0,
+				in_moe          INTEGER NOT NULL DEFAULT 0,
+				out_estimate    INTEGER NOT NULL DEFAULT 0,
+				out_moe         INTEGER NOT NULL DEFAULT 0,
+				net_migr_est    INTEGER NOT NULL DEFAULT 0,
+				net_migr_moe    INTEGER NOT NULL DEFAULT 0,
+				gross_migr_est  INTEGER NOT NULL DEFAULT 0,
+				gross_migr_moe  INTEGER NOT NULL DEFAULT 0,
+				FOREIGN KEY(county_a)       REFERENCES ddm_counties(id),
+				FOREIGN KEY(county_b)       REFERENCES ddm_counties(id)
+			)
+		''' )
+		
+		# Представления
+		self.cursor.execute( '''DROP VIEW IF EXISTS ddm_county_centers''' )
+		self.cursor.execute( '''
+			CREATE VIEW IF NOT EXISTS ddm_county_centers AS SELECT c.id, c.name, p.x, p.y, b.square FROM ddm_county_boundaries AS cb
+			LEFT JOIN ddm_counties AS c ON c.id = cb.county_id
+			LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id
+			LEFT JOIN ddm_points AS p ON p.id = b.center_id
+			WHERE b.outer = 1
+			GROUP BY c.id
+			ORDER BY c.id, b.square DESC
 		''' )
 
 
@@ -511,5 +765,60 @@ class DDM_Model() :
 		if ( self.conn ) :
 			self.conn.close()
 
+def main() :
+	
+	parser = OptionParser()
+	
+	parser.add_option( "-f", "--force", 
+		action = "store_true", dest = "rebuild_db", default = False,
+		help = "force rebuild DB"
+	)
+	
+	# Сброс данных о графствах
+	parser.add_option( "", "--drop-counties", 
+		action = "store_true", dest = "drop_counties", default = False,
+		help = "drop ddm_counties table"
+	)
+	
+	# Сброс данных о расстояниях между графствами
+	parser.add_option( "", "--drop-distances", 
+		action = "store_true", dest = "drop_county_distances", default = False,
+		help = "drop ddm_county_distances table"
+	)
+	
+	# Сброс данных о резидентах (численности)
+	parser.add_option( "", "--drop-residences", 
+		action = "store_true", dest = "drop_residences", default = False,
+		help = "drop ddm_drop_residences table"
+	)
+	
+	# Сброс данных о резидентах (численности)
+	parser.add_option( "", "--drop-migrations", 
+		action = "store_true", dest = "drop_migrations", default = False,
+		help = "drop ddm_mirgations table"
+	)
+	parser.add_option( "-i", "--id", 
+		type="int", dest = "county_id", default = 0,  metavar = "ID",
+		help = "target county id"
+	)
+	
+	parser.add_option( "-v", "--verbose", 
+		action = "store_true", dest = "verbose", default = False,
+		help = "print verbose information"
+	)
+	
+	( options, args ) = parser.parse_args()
+	# print( options )
 
-model = DDM_Model()
+	model = DDM_Model( options )
+	print( 'Ending...' )
+	
+if __name__ == "__main__" :
+	start_time = time.time()
+	try :
+		main()
+	except :
+		print( '%s' % sys.exc_info() )
+	else :
+		end_time = time.time()
+		print( '\n\n--- %f seconds ---' % ( end_time - start_time ) )
