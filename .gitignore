@@ -1,3 +1,4 @@
 *.sqlite
+data/*.obj
 data/.~lock*
 data/*_debug.xlsx
