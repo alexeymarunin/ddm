@@ -2,27 +2,45 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      #map_canvas { height: 100% }
-    </style>
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCq1wAq2gmenvXvgCCqT6pfkUGcKLGV_PA">
     </script>
     <script type="text/javascript">
+	  
+	  var map;
       function initialize() {
         var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
+          center: new google.maps.LatLng( 55.35411, -161.65856),
           zoom: 8,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            mapOptions);
+        map = new google.maps.Map(document.getElementById( "map_canvas" ), mapOptions );
       }
+	  
+	  function setMapCenter( lat, lng )
+      {
+         var latlng = new google.maps.LatLng( lat, lng );
+         map.panTo( latlng );
+		 var marker = new google.maps.Marker({
+				position: latlng,
+				map: map
+			});
+      }
+	  
+	  function setWebPageSize(  width, height )
+	  {
+         var  w = width.toString();
+         var  h = height.toString();
+         var elem = document.getElementById( "map_canvas" );
+         elem.style.width = w + 'px';
+         elem.style.height = h + 'px';
+         var center = map.getCenter();
+         google.maps.event.trigger( map, "resize" );
+         map.setCenter(center); 
+	  }
     </script>
   </head>
   <body onload="initialize()">
-    <div id="map_canvas" style="width:100%; height:100%"></div>
+    <div id="map_canvas" style="width: 800px; height: 600px;"></div>
   </body>
 </html>

@@ -2,7 +2,9 @@
 #define DDMOBJECTMODEL_H
 
 #include<QObject>
+#include <QtSql>
 #include<QString>
+#include <QStringList>
 
 
 class ddmObjectModel: public QObject
@@ -19,9 +21,20 @@ public:
 
     void setCurentCounty( const QString county );
 
+    bool openDB(  const QString& fullPath );
+
     QString CurentState();
 
     QString CurentCounty();
+
+    bool isOpen();
+
+    void getStatesList( QStringList& states );
+
+    void getCountiesList( QStringList& counties, const QString& state );
+
+
+
 
 signals:
     void updateState( const QString& state );
@@ -32,6 +45,8 @@ signals:
 private:
    QString m_state;
    QString m_county;
+
+   QSqlDatabase m_dbase;
 };
 
 #endif // DDMOBJECTMODEL_H
