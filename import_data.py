@@ -373,6 +373,7 @@ class DDM_Model() :
 				distance       = self.get_county_distance( county_a, county_b )
 				f_out          = ( out_estimate / population_a ) * distance
 				f_in           = ( in_estimate / population_a ) * distance
+				f_mid          = 0.5 * ( f_out + f_in )
 				if self.verbose :
 					print( '[ROW %d] (%f s):' % ( row + 1, ( end_time - start_time ) ) )
 					print( '    County A - %s(%d)' % ( county_name1, county_id1 ) )
@@ -381,7 +382,7 @@ class DDM_Model() :
 					print( '    Flow from B to A: %d/%d' % ( out_estimate, out_moe ) )
 					print( '    Net Migration from B to A: %d / %d' % ( net_migr_est, net_migr_moe ) )
 					print( '    Gross Migration between A and B: %d / %d' % ( gross_migr_est, gross_migr_moe ) )
-					print( '    Fiction forces (OUT/IN): %f / %f' % ( f_out, f_in ) )
+					print( '    Fiction forces (OUT/IN/MID): %f / %f / %f' % ( f_out, f_in, f_mid ) )
 					print( ' ' )
 				
 				self.migrations.append({ 
@@ -398,6 +399,7 @@ class DDM_Model() :
 					'gross_migr_moe' : gross_migr_moe, 
 					'f_out'          : f_out, 
 					'f_in'           : f_in, 
+					'f_mid'          : f_mid, 
 				})
 				
 		# Освобождаем память
@@ -411,7 +413,7 @@ class DDM_Model() :
 				out_estimate, out_moe, 
 				net_migr_est, net_migr_moe, 
 				gross_migr_est, gross_migr_moe, 
-				f_out, f_in 
+				f_out, f_in, f_mid 
 			) 
 			VALUES ( 
 				:county_a, :county_b, :distance, 
@@ -419,7 +421,7 @@ class DDM_Model() :
 				:out_estimate, :out_moe,  
 				:net_migr_est, :net_migr_moe,  
 				:gross_migr_est, :gross_migr_moe,
-				:f_out, :f_in
+				:f_out, :f_in, :f_mid
 			)''', self.migrations )
 		self.conn.commit()
 
@@ -458,7 +460,9 @@ class DDM_Model() :
 			if rc_in :
 				in_count = int( rc_in[0] )
 				f_in_mid = f_in_sum / in_count
-		
+			
+			f_mid = 0.5 * ( f_out_mid + f_in_mid )
+			
 			if self.verbose :
 				print( 'County ID: %d' % ( county_id ) )
 				print( '    out_count: %d' % ( out_count ) )
@@ -467,6 +471,7 @@ class DDM_Model() :
 				print( '    in_count: %d' % ( in_count ) )
 				print( '    f_in_sum: %f' % ( f_in_sum ) )
 				print( '    f_in_mid: %f' % ( f_in_mid ) )
+				print( '    f_mid: %f' % ( f_mid ) )
 				print( ' ' )
 			
 			self.frictions.append({
@@ -477,6 +482,7 @@ class DDM_Model() :
 				'in_count':  in_count,
 				'f_in_sum':  f_in_sum,
 				'f_in_mid':  f_in_mid,
+				'f_mid':     f_mid,
 			})
 		
 		print( 'Inserting county frictions (%d)...' % len( self.frictions ) )
@@ -484,12 +490,14 @@ class DDM_Model() :
 			INSERT INTO ddm_frictions ( 
 				county_id, 
 				out_count, f_out_sum, f_out_mid, 
-				in_count,  f_in_sum,  f_in_mid
+				in_count,  f_in_sum,  f_in_mid,
+				f_mid
 			) 
 			VALUES ( 
 				:county_id, 
 				:out_count, :f_out_sum, :f_out_mid,
-				:in_count,  :f_in_sum,  :f_in_mid
+				:in_count,  :f_in_sum,  :f_in_mid,
+				:f_mid
 			)''', self.frictions )
 		self.conn.commit()
 
@@ -993,6 +1001,7 @@ class DDM_Model() :
 				gross_migr_moe  INTEGER NOT NULL DEFAULT 0,
 				f_out           DOUBLE DEFAULT 0,
 				f_in            DOUBLE DEFAULT 0,
+				f_mid           DOUBLE DEFAULT 0,
 				FOREIGN KEY(county_a)       REFERENCES ddm_counties(id),
 				FOREIGN KEY(county_b)       REFERENCES ddm_counties(id)
 			)
@@ -1012,6 +1021,7 @@ class DDM_Model() :
 				in_count        INTEGER DEFAULT 0,
 				f_in_sum        INTEGER DEFAULT 0,
 				f_in_mid        DOUBLE DEFAULT 0,
+				f_mid           DOUBLE DEFAULT 0,
 				FOREIGN KEY(county_id)      REFERENCES ddm_counties(id)
 			)
 		''' )
