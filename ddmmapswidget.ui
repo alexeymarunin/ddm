@@ -33,38 +33,65 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="m_cmbState">
-             <item>
-              <property name="text">
-               <string>Пенсильвания</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Колумбия</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Техас</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="QComboBox" name="m_cmbState"/>
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <widget class="QLabel" name="m_lbCounty">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>9</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Графство:</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="m_cmbCounty"/>
+              <widget class="QComboBox" name="m_cmbCounty">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="m_lbFilters">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Фильтры:</string>
                </property>
@@ -93,20 +120,16 @@
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <widget class="ddmMap" name="m_map">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>800</width>

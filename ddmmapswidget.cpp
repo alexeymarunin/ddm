@@ -1,13 +1,15 @@
-#include "ddmmapswidget.h"
 #include "ui_ddmmapswidget.h"
+#include "ddmmapswidget.h"
 #include "ddmObjectModel.h"
 
 #include <QDir>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPointF>
+#include <QResizeEvent>
 
 
-ddmMapsWidget::ddmMapsWidget(QWidget *parent) :
+ddmMapsWidget::ddmMapsWidget( QWidget *parent ) :
     QWidget(parent),
     ui(new Ui::ddmMapsWidget)
 {
@@ -16,15 +18,26 @@ ddmMapsWidget::ddmMapsWidget(QWidget *parent) :
     m_leState = new QLineEdit( ui->m_cmbState );
     m_leCounty = new QLineEdit( ui->m_cmbCounty );
 
+    // устанавливаем соединение с БД
+    QString db_path = QObject::tr( "%1/ddm.sqlite" ).arg( QDir::current().path() );
     m_model = new ddmObjectModel();
+    m_model->openDB( db_path );
+
+    // устанавливаем страницу для отображения google maps
+    QString path = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
+    QUrl url = QUrl::fromLocalFile( path );
+    ui->m_map->setUrl( url );
+
+    QStringList states, counties;
+    m_model->getStatesList( states );
+    m_model->getCountiesList( counties, states.at( 0 ) );
+
 
     ui->m_cmbState->setLineEdit(  m_leState );
     ui->m_cmbCounty->setLineEdit( m_leCounty );
 
-    // страница для отображения google maps
-    QString path = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
-    QUrl url = QUrl::fromLocalFile( path );
-    ui->m_map->setUrl( url );
+    ui->m_cmbState->addItems( states );
+    ui->m_cmbCounty->addItems( counties );
 
     installEvents();
 }
@@ -65,12 +78,6 @@ void ddmMapsWidget::slotSetCurentCounty( const QString& text )
 
 void ddmMapsWidget::updateState( const QString &state )
 {
-    QString message = QObject::tr( "Выбран штат %1" ).arg( state );
-    QMessageBox mb;
-    mb.setText( message );
-    mb.exec();
-    // возможно должен вызываться как слот,
-    // а не как простая функция
     updateCountiesList( state );
     QString county = ui->m_cmbCounty->itemText( 0 );
     slotSetCurentCounty( county );
@@ -79,22 +86,40 @@ void ddmMapsWidget::updateState( const QString &state )
 
 void ddmMapsWidget::updateCounty( const QString &county )
 {
-    QString message = QObject::tr( "Выбрано гравство %1" ).arg( county );
-    QMessageBox mb;
-    mb.setText( message );
-    mb.exec();
+    QPointF point;
+    QSqlQuery query;
+    QString text = QObject::tr( "SELECT id FROM ddm_counties WHERE title = '%1'"  ).arg( county );
+    query.exec( text );
+    int county_id = -1;
+    while( query.next() )
+        county_id = query.value(0).toInt();
+
+    text = "SELECT p.x, p.y FROM ddm_county_boundaries AS cb LEFT JOIN ";
+    text.append( "ddm_counties AS c ON c.id = cb.county_id " );
+    text.append( "LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id " );
+    text.append( "LEFT JOIN ddm_points AS p ON p.id = b.center_id " );
+    text.append( QObject::tr( "WHERE c.id = %1 AND b.outer = 1 ORDER BY b.square DESC LIMIT 1" ).arg( county_id ) );
+    query.exec( text );
+    while( query.next() )
+    {
+        point.setX( query.value(0).toDouble() );
+        point.setY( query.value(1).toDouble() );
+    }
+
+    ui->m_map->updateMap( point );
 }
 
 
 void ddmMapsWidget::updateCountiesList( const QString &state )
 {
-    if( state == "Пенсильвания" )
-    {
-        ui->m_cmbCounty->addItem( QObject::tr( "Нортумберленд" ) );
-        ui->m_cmbCounty->addItem( QObject::tr( "Канонсбург" ) );
-    }
-    else
-    {
-        ui->m_cmbCounty->clear();
-    }
+    QStringList counties;
+    m_model->getCountiesList( counties, state );
+    ui->m_cmbCounty->clear();
+    ui->m_cmbCounty->addItems( counties );
+}
+
+void ddmMapsWidget::resizeEvent(QResizeEvent *event)
+{
+    QSize size = event->size();
+    ui->m_map->resize( size.width(), size.height() );
 }

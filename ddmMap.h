@@ -3,18 +3,20 @@
 
 #include <QWebView>
 
+class QPointF;
+
 class ddmMap: public QWebView
 {
 public:
     ddmMap( QWidget* parent );
 
+    void updateMap( const QPointF& point );
+
 public slots:
     void replyFinished(QNetworkReply*);
     void loadCoordinates();
     void geoCode(const QString &address);
-
-protected:
-    void resizeEvent(QResizeEvent *event);
+    void resize( int w, int h );
 
 signals:
     void reloadMap();

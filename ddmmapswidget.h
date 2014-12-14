@@ -25,6 +25,9 @@ private:
     // обновить список графств, в зависимости от штата
     void updateCountiesList( const QString& state );
 
+protected:
+    void resizeEvent( QResizeEvent *event );
+
 private slots:
     // установить текуший штат для модели
     void slotSetCurentState( const QString&  text );
