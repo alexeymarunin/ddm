@@ -307,7 +307,10 @@ class DDM_Model() :
 					self.residences.append({ 'county_id':county_id, 'popul_est':popul_est, 'popul_moe':popul_moe })
 				
 				prev_county = county_title
-				
+		
+		# Для графства Kenedy County, Texas задаем население вручную (нет в файле)
+		self.residences.append({ 'county_id':2655, 'popul_est':415, 'popul_moe':0 })
+		
 		# Освобождаем память
 		book.release_resources()
 		
@@ -456,8 +459,7 @@ class DDM_Model() :
 				in_count = int( rc_in[0] )
 				f_in_mid = f_in_sum / in_count
 		
-			#if self.verbose :
-			if True :
+			if self.verbose :
 				print( 'County ID: %d' % ( county_id ) )
 				print( '    out_count: %d' % ( out_count ) )
 				print( '    f_out_sum: %f' % ( f_out_sum ) )
