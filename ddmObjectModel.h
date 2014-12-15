@@ -21,6 +21,8 @@ public:
 
     void setCurentCounty( const QString county );
 
+    int GetCurentStateId();
+
     bool openDB(  const QString& fullPath );
 
     QString CurentState();
@@ -34,12 +36,10 @@ public:
     void getCountiesList( QStringList& counties, const QString& state );
 
 
-
-
 signals:
     void updateState( const QString& state );
 
-    void updateCounty( const QString& county );
+    void updateCounty( const QString& county, int state_id );
 
 
 private:
