@@ -39,7 +39,7 @@ private slots:
     void updateState(  const QString& state );
 
     // обновить гравство на карте
-    void updateCounty( const QString& county, int state_id );
+    void updateCounty(  const QString& state );
 
 private:
     Ui::ddmMapsWidget *ui;
