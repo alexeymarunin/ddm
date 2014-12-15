@@ -38,8 +38,8 @@ private slots:
     // обновить штат
     void updateState(  const QString& state );
 
-    // обновить гравство на карте
-    void updateCounty(  const QString& state );
+    // обновить графство на карте
+    void updateCounty(  const QString& state, int state_id );
 
 private:
     Ui::ddmMapsWidget *ui;

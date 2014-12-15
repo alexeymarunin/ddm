@@ -25,6 +25,8 @@ public:
 
     QString CurentState();
 
+    int GetCurentStateId();
+
     QString CurentCounty();
 
     bool isOpen();
@@ -39,7 +41,7 @@ public:
 signals:
     void updateState( const QString& state );
 
-    void updateCounty( const QString& county );
+    void updateCounty( const QString& county, int state_id );
 
 
 private:

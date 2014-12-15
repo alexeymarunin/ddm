@@ -22,7 +22,8 @@ void ddmObjectModel::setCurentState( const QString state )
 void ddmObjectModel::setCurentCounty( const QString county )
 {
     m_county = county;
-    emit updateCounty( m_county );
+    int state_id = GetCurentStateId();
+    emit updateCounty( m_county, state_id );
 }
 
 bool ddmObjectModel::openDB( const QString &fullPath )
@@ -36,6 +37,21 @@ bool ddmObjectModel::openDB( const QString &fullPath )
 QString ddmObjectModel::CurentState()
 {
     return m_state;
+}
+
+
+int ddmObjectModel::GetCurentStateId()
+{
+    int state_id = -1;
+    if( m_state.isEmpty() )
+        return state_id;
+    QSqlQuery query;
+    QString text = QObject::tr( "SELECT id FROM ddm_states WHERE name = '%1'"  ).arg( m_state );
+    query.exec( text );
+    while( query.next() )
+        state_id = query.value(0).toInt();
+    return state_id;
+
 }
 
 

@@ -28,10 +28,15 @@ ddmMapsWidget::ddmMapsWidget( QWidget *parent ) :
     QUrl url = QUrl::fromLocalFile( path );
     ui->m_map->setUrl( url );
 
+    // инициализация начальных значений
     QStringList states, counties;
+    QString state, county;
     m_model->getStatesList( states );
-    m_model->getCountiesList( counties, states.at( 0 ) );
-
+    state = states.at( 0 );
+    m_model->getCountiesList( counties, state );
+    county = counties.at( 0 );
+    slotSetCurentState( state );
+    slotSetCurentCounty( county );
 
     ui->m_cmbState->setLineEdit(  m_leState );
     ui->m_cmbCounty->setLineEdit( m_leCounty );
@@ -55,8 +60,7 @@ void ddmMapsWidget::installEvents()
   connect( ui->m_cmbCounty, SIGNAL( activated ( const QString& ) ),  this, SLOT( slotSetCurentCounty( const QString& ) ) );
 
   connect( m_model, SIGNAL( updateState( const QString& ) ), this, SLOT( updateState( const QString&  ) ),   Qt::UniqueConnection );
-  connect( m_model, SIGNAL( updateCounty( const QString& ) ), this, SLOT( updateCounty( const QString&  ) ));
-
+  connect( m_model, SIGNAL( updateCounty( const QString&, int ) ), this, SLOT( updateCounty( const QString&, int ) ));
 }
 
 
@@ -84,11 +88,11 @@ void ddmMapsWidget::updateState( const QString &state )
 }
 
 
-void ddmMapsWidget::updateCounty( const QString &county )
+void ddmMapsWidget::updateCounty( const QString &county, int state_id )
 {
     QPointF point;
     QSqlQuery query;
-    QString text = QObject::tr( "SELECT id FROM ddm_counties WHERE title = '%1'"  ).arg( county );
+    QString text = QObject::tr( "SELECT id FROM ddm_counties WHERE title = '%1' AND state_id = %2"  ).arg( county ).arg( state_id );
     query.exec( text );
     int county_id = -1;
     while( query.next() )
@@ -118,7 +122,7 @@ void ddmMapsWidget::updateCountiesList( const QString &state )
     ui->m_cmbCounty->addItems( counties );
 }
 
-void ddmMapsWidget::resizeEvent(QResizeEvent *event)
+void ddmMapsWidget::resizeEvent( QResizeEvent *event )
 {
     QSize size = event->size();
     ui->m_map->resize( size.width(), size.height() );
