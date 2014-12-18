@@ -5,6 +5,7 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCq1wAq2gmenvXvgCCqT6pfkUGcKLGV_PA">
     </script>
+	
     <script type="text/javascript">
 	  
 	  var map;
@@ -38,6 +39,27 @@
          google.maps.event.trigger( map, "resize" );
          map.setCenter(center); 
 	  }
+	  
+	  function drawPolygon ( container )
+	  {
+	      var lat = container.getLatList();
+		  var lon = container.getLonList();
+	      var polygonCoords = [];
+		  for( var i = 0; i <  container.length(); i++ )
+		      polygonCoords.push( new google.maps.LatLng( lat[i], lon[i] ) );
+		  
+		 polygon = new google.maps.Polygon({
+				paths: polygonCoords,
+				strokeColor: '#FF0000',
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: '#FF0000',
+				fillOpacity: 0.35
+			});
+			
+		polygon.setMap( map ); 
+	  }
+	  
     </script>
   </head>
   <body onload="initialize()">

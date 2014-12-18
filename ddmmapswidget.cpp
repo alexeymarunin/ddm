@@ -1,6 +1,7 @@
 #include "ui_ddmmapswidget.h"
 #include "ddmmapswidget.h"
 #include "ddmObjectModel.h"
+#include "ddmContainer.h"
 
 #include <QDir>
 #include <QLineEdit>
@@ -90,27 +91,12 @@ void ddmMapsWidget::updateState( const QString &state )
 
 void ddmMapsWidget::updateCounty( const QString &county, int state_id )
 {
-    QPointF point;
-    QSqlQuery query;
-    QString text = QObject::tr( "SELECT id FROM ddm_counties WHERE title = '%1' AND state_id = %2"  ).arg( county ).arg( state_id );
-    query.exec( text );
-    int county_id = -1;
-    while( query.next() )
-        county_id = query.value(0).toInt();
-
-    text = "SELECT p.x, p.y FROM ddm_county_boundaries AS cb LEFT JOIN ";
-    text.append( "ddm_counties AS c ON c.id = cb.county_id " );
-    text.append( "LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id " );
-    text.append( "LEFT JOIN ddm_points AS p ON p.id = b.center_id " );
-    text.append( QObject::tr( "WHERE c.id = %1 AND b.outer = 1 ORDER BY b.square DESC LIMIT 1" ).arg( county_id ) );
-    query.exec( text );
-    while( query.next() )
-    {
-        point.setX( query.value(0).toDouble() );
-        point.setY( query.value(1).toDouble() );
-    }
-
-    ui->m_map->updateMap( point );
+    QPointF center = m_model->getCountyCenter( county );
+    ddmContainer *boundary = new ddmContainer();
+    m_model->getCountyBoundary( county, boundary );
+    ui->m_map->setCenter( center );
+    ui->m_map->drawPolygon( boundary );
+    delete boundary;
 }
 
 

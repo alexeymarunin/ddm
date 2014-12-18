@@ -1,5 +1,7 @@
 #include "ddmMap.h"
 
+#include "ddmContainer.h"
+
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QWebFrame>
@@ -16,7 +18,7 @@ ddmMap::ddmMap( QWidget* parent ) : QWebView(parent), m_pendingRequests(0)
 }
 
 
-void ddmMap::updateMap( const QPointF &point )
+void ddmMap::setCenter( const QPointF &point )
 {
     QString scriptStr;
     scriptStr = QObject::tr( "setMapCenter( %1, %2 );" ).arg( point.x() ).arg( point.y() );
@@ -49,4 +51,15 @@ void ddmMap::resize( int w, int h )
 
     QString scriptStr = QObject::tr( "setWebPageSize( %1, %2 );" ).arg( w ).arg( h );
     page()->mainFrame()->evaluateJavaScript( scriptStr );
+}
+
+
+void ddmMap::drawPolygon( ddmContainer* boundary )
+{
+    if( boundary == NULL )
+        return;
+
+    page()->currentFrame()->addToJavaScriptWindowObject( "container", boundary );
+    page()->currentFrame()->documentElement().evaluateJavaScript( "drawPolygon( container );" );
+    page()->currentFrame()->documentElement().evaluateJavaScript( "delete container;" );
 }

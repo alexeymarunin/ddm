@@ -4,8 +4,10 @@
 #include<QObject>
 #include <QtSql>
 #include<QString>
-#include <QStringList>
+#include <QPointF>
 
+class ddmContainer;
+class QStringList;
 
 class ddmObjectModel: public QObject
 {
@@ -21,13 +23,13 @@ public:
 
     void setCurentCounty( const QString county );
 
-    bool openDB(  const QString& fullPath );
+    bool openDB( const QString& fullPath );
 
     QString CurentState();
 
-    int GetCurentStateId();
-
     QString CurentCounty();
+
+    int GetCurentStateId();
 
     bool isOpen();
 
@@ -35,8 +37,9 @@ public:
 
     void getCountiesList( QStringList& counties, const QString& state );
 
+    QPointF getCountyCenter( const QString& county );
 
-
+    void getCountyBoundary( const QString& county, ddmContainer* boundary );
 
 signals:
     void updateState( const QString& state );
