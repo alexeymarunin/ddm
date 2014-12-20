@@ -17,12 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     ddmObjectModel.cpp \
     ddmMap.cpp \
-    ddmMapsWidget.cpp
+    ddmMapsWidget.cpp \
+    ddmContainer.cpp
 
 HEADERS  += mainwindow.h \
     ddmObjectModel.h \
     ddmMap.h \
-    ddmMapsWidget.h
+    ddmMapsWidget.h \
+    ddmContainer.h \
+    ddmContainer.h
 
 FORMS    += mainwindow.ui \
     ddmmapswidget.ui

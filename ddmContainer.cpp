@@ -7,38 +7,63 @@ ddmContainer::~ddmContainer()
 }
 
 
-void ddmContainer::appendLat( QVariant lat )
+void ddmContainer::setName( QVariant name )
 {
-    m_lat.append( lat );
+    m_name = name;
+}
+
+void ddmContainer::setId( QVariant id )
+{
+    m_id = id;
 }
 
 
-void ddmContainer::appendLon( QVariant lon )
+void ddmContainer::setCenter( QVariant center )
 {
-    m_lon.append( lon );
+    m_center = center;
+}
+
+
+void ddmContainer::appendPoint( QVariant lat, QVariant lon )
+{
+    QString val = QObject::tr( "%1,%2" ).arg( lat.toDouble() ).arg( lon.toDouble() );
+    m_points.append( val );
 }
 
 
 void ddmContainer::clear()
 {
-    m_lat.clear();
-    m_lon.clear();
+    m_points.clear();
+    m_center.clear();
+    m_id.clear();
+    m_name.clear();
+}
+
+QVariant ddmContainer::id()
+{
+    return m_id;
 }
 
 
-QVariantList ddmContainer::getLatList()
+QVariant ddmContainer::name()
 {
-    return m_lat;
+    return m_name;
 }
 
 
-QVariantList ddmContainer::getLonList()
+QVariant ddmContainer::center()
 {
-    return m_lon;
+    return m_center;
+}
+
+
+QVariantList ddmContainer::points()
+{
+    return m_points;
 }
 
 
 int ddmContainer::length()
 {
-    return m_lat.length();
+    return m_points.length();
 }

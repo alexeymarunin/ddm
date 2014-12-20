@@ -31,6 +31,8 @@ public:
 
     int GetCurentStateId();
 
+    int GetCurentCountyId();
+
     bool isOpen();
 
     void getStatesList( QStringList& states );

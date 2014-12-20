@@ -2,8 +2,7 @@
 #define DDMCONTAINER
 
 #include <QObject>
-#include <QDebug>
-
+#include <QVariant>
 
 
 class ddmContainer : public QObject
@@ -14,24 +13,37 @@ public:
 
     ~ddmContainer();
 
-    void appendLat( QVariant lat );
+    void appendPoint( QVariant lat, QVariant lon );
 
-    void appendLon( QVariant lon );
+    void setName( QVariant name );
+
+    void setId( QVariant id );
+
+    void setCenter( QVariant center );
 
     void clear();
 
 
 public slots:
 
-    QVariantList getLatList();
+    QVariantList points();
 
-    QVariantList getLonList();
+    QVariant id();
+
+    QVariant name();
+
+    QVariant center();
 
     int length();
 
 private:
-    QVariantList m_lat;
-    QVariantList m_lon;
+    QVariantList m_points;
+
+    QVariant m_name;
+
+    QVariant m_id;
+
+    QVariant m_center;
 };
 
 

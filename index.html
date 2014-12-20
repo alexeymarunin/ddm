@@ -42,11 +42,13 @@
 	  
 	  function drawPolygon ( container )
 	  {
-	      var lat = container.getLatList();
-		  var lon = container.getLonList();
+		  var county = container.points();
 	      var polygonCoords = [];
 		  for( var i = 0; i <  container.length(); i++ )
-		      polygonCoords.push( new google.maps.LatLng( lat[i], lon[i] ) );
+		  {
+		      var point = county[i].split( ",",2 );
+		      polygonCoords.push( new google.maps.LatLng( parseFloat( point[0] ), parseFloat( point[1] ) ) );
+          }
 		  
 		 polygon = new google.maps.Polygon({
 				paths: polygonCoords,

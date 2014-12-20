@@ -92,11 +92,19 @@ void ddmMapsWidget::updateState( const QString &state )
 void ddmMapsWidget::updateCounty( const QString &county, int state_id )
 {
     QPointF center = m_model->getCountyCenter( county );
-    ddmContainer *boundary = new ddmContainer();
-    m_model->getCountyBoundary( county, boundary );
+    QString s_center = QObject::tr("%1,%2").arg( center.x() ).arg( center.y() );
+    ddmContainer *county_info = new ddmContainer();
+    int county_id = m_model->GetCurentCountyId();
+
+    m_model->getCountyBoundary( county, county_info );
+    county_info->setName( county );
+    county_info->setCenter( s_center );
+    county_info->setId( county_id );
+
     ui->m_map->setCenter( center );
-    ui->m_map->drawPolygon( boundary );
-    delete boundary;
+    ui->m_map->drawPolygon( county_info );
+
+    delete county_info;
 }
 
 

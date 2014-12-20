@@ -58,6 +58,27 @@ int ddmObjectModel::GetCurentStateId()
 }
 
 
+int ddmObjectModel::GetCurentCountyId()
+{
+    int county_id = -1;
+    if( m_county.isEmpty() )
+        return county_id;
+
+    int state_id = GetCurentStateId();
+    if( state_id == -1 )
+        return county_id;
+
+    QSqlQuery query;
+    QString text = QObject::tr( "SELECT id FROM ddm_counties WHERE title = '%1' AND state_id = %2"  ).arg( m_county ).arg( state_id );
+    query.exec( text );
+    while( query.next() )
+        county_id = query.value(0).toInt();
+
+    return county_id;
+
+}
+
+
 QString ddmObjectModel::CurentCounty()
 {
     return m_county;
@@ -164,10 +185,6 @@ void ddmObjectModel::getCountyBoundary( const QString &county, ddmContainer* bou
    text.append( QObject::tr( "ddm_points AS p ON p.id = bp.point_id WHERE bp.boundary_id = %1" ).arg( boundary_id ) );
    query.exec( text );
    while( query.next() )
-   {
-       double x = query.value( 0 ).toDouble();
-       double y = query.value( 1 ).toDouble();
-       boundary->appendLon( x );
-       boundary->appendLat( y );
-   }
+       boundary->appendPoint( query.value( 1 ), query.value( 0 ) );
+
 }
