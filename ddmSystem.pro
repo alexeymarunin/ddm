@@ -15,18 +15,27 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ddmObjectModel.cpp \
-    ddmMap.cpp \
-    ddmMapsWidget.cpp
+    ddmContainer.cpp \
+    ddmCounty.cpp \
+    ddmBoundary.cpp \
+    ddmObject.cpp \
+    ddmModel.cpp \
+    ddmState.cpp \
+    ddmMapView.cpp \
+    ddmWidget.cpp
 
 HEADERS  += mainwindow.h \
-    ddmObjectModel.h \
-    ddmMap.h \
-    ddmMapsWidget.h
+    ddmContainer.h \
+    ddmCounty.h \
+    ddmBoundary.h \
+    ddmObject.h \
+    ddmModel.h \
+    ddmState.h \
+    ddmMapView.h \
+    ddmWidget.h
 
 FORMS    += mainwindow.ui \
-    ddmmapswidget.ui
+    ddmwidget.ui
 
 DESTDIR = $$PWD
 
-include(xlsx/qtxlsx.pri)

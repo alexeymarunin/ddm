@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ddmMapsWidget</class>
- <widget class="QWidget" name="ddmMapsWidget">
+ <class>ddmWidget</class>
+ <widget class="QWidget" name="ddmWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -120,7 +120,7 @@
         </layout>
        </item>
        <item>
-        <widget class="ddmMap" name="m_map">
+        <widget class="ddmMapView" name="m_map">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -135,6 +135,9 @@
            <width>800</width>
            <height>600</height>
           </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="url">
           <url>
@@ -156,9 +159,9 @@
    <header>QtWebKitWidgets/QWebView</header>
   </customwidget>
   <customwidget>
-   <class>ddmMap</class>
+   <class>ddmMapView</class>
    <extends>QWebView</extends>
-   <header>ddmMap.h</header>
+   <header>ddmMapView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

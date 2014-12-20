@@ -1,14 +1,13 @@
-#include "ddmMap.h"
-
-#include "ddmContainer.h"
-
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QWebFrame>
 #include <QWebElement>
 
+#include "ddmMapView.h"
+#include "ddmContainer.h"
 
-ddmMap::ddmMap( QWidget* parent ) : QWebView(parent), m_pendingRequests(0)
+
+ddmMapView::ddmMapView( QWidget* parent ) : QWebView(parent), m_pendingRequests(0)
 {
     m_manager = new QNetworkAccessManager(this);
 
@@ -18,7 +17,7 @@ ddmMap::ddmMap( QWidget* parent ) : QWebView(parent), m_pendingRequests(0)
 }
 
 
-void ddmMap::setCenter( const QPointF &point )
+void ddmMapView::setCenter( const QPointF &point )
 {
     QString scriptStr;
     scriptStr = QObject::tr( "setMapCenter( %1, %2 );" ).arg( point.x() ).arg( point.y() );
@@ -26,25 +25,25 @@ void ddmMap::setCenter( const QPointF &point )
 }
 
 
-void ddmMap::replyFinished( QNetworkReply* reply )
+void ddmMapView::replyFinished( QNetworkReply* reply )
 {
 
 }
 
 
-void ddmMap::loadCoordinates()
+void ddmMapView::loadCoordinates()
 {
 
 }
 
 
-void ddmMap::geoCode(const QString& address )
+void ddmMapView::geoCode(const QString& address )
 {
 
 }
 
 
-void ddmMap::resize( int w, int h )
+void ddmMapView::resize( int w, int h )
 {
     if( !page() )
         return;
@@ -54,7 +53,7 @@ void ddmMap::resize( int w, int h )
 }
 
 
-void ddmMap::drawPolygon( ddmContainer* boundary )
+void ddmMapView::drawPolygon( ddmContainer* boundary )
 {
     if( boundary == NULL )
         return;

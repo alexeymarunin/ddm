@@ -1,20 +1,24 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "ddmmapswidget.h"
-
 #include <QFileDialog>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "ddmWidget.h"
 
+MainWindow::MainWindow( QWidget* parent ) :
+    QMainWindow( parent ),
+    ui( new Ui::MainWindow )
+{
     ui->setupUi( this );
     setWindowFlags( windowFlags() | Qt::WindowMaximizeButtonHint );
     CreateMenuEvents();
-    m_viewMapWidget = new ddmMapsWidget( this );
+    m_viewMapWidget = new ddmWidget( this->model(), this );
     setCentralWidget( m_viewMapWidget );
 
+}
+
+ddmModel* MainWindow::model() const
+{
+    return const_cast<ddmModel*>( &this->m_model );
 }
 
 MainWindow::~MainWindow()

@@ -1,19 +1,19 @@
-#ifndef DDMMAP_H
-#define DDMMAP_H
+#ifndef DDM_MAP_VIEW_H
+#define DDM_MAP_VIEW_H
 
 #include <QWebView>
 
 class ddmContainer;
 
-class ddmMap: public QWebView
+class ddmMapView : public QWebView
 {
 public:
-    ddmMap( QWidget* parent );
+    ddmMapView( QWidget* parent );
 
     void setCenter( const QPointF& point );
 
 public slots:
-    void replyFinished(QNetworkReply*);
+    void replyFinished( QNetworkReply* reply );
     void loadCoordinates();
     void geoCode(const QString &address);
     void resize( int w, int h );
@@ -30,4 +30,4 @@ private:
 };
 
 
-#endif // DDMMAP_H
+#endif // DDM_MAP_VIEW_H

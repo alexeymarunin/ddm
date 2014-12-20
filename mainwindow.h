@@ -2,11 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ddmModel.h"
 
-class ddmMapsWidget;
+class ddmWidget;
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -14,7 +15,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow( QWidget* parent = 0 );
+
+    ddmModel* model() const;
+
     ~MainWindow();
 
 private:
@@ -28,7 +32,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    ddmMapsWidget* m_viewMapWidget;
+    ddmWidget* m_viewMapWidget;
+
+    ddmModel m_model;
+
 
 };
 

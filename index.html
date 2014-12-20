@@ -3,64 +3,74 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCq1wAq2gmenvXvgCCqT6pfkUGcKLGV_PA"></script>
+    <script type="text/javascript" src="js/jquery-1.11.2.js"></script>
+    <script type="text/javascript" src="js/underscore-1.7.0.js"></script>
+    <script type="text/javascript" src="js/backbone-1.1.2.js"></script>
+    <script type="text/javascript" src="js/ddm.js"></script>
+  </head>
+  <body>
+    <div id="map_canvas" style="width: 800px; height: 600px;"></div>
     
     <script type="text/javascript">
-      
-      var map;
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng( 32.5357063513, -86.6425685638 ),
+      ddm_map( jQuery, {
+        counties: [
+          { id:69, 
+            name: 'Aleutians East', 
+            boundaries:
+            [
+              { boundary_id: 43, points: [ { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 },  ] },
+              { boundary_id: 53, points: [ { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 }, { x: 8, y:60 },  ] },
+              //[[-135.0306, 59.3462], [-135.3756, 59.3407], [-135.7207, 59.7296], [-135.4797, 59.8008], [-135.2332, 59.6967], [-135.0251, 59.5653], [-135.0689, 59.4557], [-135.0306, 59.3462]], 
+              [[-159.42634,54.75864], [-159.44287,54.7384], [-159.46929,54.72097], [-159.5029,54.709], [-159.53415,54.70136], [-159.54787,54.6993], [-159.55154,54.69957], [-159.5661,54.70349], [-159.58691,54.70378], [-159.60043,54.70396], [-159.62476,54.70792], [-159.65243,54.71778], [-159.66919,54.73352], [-159.6796,54.75106], [-159.68485,54.76234], [-159.68858,54.7656], [-159.69144,54.76415], [-159.70139,54.75985], [-159.72098,54.75251], [-159.74679,54.74267], [-159.7654,54.73977], [-159.78634,54.74146], [-159.80175,54.7418], [-159.8135,54.74042], [-159.83508,54.74546], [-159.85522,54.7577], [-159.87893,54.77681], [-159.89962,54.79431], [-159.90872,54.8053], [-159.91167,54.80929], [-159.91033,54.81417], [-159.90579,54.82278], [-159.89746,54.83407], [-159.88583,54.84719], [-159.87207,54.85663], [-159.85464,54.8644], [-159.83703,54.87029], [-159.81467,54.87661], [-159.78653,54.88502], [-159.76105,54.89132], [-159.72929,54.89416], [-159.70811,54.89184], [-159.68133,54.88743], [-159.65597,54.87903], [-159.64315,54.87456], [-159.6363,54.8718], [-159.62341,54.87566], [-159.61832,54.87774], [-159.6019,54.88189], [-159.58075,54.88395], [-159.57263,54.88373], [-159.55612,54.88026], [-159.53823,54.87262], [-159.51354,54.86155], [-159.4976,54.85546], [-159.47819,54.84145], [-159.45875,54.82772], [-159.44065,54.81754], [-159.42435,54.80155], [-159.41677,54.7922], [-159.41644,54.782], [-159.41818,54.77515], [-159.42523,54.76]] 
+            ]
+          }
+        ],
+        el: '#map_canvas',
+        map: {
           zoom: 8,
+          center: new google.maps.LatLng( 54.75864, -159.42634 ),
           mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById( "map_canvas" ), mapOptions );
+        },
+        polygon: {
+          clean: {
+            fillColor: '#FFFFEE',
+            fillOpacity: 0.1,
+            strokeColor: '#FFFFEE',
+            strokeWeight: 0.1,
+            strokeOpacity: 0.1
+          },
+          hover: {
+            fillOpacity: 0.9,
+            strokeWeight: 3,
+            strokeOpacity: 0.9
+          },
+          select: {
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            strokeColor: '#FF0000',
+            strokeWeight: 2,
+            strokeOpacity: 0.7
+          }
+        }
+      });
+      
+      function ddm_add_county( county ) {
+        DDM.View.collection.add( county );
       }
       
-      function setMapCenter( lat, lng )
-      {
-         var latlng = new google.maps.LatLng( lat, lng );
-         map.panTo( latlng );
-         var marker = new google.maps.Marker({
-                position: latlng,
-                map: map
-            });
+      function ddm_select_county( county_id ) {
+        var county = DDM.View.collection.get( county_id );
+        county.select();
       }
       
-      function setWebPageSize(  width, height )
-      {
-         var  w = width.toString();
-         var  h = height.toString();
-         var elem = document.getElementById( "map_canvas" );
-         elem.style.width = w + 'px';
-         elem.style.height = h + 'px';
-         var center = map.getCenter();
-         google.maps.event.trigger( map, "resize" );
-         map.setCenter(center); 
+      function ddm_map_resize( width, height ) {
+        var el = DDM.View.$el;
+        el.width( width );
+        el.height( height );
       }
       
-      function drawPolygon ( container )
-      {
-          var lat = container.getLatList();
-          var lon = container.getLonList();
-          var polygonCoords = [];
-          for( var i = 0; i <  container.length(); i++ )
-              polygonCoords.push( new google.maps.LatLng( lat[i], lon[i] ) );
-          
-         polygon = new google.maps.Polygon({
-                paths: polygonCoords,
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35
-            });
-            
-        polygon.setMap( map ); 
-      }
-      
+      $(function() {
+      });
     </script>
-  </head>
-  <body onload="initialize()">
-    <div id="map_canvas" style="width: 800px; height: 600px;"></div>
   </body>
 </html>
