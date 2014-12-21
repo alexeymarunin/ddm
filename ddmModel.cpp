@@ -28,7 +28,12 @@ void ddmModel::loadStates()
 {
     if ( this->m_states.empty() )
     {
-        QString sql = QObject::tr( "SELECT id, name FROM ddm_states ORDER BY id" );
+        QString sql = QObject::tr( "SELECT s.id, s.name FROM ddm_frictions AS f\n" );
+        sql.append( "LEFT JOIN ddm_counties AS c ON c.id = f.county_id\n" );
+        sql.append( "LEFT JOIN ddm_states AS s ON s.id = c.state_id\n" );
+        sql.append( "GROUP BY s.id\n" );
+        sql.append( "ORDER BY s.id\n" );
+
         QSqlQuery query;
         query.exec( sql );
         while ( query.next() )
@@ -81,8 +86,8 @@ void ddmModel::loadBoundaries()
     {
         ddmBoundaryMap boundaries;
         do {
-            QString sql = QObject::tr( "SELECT b.id, b.square, p.x, p.y FROM ddm_boundaries_points AS bp\n" );
-            sql.append( "LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id\n" );
+            QString sql = QObject::tr( "SELECT b.id, b.square, p.x, p.y FROM ddm_boundary_points AS bp\n" );
+            sql.append( "LEFT JOIN ddm_boundaries AS b ON b.id = bp.boundary_id\n" );
             sql.append( "LEFT JOIN ddm_points AS p ON p.id = bp.point_id\n" );
             sql.append( "WHERE b.outer = 1\n" );
             sql.append( "ORDER BY b.id\n" );
@@ -125,13 +130,16 @@ void ddmModel::loadBoundaries()
             {
                 int county_id = query.value(0).toInt();
                 if ( !prevCounty || county_id != county->id() ) {
+                    if ( !this->m_counties.contains( county_id ) ) continue;
                     int boundary_id = query.value(1).toInt();
                     double x = query.value(2).toDouble();
                     double y = query.value(3).toDouble();
                     QPointF center( x, y );
+                    ddmBoundary* boundary = boundaries[boundary_id];
                     county = this->m_counties[county_id];
                     county->setCenter( center );
-                    boundaries[boundary_id]->setCounty( county );
+                    county->addBoundary( boundary );
+                    boundary->setCounty( county );
                     prevCounty = county;
                 }
             }
@@ -146,7 +154,7 @@ ddmStateMap& ddmModel::states() const
 
 ddmCountyMap& ddmModel::counties() const
 {
-    return const_cast<ddmCountyMap&>(this->m_counties);
+    return const_cast<ddmCountyMap&>( this->m_counties );
 }
 
 ddmState* ddmModel::currentState() const
@@ -192,7 +200,7 @@ void ddmModel::setCurrentState( ddmState* state )
 
 void ddmModel::setCurrentCounty( int id )
 {
-    this->m_currentCounty = this->m_counties[id];
+    this->setCurrentCounty( this->m_counties[id] );
 }
 
 void ddmModel::setCurrentCounty( const QString& countyName )
@@ -201,7 +209,7 @@ void ddmModel::setCurrentCounty( const QString& countyName )
     {
         QString name = county->geographicName();
         if ( name.contains( countyName, Qt::CaseInsensitive ) ) {
-            this->m_currentCounty = county;
+            this->setCurrentCounty( county );
             return;
         }
     }
@@ -239,6 +247,22 @@ QStringList ddmModel::countyNames() const
         names.append( name );
     }
     return names;
+}
+
+QVariantMap ddmModel::getProperties() const
+{
+    QVariantMap result;
+
+    result.insert( "currentCounty", this->currentCounty()->id() );
+
+    QVariantList counties;
+    foreach ( ddmCounty* county, this->counties() )
+    {
+        counties.append( county->getProperties() );
+    }
+    result.insert( "counties", counties );
+
+    return result;
 }
 
 ddmModel::~ddmModel()

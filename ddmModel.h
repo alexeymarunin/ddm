@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QtSql>
 #include <QStringList>
+#include <QVariantList>
+#include <QVariantMap>
 
 #include "ddmState.h"
 #include "ddmCounty.h"
@@ -35,6 +37,10 @@ public:
 
     QStringList stateNames() const;
     QStringList countyNames() const;
+
+    QVariantMap getProperties() const;
+
+    Q_PROPERTY( QVariantMap props READ getProperties );
 
     virtual ~ddmModel();
 

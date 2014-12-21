@@ -3,8 +3,6 @@
 
 #include <QWebView>
 
-class ddmContainer;
-
 class ddmMapView : public QWebView
 {
 public:
@@ -12,19 +10,23 @@ public:
 
     void setCenter( const QPointF& point );
 
+    void injectModel( QObject* model );
+
 public slots:
     void replyFinished( QNetworkReply* reply );
     void loadCoordinates();
     void geoCode(const QString &address);
     void resize( int w, int h );
 
-    void drawPolygon( ddmContainer* boundary );
+    //void drawPolygon( ddmContainer* boundary );
+
 
 signals:
     void reloadMap();
 
 private:
-    QNetworkAccessManager *m_manager;
+    QNetworkAccessManager*  m_manager;
+
     QList<QPointF> m_coordinates;
     int m_pendingRequests;
 };

@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QPointF>
+#include <QVariantMap>
+
 #include "ddmState.h"
 #include "ddmBoundary.h"
 
@@ -31,6 +33,10 @@ public:
 
     void setModel( ddmModel* model );
     ddmModel* model() const;
+
+    QVariantMap getProperties() const;
+
+    Q_PROPERTY( QVariantMap props READ getProperties );
 
     virtual ~ddmCounty();
 

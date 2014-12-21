@@ -51,6 +51,31 @@ QPointF ddmBoundary::center() const
     return this->m_center;
 }
 
+QVariantMap ddmBoundary::getProperties() const
+{
+    QVariantMap result;
+
+    result.insert( "id", this->id() );
+
+    QVariantMap center;
+    center.insert( "x", this->center().x() );
+    center.insert( "y", this->center().y() );
+    result.insert( "center", center );
+    result.insert( "square", this->square() );
+
+    QVariantList vertices;
+    foreach ( QPointF vertex, this->vertices() )
+    {
+        QVariantMap point;
+        point.insert( "x", vertex.x() );
+        point.insert( "y", vertex.y() );
+        vertices.append( point );
+    }
+    result.insert( "vertices", vertices );
+
+    return result;
+}
+
 ddmBoundary::~ddmBoundary()
 {
 }

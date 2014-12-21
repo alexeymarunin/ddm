@@ -67,6 +67,28 @@ ddmModel* ddmCounty::model() const
     return dynamic_cast<ddmModel*>( this->parent() );
 }
 
+QVariantMap ddmCounty::getProperties() const
+{
+    QVariantMap result;
+
+    result.insert( "id", this->id() );
+    result.insert( "name", this->geographicName() );
+
+    QVariantMap center;
+    center.insert( "x", this->center().x() );
+    center.insert( "y", this->center().y() );
+    result.insert( "center", center );
+
+    QVariantList boundaries;
+    foreach ( ddmBoundary* boundary, this->boundaries() )
+    {
+        boundaries.append( boundary->getProperties() );
+    }
+    result.insert( "boundaries", boundaries );
+
+    return result;
+}
+
 ddmCounty::~ddmCounty()
 {
 }

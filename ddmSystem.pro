@@ -15,7 +15,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ddmContainer.cpp \
     ddmCounty.cpp \
     ddmBoundary.cpp \
     ddmObject.cpp \
@@ -25,7 +24,6 @@ SOURCES += main.cpp\
     ddmWidget.cpp
 
 HEADERS  += mainwindow.h \
-    ddmContainer.h \
     ddmCounty.h \
     ddmBoundary.h \
     ddmObject.h \

@@ -4,26 +4,32 @@
 #include <QWebElement>
 
 #include "ddmMapView.h"
-#include "ddmContainer.h"
 
 
-ddmMapView::ddmMapView( QWidget* parent ) : QWebView(parent), m_pendingRequests(0)
+ddmMapView::ddmMapView( QWidget* parent ) : QWebView( parent ),
+    m_pendingRequests( 0 )
 {
     m_manager = new QNetworkAccessManager(this);
 
     connect( m_manager, SIGNAL( finished( QNetworkReply* ) ), this, SLOT( replyFinished(QNetworkReply*) ));
 
-    connect(this,SIGNAL( reloadMap() ), this,SLOT( loadCoordinates() ));
 }
-
 
 void ddmMapView::setCenter( const QPointF &point )
 {
-    QString scriptStr;
-    scriptStr = QObject::tr( "setMapCenter( %1, %2 );" ).arg( point.x() ).arg( point.y() );
-    page()->currentFrame()->documentElement().evaluateJavaScript( scriptStr );
+    QString script;
+    script = QObject::tr( "ddm_set_map_center( %1, %2 );" ).arg( point.x() ).arg( point.y() );
+    this->page()->currentFrame()->documentElement().evaluateJavaScript( script );
 }
 
+void ddmMapView::injectModel( QObject* model )
+{
+    QWebFrame* frame = this->page()->currentFrame();
+    QString script;
+    frame->addToJavaScriptWindowObject( "ddm_model", model );
+    //script = QObject::tr( "ddm_add_counties( ddm_model.countiesJSON ); alert( ddm_model )" );
+    //frame->documentElement().evaluateJavaScript( script );
+}
 
 void ddmMapView::replyFinished( QNetworkReply* reply )
 {
@@ -52,7 +58,7 @@ void ddmMapView::resize( int w, int h )
     page()->mainFrame()->evaluateJavaScript( scriptStr );
 }
 
-
+/*
 void ddmMapView::drawPolygon( ddmContainer* boundary )
 {
     if( boundary == NULL )
@@ -62,3 +68,4 @@ void ddmMapView::drawPolygon( ddmContainer* boundary )
     page()->currentFrame()->documentElement().evaluateJavaScript( "drawPolygon( container );" );
     page()->currentFrame()->documentElement().evaluateJavaScript( "delete container;" );
 }
+*/

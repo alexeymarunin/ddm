@@ -3,6 +3,8 @@
 
 #include <QPointF>
 #include <QMap>
+#include <QVariantMap>
+
 #include "ddmObject.h"
 
 class ddmCounty;
@@ -27,6 +29,10 @@ public:
 
     void setCenter( const QPointF& point );
     QPointF center() const;
+
+    QVariantMap getProperties() const;
+
+    Q_PROPERTY( QVariantMap props READ getProperties );
 
     virtual ~ddmBoundary();
 

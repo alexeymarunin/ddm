@@ -10,6 +10,7 @@
             selected: false,
             hover: false,
             boundaries: [],
+            center: { x:0, y:0 }
         },
         
         initialize: function() {
@@ -21,9 +22,16 @@
             var paths = new google.maps.MVCArray();
             _.each( boundaries, function( boundary ) {
                 var loop = new google.maps.MVCArray();
-                _.each( boundary, function( vertex ) {
-                    var point = new google.maps.LatLng( vertex[1], vertex[0] );
+                _.each( boundary.vertices, function( vertex ) {
+                    var point = new google.maps.LatLng( vertex.y, vertex.x );
                     loop.push( point );
+                    /*
+                    var marker = new google.maps.Marker({
+                      //position: new google.maps.LatLng( 59.3462, -135.0306 ),
+                      position: point,
+                      map: DDM.Map
+                    });
+                    */
                 });
                 paths.push( loop );
             });
@@ -144,6 +152,9 @@
         // Элемент DOM, на котором будет отрисовываться карта
         var el = $( config.el );
         DDM.Map = new google.maps.Map( el[0], config.map );
+
+        // Модель, которая пришла от приложения
+        DDM.Model = ddm_model.props;
         
         // Представление DDM
         DDM.View = new MapView({ el:el });
@@ -153,7 +164,11 @@
         google.maps.event.addDomListener( window, 'resize', ddm_resize );
 
         window.DDM = DDM;
+        
 
+        if ( _.isFunction( config.success ) ) {
+            config.success.apply( DDM );
+        }
         /*
         marker = new google.maps.Marker({
           //position: new google.maps.LatLng( 59.3462, -135.0306 ),
@@ -162,6 +177,7 @@
         });
         */
         return DDM;
+        
     }
 
     /**
