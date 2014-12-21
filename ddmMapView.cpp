@@ -13,10 +13,10 @@ ddmMapView::ddmMapView( QWidget* parent ) : QWebView( parent ),
 
     connect( m_manager, SIGNAL( finished( QNetworkReply* ) ), this, SLOT( replyFinished(QNetworkReply*) ));
 
+    QWebFrame* frame = this->page()->mainFrame();
     // отключаем полосы прокрутки
-    QWebFrame* frame = this->page()->currentFrame();
-    frame->setScrollBarPolicy(Qt::Vertical,   Qt::ScrollBarAlwaysOff );
-    frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff );
+    frame->setScrollBarPolicy( Qt::Vertical,   Qt::ScrollBarAlwaysOff );
+    frame->setScrollBarPolicy( Qt::Horizontal, Qt::ScrollBarAlwaysOff );
 }
 
 void ddmMapView::selectCounty( int id )
