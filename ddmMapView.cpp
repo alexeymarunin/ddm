@@ -13,6 +13,10 @@ ddmMapView::ddmMapView( QWidget* parent ) : QWebView( parent ),
 
     connect( m_manager, SIGNAL( finished( QNetworkReply* ) ), this, SLOT( replyFinished(QNetworkReply*) ));
 
+    // отключаем полосы прокрутки
+    QWebFrame* frame = this->page()->currentFrame();
+    frame->setScrollBarPolicy(Qt::Vertical,   Qt::ScrollBarAlwaysOff );
+    frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff );
 }
 
 void ddmMapView::selectCounty( int id )
@@ -52,7 +56,7 @@ void ddmMapView::resize( int w, int h )
     if( !page() )
         return;
 
-    QString scriptStr = QObject::tr( "setWebPageSize( %1, %2 );" ).arg( w ).arg( h );
+    QString scriptStr = QObject::tr( "ddm_map_resize( %1, %2 );" ).arg( w ).arg( h );
     page()->mainFrame()->evaluateJavaScript( scriptStr );
 }
 

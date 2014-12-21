@@ -71,9 +71,17 @@
       }
       
       function ddm_map_resize( width, height ) {
-        var el = DDM.View.$el;
-        el.width( width );
-        el.height( height );
+        var  w = width.toString();
+        var  h = height.toString();
+        var map = DDM.View.map;
+        var center = map.getCenter();
+        var elem = document.getElementById( "map_canvas" );
+        elem.style.width = w + 'px';
+        elem.style.height = h + 'px';
+        google.maps.event.trigger( map, 'resize' );
+        map.setCenter( center );
+        // надо потом разобраться
+        // почему не отрабатывет этот же код в ddm_resize()
       }
       
     </script>
