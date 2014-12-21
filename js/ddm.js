@@ -160,6 +160,9 @@
         DDM.View = new MapView({ el:el });
         DDM.View.render();
         
+        // 
+        DDM.Collection = DDM.View.collection;
+        
         // Вешаем обработчик события 
         google.maps.event.addDomListener( window, 'resize', ddm_resize );
 

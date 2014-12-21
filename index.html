@@ -12,6 +12,9 @@
     <div id="map_canvas" style="width: 800px; height: 600px;"></div>
     
     <script type="text/javascript">
+      // Маркер для отображения центра текущего графства
+      var COUNTY_MARKER = null;
+      
       ddm_map( jQuery, {
         counties: ddm_model.props.counties,
         el: '#map_canvas',
@@ -41,19 +44,30 @@
             strokeOpacity: 0.7
           }
         },
-        success: function( ddm ) {
-          ddm_select_county( ddm.Model.currentCounty );
+        success: function() {
+          ddm_select_county( DDM.Model.currentCounty );
         }
       });
       
       function ddm_select_county( county_id ) {
-        var county = DDM.View.collection.get( county_id );
+        var county = DDM.Collection.get( county_id );
         county.select();
-        ddm_set_map_center( county.center.x, county.center.y );
+        var center = county.get( 'center' );
+        var LatLng = ddm_set_map_center( center.x, center.y );
+        if ( !COUNTY_MARKER ) {
+          COUNTY_MARKER = new google.maps.Marker({
+            position: LatLng,
+            map: DDM.View.map
+          });
+        }
+        COUNTY_MARKER.setPosition( LatLng );
       }
       
       function ddm_set_map_center( x, y ) {
-        DDM.Map.panTo( new google.maps.LatLng( x, y ) );
+        var LatLng = new google.maps.LatLng( x, y );
+        DDM.Map.panTo( LatLng );
+        return LatLng;
+
       }
       
       function ddm_map_resize( width, height ) {
