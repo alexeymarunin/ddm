@@ -8,12 +8,18 @@
 #include "ui_ddmwidget.h"
 #include "ddmWidget.h"
 #include "ddmModel.h"
+#include "ddmMapViewPage.h"
+
 
 ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     ui( new Ui::ddmWidget ),
     m_model( model )
 {
     ui->setupUi( this );
+
+    ddmMapView* mapView = this->mapView();
+    ddmMapViewPage* mapPage = new ddmMapViewPage;
+    mapView->setPage( mapPage );
 
     m_leState = new QLineEdit( ui->m_cmbState );
     m_leCounty = new QLineEdit( ui->m_cmbCounty );
@@ -25,7 +31,7 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     // устанавливаем страницу для отображения google maps
     QString pathToWeb = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
     QUrl url = QUrl::fromLocalFile( pathToWeb );
-    ui->m_map->setUrl( url );
+    this->mapView()->setUrl( url );
 
     // инициализация начальных значений
     ui->m_cmbState->setLineEdit(  m_leState );
@@ -83,15 +89,7 @@ void ddmWidget::changedState( ddmState* state )
 void ddmWidget::changedCounty( ddmCounty* county )
 {
     this->slotSetCurrentCounty( county->geographicName() );
-    this->ui->m_map->setCenter( county->center() );
-    /*
-    QPointF center = m_model->getCountyCenter( county );
-    ddmContainer *boundary = new ddmContainer();
-    m_model->getCountyBoundary( county, boundary );
-    ui->m_map->setCenter( center );
-    ui->m_map->drawPolygon( boundary );
-    delete boundary;
-    */
+    this->mapView()->selectCounty( county->id() );
 }
 
 
@@ -120,6 +118,10 @@ ddmModel* ddmWidget::model() const
     return this->m_model;
 }
 
+ddmMapView* ddmWidget::mapView() const
+{
+    return this->ui->m_map;
+}
 
 ddmWidget::~ddmWidget()
 {

@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     ddmModel.cpp \
     ddmState.cpp \
     ddmMapView.cpp \
-    ddmWidget.cpp
+    ddmWidget.cpp \
+    ddmMapViewPage.cpp
 
 HEADERS  += mainwindow.h \
     ddmCounty.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     ddmModel.h \
     ddmState.h \
     ddmMapView.h \
-    ddmWidget.h
+    ddmWidget.h \
+    ddmMapViewPage.h
 
 FORMS    += mainwindow.ui \
     ddmwidget.ui

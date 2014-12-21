@@ -15,10 +15,10 @@ ddmMapView::ddmMapView( QWidget* parent ) : QWebView( parent ),
 
 }
 
-void ddmMapView::setCenter( const QPointF &point )
+void ddmMapView::selectCounty( int id )
 {
     QString script;
-    script = QObject::tr( "ddm_set_map_center( %1, %2 );" ).arg( point.x() ).arg( point.y() );
+    script = QObject::tr( "ddm_select_county( %1 );" ).arg( id );
     this->page()->currentFrame()->documentElement().evaluateJavaScript( script );
 }
 
@@ -27,8 +27,6 @@ void ddmMapView::injectModel( QObject* model )
     QWebFrame* frame = this->page()->currentFrame();
     QString script;
     frame->addToJavaScriptWindowObject( "ddm_model", model );
-    //script = QObject::tr( "ddm_add_counties( ddm_model.countiesJSON ); alert( ddm_model )" );
-    //frame->documentElement().evaluateJavaScript( script );
 }
 
 void ddmMapView::replyFinished( QNetworkReply* reply )

@@ -8,7 +8,7 @@ class QLineEdit;
 class ddmState;
 class ddmCounty;
 class ddmModel;
-
+class ddmMapView;
 
 namespace Ui {
     class ddmWidget;
@@ -51,6 +51,8 @@ private:
     ddmModel*   m_model;
     QLineEdit*  m_leState;
     QLineEdit*  m_leCounty;
+
+    ddmMapView* mapView() const;
 
     void installEvents();
     void updateCountiesList();

@@ -8,7 +8,7 @@ class ddmMapView : public QWebView
 public:
     ddmMapView( QWidget* parent );
 
-    void setCenter( const QPointF& point );
+    void selectCounty( int id );
 
     void injectModel( QObject* model );
 

@@ -1,4 +1,5 @@
 #include <QFileDialog>
+#include <QWebSettings>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -8,6 +9,8 @@ MainWindow::MainWindow( QWidget* parent ) :
     QMainWindow( parent ),
     ui( new Ui::MainWindow )
 {
+    QWebSettings::globalSettings()->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
+
     ui->setupUi( this );
     setWindowFlags( windowFlags() | Qt::WindowMaximizeButtonHint );
     CreateMenuEvents();
