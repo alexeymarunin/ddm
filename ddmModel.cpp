@@ -1,5 +1,6 @@
 #include "ddmModel.h"
 
+
 ddmModel::ddmModel( QObject* parent ) : QObject( parent ),
     m_currentState( 0 ),
     m_currentCounty( 0 )
@@ -264,6 +265,13 @@ QVariantMap ddmModel::getProperties() const
 
     return result;
 }
+
+
+void ddmModel::setCurrentCountyFromJS( int countyId )
+{
+  setCurrentCounty( countyId );
+}
+
 
 ddmModel::~ddmModel()
 {

@@ -88,8 +88,12 @@ void ddmWidget::changedState( ddmState* state )
 
 void ddmWidget::changedCounty( ddmCounty* county )
 {
-    this->slotSetCurrentCounty( county->geographicName() );
-    this->mapView()->selectCounty( county->id() );
+    if( county )
+    {
+        this->slotSetCurrentCounty( county->geographicName() );
+        this->mapView()->selectCounty( county->id() );
+        ui->m_cmbCounty->setEditText( this->model()->currentCounty()->geographicName() );
+    }
 }
 
 

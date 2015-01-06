@@ -42,6 +42,9 @@ public:
 
     Q_PROPERTY( QVariantMap props READ getProperties );
 
+    // устанавливаем текущее графство в ГПИ при пикинге мышкой по карте
+    Q_INVOKABLE void setCurrentCountyFromJS( int countyId );
+
     virtual ~ddmModel();
 
 signals:
