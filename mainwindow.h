@@ -46,7 +46,8 @@ private:
 
     ddmModel m_model;
 
-    QLabel* m_statusBarMessage;
+    QLabel* m_statusBarLat;
+    QLabel* m_statusBarLng;
 
 
 };

@@ -1,7 +1,6 @@
 #include <QFileDialog>
 #include <QWebSettings>
 #include <QLabel>
-#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -14,8 +13,12 @@ MainWindow::MainWindow( QWidget* parent ) :
     QWebSettings::globalSettings()->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
 
     ui->setupUi( this );
-    m_statusBarMessage = new QLabel( this );
-    ui->statusBar->addWidget( m_statusBarMessage );
+    m_statusBarLat = new QLabel( this );
+    m_statusBarLng = new QLabel( this );
+    m_statusBarLat->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    m_statusBarLng->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    ui->statusBar->addPermanentWidget( m_statusBarLat, 1 );
+    ui->statusBar->addPermanentWidget( m_statusBarLng, 1 );
     setWindowFlags( windowFlags() | Qt::WindowMaximizeButtonHint );
     m_viewMapWidget = new ddmWidget( this->model(), this );
     setCentralWidget( m_viewMapWidget );
@@ -30,7 +33,8 @@ ddmModel* MainWindow::model() const
 
 MainWindow::~MainWindow()
 {
-    delete m_statusBarMessage;
+    delete m_statusBarLat;
+    delete m_statusBarLng;
     delete ui;
 }
 
@@ -95,7 +99,8 @@ void MainWindow::slotDecreaseZoom()
 
 void MainWindow::changedStatusBarCoords( const QString &lat, const QString &lng )
 {
-    if( m_statusBarMessage == NULL )
+    if( m_statusBarLat == NULL || m_statusBarLng == NULL )
         return;
-    m_statusBarMessage->setText( QObject::tr( "Широта: %1 Долгота: %2" ).arg( lat ).arg( lng ) );
+    m_statusBarLat->setText( QObject::tr( "Широта: %1" ).arg( lat ) );
+    m_statusBarLng->setText( QObject::tr( "Долгота: %1" ).arg( lng ) );
 }
