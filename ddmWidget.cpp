@@ -58,6 +58,7 @@ void ddmWidget::installEvents()
 
     connect( this->model(), SIGNAL( changedState( ddmState* ) ), this, SLOT( changedState( ddmState* ) ), Qt::UniqueConnection );
     connect( this->model(), SIGNAL( changedCounty( ddmCounty* ) ), this, SLOT( changedCounty( ddmCounty* ) ) );
+    connect( this->model(), SIGNAL( changedCoords( const QString& ,const QString& ) ), this, SLOT( changedCoords( const QString& ,const QString& ) ) );
     connect( this->ui->m_map->page()->mainFrame(), SIGNAL( javaScriptWindowObjectCleared() ), this, SLOT( slotInjectModel() ) );
 }
 
@@ -97,6 +98,14 @@ void ddmWidget::changedCounty( ddmCounty* county )
 }
 
 
+void ddmWidget::changedCoords( const QString& lat, const QString& lng )
+{
+    if( lat.isEmpty() || lng.isEmpty() )
+        return;
+    emit changedStatusBarCoords( lat, lng );
+}
+
+
 void ddmWidget::updateCountiesList()
 {
     QStringList counties( this->model()->countyNames() );
@@ -132,3 +141,23 @@ ddmWidget::~ddmWidget()
     delete ui;
 }
 
+
+void ddmWidget::reload()
+{
+    if( ddmMapView* view = mapView() )
+        view->reload();
+}
+
+
+void ddmWidget::increaseZoom()
+{
+    if( ddmMapView* view = mapView() )
+        view->increaseZoomLevel();
+}
+
+
+void ddmWidget::decreaseZoom()
+{
+    if( ddmMapView* view = mapView() )
+        view->decreaseZoomLevel();
+}

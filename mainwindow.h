@@ -5,6 +5,7 @@
 #include "ddmModel.h"
 
 class ddmWidget;
+class QLabel;
 
 namespace Ui {
     class MainWindow;
@@ -22,12 +23,21 @@ public:
     ~MainWindow();
 
 private:
-    void CreateMenuEvents();
+    void InstallEvents();
 
 private slots:
     void slotQuit();
 
     void slotOpen();
+
+    void slotReload();
+
+    void slotIncreaseZoom();
+
+    void slotDecreaseZoom();
+
+    void changedStatusBarCoords( const QString& lat, const QString& lng );
+
 
 private:
     Ui::MainWindow *ui;
@@ -35,6 +45,8 @@ private:
     ddmWidget* m_viewMapWidget;
 
     ddmModel m_model;
+
+    QLabel* m_statusBarMessage;
 
 
 };

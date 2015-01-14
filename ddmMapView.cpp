@@ -33,6 +33,27 @@ void ddmMapView::injectModel( QObject* model )
     frame->addToJavaScriptWindowObject( "ddm_model", model );
 }
 
+
+void ddmMapView::increaseZoomLevel()
+{
+    if( !page() )
+        return;
+
+    QString scriptStr = QObject::tr( "ddm_increase_map_zoom();" );
+    page()->mainFrame()->evaluateJavaScript( scriptStr );
+}
+
+
+void ddmMapView::decreaseZoomLevel()
+{
+    if( !page() )
+        return;
+
+    QString scriptStr = QObject::tr( "ddm_decrease_map_zoom();" );
+    page()->mainFrame()->evaluateJavaScript( scriptStr );
+}
+
+
 void ddmMapView::replyFinished( QNetworkReply* reply )
 {
 
@@ -60,14 +81,3 @@ void ddmMapView::resize( int w, int h )
     page()->mainFrame()->evaluateJavaScript( scriptStr );
 }
 
-/*
-void ddmMapView::drawPolygon( ddmContainer* boundary )
-{
-    if( boundary == NULL )
-        return;
-
-    page()->currentFrame()->addToJavaScriptWindowObject( "container", boundary );
-    page()->currentFrame()->documentElement().evaluateJavaScript( "drawPolygon( container );" );
-    page()->currentFrame()->documentElement().evaluateJavaScript( "delete container;" );
-}
-*/

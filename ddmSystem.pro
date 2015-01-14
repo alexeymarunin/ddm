@@ -39,3 +39,6 @@ FORMS    += mainwindow.ui \
 
 DESTDIR = $$PWD
 
+RESOURCES += \
+    icons.qrc
+

@@ -27,10 +27,24 @@ public:
 
     virtual ~ddmWidget();
 
+    // перезагрузить страницу
+    void reload();
+
+    // увеличить масштаб
+    void increaseZoom();
+
+    // уменьшить масштаб
+    void decreaseZoom();
+
 protected:
     void resizeEvent( QResizeEvent *event );
 
+signals:
+    // изменить значение координат в StatusBar'е
+    void changedStatusBarCoords( const QString& lat, const QString& lng );
+
 private slots:
+
     // установить текуший штат для модели
     void slotSetCurrentState( const QString& stateName );
 
@@ -44,6 +58,9 @@ private slots:
 
     // обновить графство на карте
     void changedCounty( ddmCounty* county );
+
+    // изменилось текущие положение курсора на карте (значение координат)
+    void changedCoords( const QString& lat ,const QString& lon );
 
 private:
     Ui::ddmWidget* ui;

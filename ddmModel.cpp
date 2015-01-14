@@ -1,5 +1,7 @@
 #include "ddmModel.h"
 
+#include <QMessageBox>
+
 
 ddmModel::ddmModel( QObject* parent ) : QObject( parent ),
     m_currentState( 0 ),
@@ -269,7 +271,13 @@ QVariantMap ddmModel::getProperties() const
 
 void ddmModel::setCurrentCountyFromJS( int countyId )
 {
-  setCurrentCounty( countyId );
+    setCurrentCounty( countyId );
+}
+
+
+void ddmModel::getCurrentCoordsFromJS( const QString& lat, const QString& lng )
+{
+    emit changedCoords( lat, lng );
 }
 
 

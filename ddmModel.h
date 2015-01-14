@@ -1,4 +1,4 @@
-#ifndef DDM_MODEL_H
+﻿#ifndef DDM_MODEL_H
 #define DDM_MODEL_H
 
 #include <QObject>
@@ -45,12 +45,15 @@ public:
     // устанавливаем текущее графство в ГПИ при пикинге мышкой по карте
     Q_INVOKABLE void setCurrentCountyFromJS( int countyId );
 
+    // получаем текущие координаты при движении мышки по карте
+    Q_INVOKABLE void getCurrentCoordsFromJS( const QString& lat, const QString& lng );
+
     virtual ~ddmModel();
 
 signals:
-
     void changedState( ddmState* state );
     void changedCounty( ddmCounty* county );
+    void changedCoords( const QString& lat, const QString& lng );
 
 
 private:

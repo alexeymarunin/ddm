@@ -43,10 +43,14 @@
                 self.select();
             });
             google.maps.event.addListener( polygon, 'mouseover', function() {
-                self.mouseover();
+                self.mouseover( event );
             });
             google.maps.event.addListener( polygon, 'mouseout', function() {
                 self.mouseout();
+            });
+            
+            google.maps.event.addListener( polygon, 'mousemove', function (event) {
+                self.mousemove( event );
             });
             
             this.polygon = polygon;
@@ -95,6 +99,11 @@
         mouseover: function() {
             this.set( 'hover', true );
             return this;
+        },
+        
+        mousemove: function( event ) {
+             DDM.getCurrentCoordsFromJS( event.latLng.lat() ,event.latLng.lng() );
+             return this;
         },
         
         mouseout: function() {
@@ -158,6 +167,7 @@
         // Модель, которая пришла от приложения
         DDM.Model = ddm_model.props;
         DDM.setCurrentCountyFromJS = ddm_model.setCurrentCountyFromJS;
+        DDM.getCurrentCoordsFromJS  = ddm_model.getCurrentCoordsFromJS;
         
         // Представление DDM
         DDM.View = new MapView({ el:el });

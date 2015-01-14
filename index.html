@@ -67,7 +67,6 @@
         var LatLng = new google.maps.LatLng( x, y );
         DDM.Map.panTo( LatLng );
         return LatLng;
-
       }
       
       function ddm_map_resize( width, height ) {
@@ -83,6 +82,21 @@
         // надо потом разобраться
         // почему не отрабатывет этот же код в ddm_resize()
       }
+	  
+	  function ddm_increase_map_zoom() {
+	     var map = DDM.View.map;
+		 var currentZoom = map.getZoom();
+		 currentZoom++;
+		 map.setZoom( currentZoom );
+	  }
+	  
+	  function ddm_decrease_map_zoom() {
+	     var map = DDM.View.map;
+		 var currentZoom = map.getZoom();
+		 if( currentZoom > 0 )
+             --currentZoom;		 
+		 map.setZoom( currentZoom );
+	  }
       
     </script>
   </body>
