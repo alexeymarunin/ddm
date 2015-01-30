@@ -1,10 +1,13 @@
 #include <QFileDialog>
 #include <QWebSettings>
 #include <QLabel>
+#include <QList>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ddmWidget.h"
+#include "ddmTableView.h"
+
 
 MainWindow::MainWindow( QWidget* parent ) :
     QMainWindow( parent ),
@@ -12,6 +15,7 @@ MainWindow::MainWindow( QWidget* parent ) :
 {
     QWebSettings::globalSettings()->setAttribute( QWebSettings::DeveloperExtrasEnabled, true );
 
+    m_viewsVector.clear();
     ui->setupUi( this );
     m_statusBarLat = new QLabel( this );
     m_statusBarLng = new QLabel( this );
@@ -36,6 +40,7 @@ MainWindow::~MainWindow()
     delete m_statusBarLat;
     delete m_statusBarLng;
     delete ui;
+    m_viewsVector.clear();
 }
 
 
@@ -58,6 +63,8 @@ void MainWindow::InstallEvents()
     connect( ui->decreaseZoomAction, SIGNAL( triggered() ), this, SLOT( slotDecreaseZoom() ) );
 
     connect( m_viewMapWidget, SIGNAL( changedStatusBarCoords( const QString& , const QString& ) ), this, SLOT( changedStatusBarCoords( const QString&, const QString& ) ) );
+
+    connect( ui->createTableViewAction, SIGNAL( triggered() ), this, SLOT( createTableView() ) );
 
 }
 
@@ -103,4 +110,24 @@ void MainWindow::changedStatusBarCoords( const QString &lat, const QString &lng 
         return;
     m_statusBarLat->setText( QObject::tr( "Широта: %1" ).arg( lat ) );
     m_statusBarLng->setText( QObject::tr( "Долгота: %1" ).arg( lng ) );
+}
+
+
+void MainWindow::createTableView()
+{
+  ddmTableView* view = NULL;
+  int size = m_viewsVector.size();
+  for( int i = 0; i < size; ++i )
+  {
+      if(  m_viewsVector[i]->isHidden() )
+          view = m_viewsVector[i];
+  }
+
+  if( view == NULL )
+  {
+      view = new ddmTableView( this );
+      m_viewsVector.append( view );
+  }
+
+  view->show();
 }

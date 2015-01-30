@@ -5,6 +5,7 @@
 #include "ddmModel.h"
 
 class ddmWidget;
+class ddmTableView;
 class QLabel;
 
 namespace Ui {
@@ -38,6 +39,7 @@ private slots:
 
     void changedStatusBarCoords( const QString& lat, const QString& lng );
 
+    void createTableView();
 
 private:
     Ui::MainWindow *ui;
@@ -48,6 +50,8 @@ private:
 
     QLabel* m_statusBarLat;
     QLabel* m_statusBarLng;
+
+    QVector<ddmTableView*> m_viewsVector;
 
 
 };

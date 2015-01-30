@@ -35,8 +35,7 @@
     <property name="title">
      <string>Данные</string>
     </property>
-    <addaction name="importAction"/>
-    <addaction name="exportAction"/>
+    <addaction name="createTableViewAction"/>
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
@@ -70,8 +69,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="importAction"/>
-   <addaction name="exportAction"/>
+   <addaction name="createTableViewAction"/>
    <addaction name="separator"/>
    <addaction name="reloadAction"/>
    <addaction name="increaseZoomAction"/>
@@ -94,24 +92,6 @@
    </property>
    <property name="text">
     <string>Выход</string>
-   </property>
-  </action>
-  <action name="importAction">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/icon_import.png</normaloff>:/icons/icons/icon_import.png</iconset>
-   </property>
-   <property name="text">
-    <string>Импорт</string>
-   </property>
-  </action>
-  <action name="exportAction">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/icon_export.png</normaloff>:/icons/icons/icon_export.png</iconset>
-   </property>
-   <property name="text">
-    <string>Экспорт</string>
    </property>
   </action>
   <action name="reloadAction">
@@ -139,6 +119,15 @@
    </property>
    <property name="text">
     <string>Уменьшить масшаб</string>
+   </property>
+  </action>
+  <action name="createTableViewAction">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/table.png</normaloff>:/icons/icons/table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Таблица</string>
    </property>
   </action>
  </widget>

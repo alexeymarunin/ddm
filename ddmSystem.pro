@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     ddmState.cpp \
     ddmMapView.cpp \
     ddmWidget.cpp \
-    ddmMapViewPage.cpp
+    ddmMapViewPage.cpp \
+    ddmTableViewModel.cpp \
+    ddmTableView.cpp
 
 HEADERS  += mainwindow.h \
     ddmCounty.h \
@@ -32,10 +34,13 @@ HEADERS  += mainwindow.h \
     ddmState.h \
     ddmMapView.h \
     ddmWidget.h \
-    ddmMapViewPage.h
+    ddmMapViewPage.h \
+    ddmTableViewModel.h \
+    ddmTableView.h
 
 FORMS    += mainwindow.ui \
-    ddmwidget.ui
+    ddmwidget.ui \
+    ddmtableview.ui
 
 DESTDIR = $$PWD
 
