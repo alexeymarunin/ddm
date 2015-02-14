@@ -1,10 +1,12 @@
 #ifndef DDM_WIDGET_H
 #define DDM_WIDGET_H
 
+#include <QVector>
 #include <QWidget>
 
 class QLineEdit;
 
+class ddmFilter;
 class ddmState;
 class ddmCounty;
 class ddmModel;
@@ -13,6 +15,13 @@ class ddmMapView;
 namespace Ui {
     class ddmWidget;
 };
+
+enum ddmFilters
+{
+    DDM_EMPTY_FILTER,
+    DDM_MIGRATION_FROM_COUNTY
+};
+
 
 
 class ddmWidget : public QWidget
@@ -45,34 +54,29 @@ signals:
 
 private slots:
 
-    // установить текуший штат для модели
-    void slotSetCurrentState( const QString& stateName );
-
-    // установить текушее графство для модели
-    void slotSetCurrentCounty( const QString& countyName );
-
     void slotInjectModel();
-
-    // обновить штат
-    void changedState( ddmState* state );
-
-    // обновить графство на карте
-    void changedCounty( ddmCounty* county );
 
     // изменилось текущие положение курсора на карте (значение координат)
     void changedCoords( const QString& lat ,const QString& lon );
+
+    void slotSetCurrentFilter( int index );
+
+private:
+
+    void  fillFiltersList();
+
+    void installEvents();
+
+    ddmMapView* mapView() const;
 
 private:
     Ui::ddmWidget* ui;
 
     ddmModel*   m_model;
-    QLineEdit*  m_leState;
-    QLineEdit*  m_leCounty;
 
-    ddmMapView* mapView() const;
+    QWidget* m_curWidget;
 
-    void installEvents();
-    void updateCountiesList();
+    QVector<ddmFilter*> m_filters;
 
 };
 

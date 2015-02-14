@@ -24,7 +24,10 @@ SOURCES += main.cpp\
     ddmWidget.cpp \
     ddmMapViewPage.cpp \
     ddmTableViewModel.cpp \
-    ddmTableView.cpp
+    ddmTableView.cpp \
+    ddmEmptyFilterWidget.cpp \
+    ddmFilter.cpp \
+    ddmEmptyFilter.cpp
 
 HEADERS  += mainwindow.h \
     ddmCounty.h \
@@ -36,11 +39,15 @@ HEADERS  += mainwindow.h \
     ddmWidget.h \
     ddmMapViewPage.h \
     ddmTableViewModel.h \
-    ddmTableView.h
+    ddmTableView.h \
+    ddmEmptyFlterWidget.h \
+    ddmEmptyfilter.h \
+    ddmFilter.h
 
 FORMS    += mainwindow.ui \
     ddmwidget.ui \
-    ddmtableview.ui
+    ddmtableview.ui \
+    ddmEmptyFilterWidget.ui
 
 DESTDIR = $$PWD
 
