@@ -22,7 +22,12 @@ SOURCES += main.cpp\
     ddmState.cpp \
     ddmMapView.cpp \
     ddmWidget.cpp \
-    ddmMapViewPage.cpp
+    ddmMapViewPage.cpp \
+    ddmTableViewModel.cpp \
+    ddmTableView.cpp \
+    ddmEmptyFilterWidget.cpp \
+    ddmFilter.cpp \
+    ddmEmptyFilter.cpp
 
 HEADERS  += mainwindow.h \
     ddmCounty.h \
@@ -33,14 +38,20 @@ HEADERS  += mainwindow.h \
     ddmMapView.h \
     ddmWidget.h \
     ddmMapViewPage.h \
+    ddmTableViewModel.h \
+    ddmTableView.h \
+    ddmEmptyFlterWidget.h \
+    ddmEmptyFilter.h \
+    ddmFilter.h \
     ddmVersion.h
 
 FORMS    += mainwindow.ui \
-    ddmwidget.ui
+    ddmwidget.ui \
+    ddmtableview.ui \
+    ddmEmptyFilterWidget.ui
 
 Release:DESTDIR = release
 Debug:DESTDIR = debug
-# DESTDIR = $$PWD
 
 RESOURCES += \
     icons.qrc

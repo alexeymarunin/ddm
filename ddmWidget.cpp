@@ -1,5 +1,4 @@
 #include <QDir>
-#include <QLineEdit>
 #include <QMessageBox>
 #include <QPointF>
 #include <QResizeEvent>
@@ -10,19 +9,18 @@
 #include "ddmModel.h"
 #include "ddmMapViewPage.h"
 
+#include "ddmEmptyfilter.h"
+
 
 ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     ui( new Ui::ddmWidget ),
     m_model( model )
 {
     ui->setupUi( this );
-
+    m_curWidget = NULL;
     ddmMapView* mapView = this->mapView();
     ddmMapViewPage* mapPage = new ddmMapViewPage;
     mapView->setPage( mapPage );
-
-    m_leState = new QLineEdit( ui->m_cmbState );
-    m_leCounty = new QLineEdit( ui->m_cmbCounty );
 
     // устанавливаем соединение с БД
     QString pathToDb = QObject::tr( "%1/ddm.sqlite" ).arg( QDir::current().path() );
@@ -33,68 +31,30 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     QUrl url = QUrl::fromLocalFile( pathToWeb );
     this->mapView()->setUrl( url );
 
-    // инициализация начальных значений
-    ui->m_cmbState->setLineEdit(  m_leState );
-    ui->m_cmbCounty->setLineEdit( m_leCounty );
-
-    QStringList states, counties;
-    states = this->model()->stateNames();
-    counties = this->model()->countyNames();
-    ui->m_cmbState->addItems( states );
-    ui->m_cmbCounty->addItems( counties );
-
-    this->slotSetCurrentState( this->model()->currentState()->geographicName() );
-    this->slotSetCurrentCounty( this->model()->currentCounty()->geographicName() );
-
+    fillFiltersList();
     installEvents();
-
-
+    slotSetCurrentFilter( DDM_EMPTY_FILTER );
 }
+
+
+ddmWidget::~ddmWidget()
+{
+    delete ui;
+    delete m_curWidget;
+}
+
 
 void ddmWidget::installEvents()
 {
-    connect( ui->m_cmbState,  SIGNAL( activated ( const QString& ) ), this,  SLOT( slotSetCurrentState( const QString& ) ));
-    connect( ui->m_cmbCounty, SIGNAL( activated ( const QString& ) ), this, SLOT( slotSetCurrentCounty( const QString& ) ) );
-
-    connect( this->model(), SIGNAL( changedState( ddmState* ) ), this, SLOT( changedState( ddmState* ) ), Qt::UniqueConnection );
-    connect( this->model(), SIGNAL( changedCounty( ddmCounty* ) ), this, SLOT( changedCounty( ddmCounty* ) ) );
-    connect( this->model(), SIGNAL( changedCoords( const QString& ,const QString& ) ), this, SLOT( changedCoords( const QString& ,const QString& ) ) );
     connect( this->ui->m_map->page()->mainFrame(), SIGNAL( javaScriptWindowObjectCleared() ), this, SLOT( slotInjectModel() ) );
+    connect( this->model(), SIGNAL( changedCoords( const QString& ,const QString& ) ), this, SLOT( changedCoords( const QString& ,const QString& ) ) );
+    connect( ui->m_cmbFilter,  SIGNAL( activated ( int ) ), this,  SLOT( slotSetCurrentFilter( int ) ));
 }
 
 
 void ddmWidget::slotInjectModel()
 {
     ui->m_map->page()->mainFrame()->addToJavaScriptWindowObject( "ddm_model", this->model() );
-}
-
-void ddmWidget::slotSetCurrentState( const QString& stateName )
-{
-    this->model()->setCurrentState( stateName );
-    this->updateCountiesList();
-}
-
-
-void ddmWidget::slotSetCurrentCounty( const QString& countyName )
-{
-    this->model()->setCurrentCounty( countyName );
-}
-
-
-void ddmWidget::changedState( ddmState* state )
-{
-    this->slotSetCurrentState( state->geographicName() );
-    ui->m_cmbState->setEditText( this->model()->currentState()->geographicName() );
-}
-
-void ddmWidget::changedCounty( ddmCounty* county )
-{
-    if( county )
-    {
-        this->slotSetCurrentCounty( county->geographicName() );
-        this->mapView()->selectCounty( county->id() );
-        ui->m_cmbCounty->setEditText( this->model()->currentCounty()->geographicName() );
-    }
 }
 
 
@@ -106,13 +66,38 @@ void ddmWidget::changedCoords( const QString& lat, const QString& lng )
 }
 
 
-void ddmWidget::updateCountiesList()
+void ddmWidget::slotSetCurrentFilter( int index )
 {
-    QStringList counties( this->model()->countyNames() );
-    ui->m_cmbCounty->clear();
-    ui->m_cmbCounty->addItems( counties );
-    ui->m_cmbCounty->setEditText( this->model()->currentCounty()->geographicName() );
+    if( index == DDM_EMPTY_FILTER )
+    {
+        m_curWidget = m_filters.at( DDM_EMPTY_FILTER )->getWidget();
+        m_curWidget->setParent( this );
+        m_curWidget->show();
+        ui->m_widgetContainerLayout->addWidget( m_curWidget );
+
+    }
+    else if( index == DDM_MIGRATION_FROM_COUNTY )
+    {
+        if( m_curWidget )
+        {
+            ui->m_widgetContainerLayout->removeWidget( m_curWidget );
+            m_curWidget->hide();
+            m_curWidget = NULL;
+        }
+    }
 }
+
+
+
+void ddmWidget::fillFiltersList()
+{
+    ui->m_cmbFilter->addItem( "Пустой фильтр" );
+    ui->m_cmbFilter->addItem( "Фильтр миграций из графства" );
+
+    ddmEmptyFilter* filter = new ddmEmptyFilter( model(), mapView() );
+    m_filters.append( filter );
+}
+
 
 void ddmWidget::resizeEvent( QResizeEvent *event )
 {
@@ -126,19 +111,16 @@ void ddmWidget::setModel( ddmModel* model )
     this->m_model = model;
 }
 
+
 ddmModel* ddmWidget::model() const
 {
     return this->m_model;
 }
 
+
 ddmMapView* ddmWidget::mapView() const
 {
     return this->ui->m_map;
-}
-
-ddmWidget::~ddmWidget()
-{
-    delete ui;
 }
 
 
