@@ -24,7 +24,7 @@ ddmMapView *ddmFilter::mapView()
 }
 
 
-void ddmFilter::updateVisualize()
+void ddmFilter::visualize()
 {
     // TODO: код обновления визуализации
 }

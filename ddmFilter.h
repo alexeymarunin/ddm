@@ -11,7 +11,7 @@ class ddmFilter
 public:
     virtual void updateData() = 0;
 
-    virtual void updateVisualize();
+    virtual void visualize();
 
     virtual QWidget* getWidget() = 0;
 

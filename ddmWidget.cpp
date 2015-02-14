@@ -24,6 +24,11 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
 
     // устанавливаем соединение с БД
     QString pathToDb = QObject::tr( "%1/ddm.sqlite" ).arg( QDir::current().path() );
+    if ( !QFile::exists( pathToDb ) )
+    {
+        // Если в текущем каталоге БД нет, то ищем в родительских
+        pathToDb = QObject::tr( "%1/../../ddm.sqlite" ).arg( QDir::current().path() );
+    }
     this->model()->openDatabase( pathToDb );
 
     // устанавливаем страницу для отображения google maps
