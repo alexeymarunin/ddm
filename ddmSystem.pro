@@ -32,12 +32,15 @@ HEADERS  += mainwindow.h \
     ddmState.h \
     ddmMapView.h \
     ddmWidget.h \
-    ddmMapViewPage.h
+    ddmMapViewPage.h \
+    ddmVersion.h
 
 FORMS    += mainwindow.ui \
     ddmwidget.ui
 
-DESTDIR = $$PWD
+Release:DESTDIR = release
+Debug:DESTDIR = debug
+# DESTDIR = $$PWD
 
 RESOURCES += \
     icons.qrc
