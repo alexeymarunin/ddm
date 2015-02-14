@@ -33,6 +33,11 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
 
     // устанавливаем страницу для отображения google maps
     QString pathToWeb = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
+    if ( !QFile::exists( pathToWeb ) )
+    {
+        // Если в текущем каталоге БД нет, то ищем в родительских
+        pathToWeb = QObject::tr( "%1/../../index.html" ).arg( QDir::current().path() );
+    }
     QUrl url = QUrl::fromLocalFile( pathToWeb );
     this->mapView()->setUrl( url );
 
