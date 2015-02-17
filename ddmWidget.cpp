@@ -10,6 +10,7 @@
 #include "ddmMapViewPage.h"
 
 #include "ddmEmptyfilter.h"
+#include "ddmFrictionCountyFilter.h"
 
 
 ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
@@ -23,20 +24,20 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     mapView->setPage( mapPage );
 
     // устанавливаем соединение с БД
-    QString pathToDb = QObject::tr( "%1/ddm.sqlite" ).arg( QDir::current().path() );
+    QString pathToDb = QObject::tr( "%1/ddm.sqlite" ).arg( QApplication::applicationDirPath() );
     if ( !QFile::exists( pathToDb ) )
     {
         // Если в текущем каталоге БД нет, то ищем в родительских
-        pathToDb = QObject::tr( "%1/../../ddm.sqlite" ).arg( QDir::current().path() );
+        pathToDb = QObject::tr( "%1/../../ddm.sqlite" ).arg( QApplication::applicationDirPath() );
     }
     this->model()->openDatabase( pathToDb );
 
     // устанавливаем страницу для отображения google maps
-    QString pathToWeb = QObject::tr( "%1/index.html" ).arg( QDir::current().path() );
+    QString pathToWeb = QObject::tr( "%1/index.html" ).arg( QApplication::applicationDirPath() );
     if ( !QFile::exists( pathToWeb ) )
     {
         // Если в текущем каталоге БД нет, то ищем в родительских
-        pathToWeb = QObject::tr( "%1/../../index.html" ).arg( QDir::current().path() );
+        pathToWeb = QObject::tr( "%1/../../index.html" ).arg( QApplication::applicationDirPath() );
     }
     QUrl url = QUrl::fromLocalFile( pathToWeb );
     this->mapView()->setUrl( url );
@@ -78,6 +79,13 @@ void ddmWidget::changedCoords( const QString& lat, const QString& lng )
 
 void ddmWidget::slotSetCurrentFilter( int index )
 {
+    if( m_curWidget )
+    {
+        ui->m_widgetContainerLayout->removeWidget( m_curWidget );
+        m_curWidget->hide();
+        m_curWidget = NULL;
+    }
+
     if( index == DDM_EMPTY_FILTER )
     {
         m_curWidget = m_filters.at( DDM_EMPTY_FILTER )->getWidget();
@@ -86,26 +94,28 @@ void ddmWidget::slotSetCurrentFilter( int index )
         ui->m_widgetContainerLayout->addWidget( m_curWidget );
 
     }
-    else if( index == DDM_MIGRATION_FROM_COUNTY )
+    else if( index == DDM_FRICTION_COUNTY_FILTER )
     {
-        if( m_curWidget )
-        {
-            ui->m_widgetContainerLayout->removeWidget( m_curWidget );
-            m_curWidget->hide();
-            m_curWidget = NULL;
-        }
+        m_curWidget = m_filters.at( DDM_FRICTION_COUNTY_FILTER )->getWidget();
+        m_curWidget->setParent( this );
+        m_curWidget->show();
+        ui->m_widgetContainerLayout->addWidget( m_curWidget );
+    }
+    else if( index == DDM_MIGRATION_COUNTY_FILTER )
+    {
+       // TODO:
     }
 }
-
 
 
 void ddmWidget::fillFiltersList()
 {
     ui->m_cmbFilter->addItem( "Пустой фильтр" );
+    ui->m_cmbFilter->addItem( "Фильтр трения по графствам" );
     ui->m_cmbFilter->addItem( "Фильтр миграций из графства" );
 
-    ddmEmptyFilter* filter = new ddmEmptyFilter( model(), mapView() );
-    m_filters.append( filter );
+    m_filters.append( new ddmEmptyFilter( model(), mapView() ) );
+    m_filters.append( new ddmFrictionCountyFilter( model(), mapView() ) );
 }
 
 

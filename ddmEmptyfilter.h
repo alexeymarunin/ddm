@@ -20,8 +20,6 @@ public:
 
     virtual QWidget* getWidget();
 
-
-
 private:
     ddmEmptyFilterWidget* m_widget;
 };
