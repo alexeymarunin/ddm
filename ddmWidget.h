@@ -11,6 +11,7 @@ class ddmState;
 class ddmCounty;
 class ddmModel;
 class ddmMapView;
+class ddmInfoWindowWidget;
 
 namespace Ui {
     class ddmWidget;
@@ -78,6 +79,8 @@ private:
     QWidget* m_curWidget;
 
     QVector<ddmFilter*> m_filters;
+
+    ddmInfoWindowWidget* m_infoWindow;
 
 };
 

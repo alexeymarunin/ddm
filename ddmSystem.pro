@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     ddmFilter.cpp \
     ddmEmptyFilter.cpp \
     ddmFrictionCountyFilter.cpp \
-    ddmFrictionCountyFilterWidget.cpp
+    ddmFrictionCountyFilterWidget.cpp \
+    ddmInfoWindowWidget.cpp
 
 HEADERS  += mainwindow.h \
     ddmCounty.h \
@@ -47,13 +48,15 @@ HEADERS  += mainwindow.h \
     ddmFilter.h \
     ddmVersion.h \
     ddmFrictionCountyFilter.h \
-    ddmFrictionCountyFilterWidget.h
+    ddmFrictionCountyFilterWidget.h \
+    ddmInfoWindowWidget.h
 
 FORMS    += mainwindow.ui \
     ddmwidget.ui \
     ddmtableview.ui \
     ddmEmptyFilterWidget.ui \
-    ddmfrictioncountyfilterwidget.ui
+    ddmfrictioncountyfilterwidget.ui \
+    ddminfowindowwidget.ui
 
 Release:DESTDIR = release
 Debug:DESTDIR = debug

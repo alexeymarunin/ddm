@@ -8,6 +8,7 @@
 #include "ddmWidget.h"
 #include "ddmModel.h"
 #include "ddmMapViewPage.h"
+#include "ddmInfoWindowWidget.h"
 
 #include "ddmEmptyfilter.h"
 #include "ddmFrictionCountyFilter.h"
@@ -18,6 +19,8 @@ ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
     m_model( model )
 {
     ui->setupUi( this );
+    m_infoWindow = new ddmInfoWindowWidget( this );
+    ui->m_vlPlainTextEditContainer->addWidget( m_infoWindow );
     m_curWidget = NULL;
     ddmMapView* mapView = this->mapView();
     ddmMapViewPage* mapPage = new ddmMapViewPage;
@@ -52,6 +55,7 @@ ddmWidget::~ddmWidget()
 {
     delete ui;
     delete m_curWidget;
+    delete m_infoWindow;
 }
 
 
