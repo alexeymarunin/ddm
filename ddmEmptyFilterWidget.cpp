@@ -58,7 +58,8 @@ void ddmEmptyFilterWidget::slotSetCurrentCounty( const QString &countyName )
 void ddmEmptyFilterWidget::changedState( ddmState *state )
 {
      this->slotSetCurrentState( state->geographicName() );
-     ui->m_cmbState->setEditText( m_filter->model()->currentCounty()->geographicName() );
+     ui->m_cmbState->clearEditText();
+     ui->m_cmbState->setEditText( m_filter->model()->currentState()->geographicName() );
 }
 
 
@@ -86,6 +87,7 @@ void ddmEmptyFilterWidget::updateCountiesList()
 {
     QStringList counties( m_filter->model()->countyNames() );
     ui->m_cmbCounty->clear();
+    ui->m_cmbCounty->clearEditText();
     ui->m_cmbCounty->addItems( counties );
     ui->m_cmbCounty->setEditText( m_filter->model()->currentCounty()->geographicName() );
 }

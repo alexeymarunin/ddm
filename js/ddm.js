@@ -87,7 +87,8 @@
         select: function() {
             this.set( 'selected', true );
             var countyId = this.get( 'id' );
-            DDM.setCurrentCountyFromJS( countyId );
+            if ( DDM.getCurrentCountyId() != countyId )
+                 DDM.setCurrentCountyFromJS( countyId );
             return this;
         },
         
@@ -166,8 +167,9 @@
 
         // Модель, которая пришла от приложения
         DDM.Model = ddm_model.props;
-        DDM.setCurrentCountyFromJS = ddm_model.setCurrentCountyFromJS;
+        DDM.setCurrentCountyFromJS =  ddm_model.setCurrentCountyFromJS;
         DDM.getCurrentCoordsFromJS  = ddm_model.getCurrentCoordsFromJS;
+        DDM.getCurrentCountyId      = ddm_model.getCurrentCountyId;
         
         // Представление DDM
         DDM.View = new MapView({ el:el });

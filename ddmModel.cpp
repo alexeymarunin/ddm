@@ -271,13 +271,29 @@ QVariantMap ddmModel::getProperties() const
 
 void ddmModel::setCurrentCountyFromJS( int countyId )
 {
-    setCurrentCounty( countyId );
+    //setCurrentCounty( countyId );
+    ddmCounty* county = this->m_counties[countyId];
+    if( currentCounty() != county )
+    {
+        this->m_currentCounty = county;
+        if( m_currentState != county->state() )
+            this->m_currentState = county->state();
+
+        emit changedCounty( county );
+        emit changedState( county->state() );
+    }
 }
 
 
 void ddmModel::getCurrentCoordsFromJS( const QString& lat, const QString& lng )
 {
     emit changedCoords( lat, lng );
+}
+
+
+int ddmModel::getCurrentCountyId()
+{
+    return m_currentCounty->id();
 }
 
 

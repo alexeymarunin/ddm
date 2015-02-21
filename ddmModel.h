@@ -48,6 +48,8 @@ public:
     // получаем текущие координаты при движении мышки по карте
     Q_INVOKABLE void getCurrentCoordsFromJS( const QString& lat, const QString& lng );
 
+    Q_INVOKABLE int getCurrentCountyId();
+
     virtual ~ddmModel();
 
 signals:
