@@ -1,21 +1,32 @@
+#include <QDoubleValidator>
+
+
 #include "ddmFrictionCountyFilterWidget.h"
 #include "ui_ddmfrictioncountyfilterwidget.h"
+
 
 ddmFrictionCountyFilterWidget::ddmFrictionCountyFilterWidget( ddmFrictionCountyFilter* filter, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ddmFrictionCountyFilterWidget)
 {
-    ui->setupUi(this);
-    ui->gridLayout->setContentsMargins( 0,0,0,0 );
+    ui->setupUi( this );
+    this->setContentsMargins( 0,0,0,0 );
     ui->gridLayout_2->setContentsMargins( 0,0,0,0 );
     ui->gridLayout_3->setContentsMargins( 0,0,0,0 );
-    this->setContentsMargins( 0,0,0,0 );
+    ui->m_lbTitle->setWordWrap( true );
+    ui->m_lbWarning->setWordWrap( true );
+    ui->m_lbWarning->setText( "Некорректно заданны входные значения!" );
+    ui->m_lbWarning->setStyleSheet( "QLabel { background-color : yellow; }");
+    ui->m_lbWarning->hide();
 
-    ui->m_rbIntervalMode->setChecked( true );
-    ui->m_lbValue->setEnabled( false );
-    ui->m_leValue->setEnabled( false );
-
-
+    int decimals = 7;
+    double minValue = 0.0, maxValue = 999.0;
+    QDoubleValidator* leValidator = new QDoubleValidator( minValue, maxValue, decimals, this );
+    leValidator->setNotation( QDoubleValidator::StandardNotation );
+    ui->m_leFrom->setValidator( leValidator );
+    ui->m_leTo->setValidator( leValidator );
+    ui->m_leFrom->setText( "0,0" );
+    ui->m_leTo->setText( "0,5" );
     m_filter = filter;
     installEvents();
 }
@@ -26,26 +37,41 @@ ddmFrictionCountyFilterWidget::~ddmFrictionCountyFilterWidget()
 }
 
 
-void ddmFrictionCountyFilterWidget::slotValueMode( bool state )
-{
-   ui->m_lbValue->setEnabled( state );
-   ui->m_leValue->setEnabled( state );
-}
-
-
-void ddmFrictionCountyFilterWidget::slotIntervalMode( bool state )
-{
-    ui->m_lbIntervalMode->setEnabled( state );
-    ui->m_lbFrom->setEnabled( state );
-    ui->m_lbTo->setEnabled( state );
-    ui->m_leFrom->setEnabled( state );
-    ui->m_leTo->setEnabled( state );
-}
-
-
 void ddmFrictionCountyFilterWidget::installEvents()
 {
-    connect( ui->m_rbValueMode, SIGNAL( toggled( bool ) ), this, SLOT( slotValueMode( bool ) ) );
-    connect( ui->m_rbIntervalMode, SIGNAL( toggled( bool ) ), this, SLOT( slotIntervalMode( bool ) ) );
+    // TODO: connect events here
+    connect( ui->m_pbUpdateView, SIGNAL( pressed() ), this, SLOT( updateVisualize() ) );
+    connect( ui->m_leFrom, SIGNAL( textEdited( const QString & ) ),  this, SLOT( slotVerifyData( const QString& ) ), Qt::UniqueConnection );
+    connect( ui->m_leTo, SIGNAL( textEdited( const QString & ) ),  this, SLOT( slotVerifyData( const QString& ) ), Qt::UniqueConnection );
+}
 
+
+void ddmFrictionCountyFilterWidget::updateVisualize()
+{
+    // TODO: code here
+}
+
+void ddmFrictionCountyFilterWidget::slotVerifyData( const QString& text )
+{
+    if( ui->m_leFrom->text().isEmpty() || ui->m_leTo->text().isEmpty() )
+    {
+        ui->m_lbWarning->show();
+        return;
+    }
+
+    // toDouble() не может преобразовать строку вида 1.2 ( нужна строка 1.2 )
+    // QDoubleValidator дает вводить строки вида (1,2) (Qt bug?)
+    // из-за этого меняем "," на "."
+    QString mins, maxs;
+    mins = ui->m_leFrom->text().replace( ",", "." );
+    maxs = ui->m_leTo->text().replace( ",", "." );
+    double min = mins.toDouble();
+    double max = maxs.toDouble();
+    if( min > max )
+    {
+        ui->m_lbWarning->show();
+        return;
+    }
+
+    ui->m_lbWarning->hide();
 }

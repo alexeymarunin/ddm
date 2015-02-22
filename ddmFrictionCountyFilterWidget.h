@@ -17,13 +17,14 @@ public:
     explicit ddmFrictionCountyFilterWidget( ddmFrictionCountyFilter* filter, QWidget *parent = 0);
     ~ddmFrictionCountyFilterWidget();
 
-private slots:
-    void slotIntervalMode( bool state );
-    void slotValueMode( bool state );
-
-
 private:
      void installEvents();
+
+private slots:
+
+     void updateVisualize();
+
+     void slotVerifyData( const QString& text );
 
 private:
     Ui::ddmFrictionCountyFilterWidget *ui;

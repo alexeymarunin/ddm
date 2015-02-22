@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>327</width>
-    <height>240</height>
+    <width>400</width>
+    <height>219</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,43 +19,31 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="m_lbSetValueMode">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Задать значение трения:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QRadioButton" name="m_rbValueMode">
-       <property name="text">
-        <string>Числом</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QRadioButton" name="m_rbIntervalMode">
-       <property name="text">
-        <string>Интервалом</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QGridLayout" name="gridLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinAndMaxSize</enum>
+     </property>
+     <property name="horizontalSpacing">
+      <number>2</number>
+     </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="m_lbIntervalMode">
+      <widget class="QLabel" name="m_lbTitle">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Задать значение в интервале &lt;/p&gt;&lt;p&gt;(прим: от &lt;span style=&quot; font-weight:600;&quot;&gt;0.5&lt;/span&gt; до &lt;span style=&quot; font-weight:600;&quot;&gt;0.7&lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Отобразить графства c значением трения в интервале:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="m_lbWarning">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLabel" name="m_lbFrom">
          <property name="text">
@@ -80,22 +68,25 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item>
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="QLabel" name="m_lbValue">
+      <widget class="QPushButton" name="m_pbUpdateView">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Задать значение &lt;/p&gt;&lt;p&gt;(прим:&lt;span style=&quot; font-weight:600;&quot;&gt; &amp;gt; 0.5&lt;/span&gt;,&lt;span style=&quot; font-weight:600;&quot;&gt; &amp;lt; 0.5&lt;/span&gt; или&lt;span style=&quot; font-weight:600;&quot;&gt; 0.5&lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/icons/icons/accept.png</normaloff>:/icons/icons/accept.png</iconset>
        </property>
       </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="m_leValue"/>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
