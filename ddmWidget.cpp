@@ -12,6 +12,7 @@
 
 #include "ddmEmptyfilter.h"
 #include "ddmFrictionCountyFilter.h"
+#include "ddmMigrationCountyFilter.h"
 
 
 ddmWidget::ddmWidget( ddmModel* model, QWidget* parent ) : QWidget( parent ),
@@ -107,7 +108,10 @@ void ddmWidget::slotSetCurrentFilter( int index )
     }
     else if( index == DDM_MIGRATION_COUNTY_FILTER )
     {
-       // TODO:
+        m_curWidget = m_filters.at( DDM_MIGRATION_COUNTY_FILTER )->getWidget();
+        m_curWidget->setParent( this );
+        m_curWidget->show();
+        ui->m_widgetContainerLayout->addWidget( m_curWidget );
     }
 }
 
@@ -120,6 +124,7 @@ void ddmWidget::fillFiltersList()
 
     m_filters.append( new ddmEmptyFilter( model(), mapView() ) );
     m_filters.append( new ddmFrictionCountyFilter( model(), mapView() ) );
+    m_filters.append( new ddmMigrationCountyFilter( model(), mapView() ) );
 }
 
 

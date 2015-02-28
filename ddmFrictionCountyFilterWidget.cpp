@@ -10,9 +10,8 @@ ddmFrictionCountyFilterWidget::ddmFrictionCountyFilterWidget( ddmFrictionCountyF
     ui(new Ui::ddmFrictionCountyFilterWidget)
 {
     ui->setupUi( this );
+    ui->gridLayout->setContentsMargins( 0,0,0,0 );
     this->setContentsMargins( 0,0,0,0 );
-    ui->gridLayout_2->setContentsMargins( 0,0,0,0 );
-    ui->gridLayout_3->setContentsMargins( 0,0,0,0 );
     ui->m_lbTitle->setWordWrap( true );
     ui->m_lbWarning->setWordWrap( true );
     ui->m_lbWarning->setText( "Некорректно заданны входные значения!" );
@@ -30,6 +29,7 @@ ddmFrictionCountyFilterWidget::ddmFrictionCountyFilterWidget( ddmFrictionCountyF
     m_filter = filter;
     installEvents();
 }
+
 
 ddmFrictionCountyFilterWidget::~ddmFrictionCountyFilterWidget()
 {
