@@ -1,212 +1,211 @@
-﻿function ddm_map( $, config ) {
-
-    var DDM = {};
-
-    var CountyModel = Backbone.Model.extend({
-        polygon: null,
-        defaults: {
-            id: 0,
-            name: '',
-            selected: false,
-            hover: false,
-            boundaries: [],
-            center: { x:0, y:0 }
-        },
-        
-        initialize: function() {
-            var self = this;
-            var boundaries = self.get( 'boundaries' );
-            
-            // Создаем объект полигона
-            var polygon = new google.maps.Polygon( config.polygon.clean );
-            var paths = new google.maps.MVCArray();
-            _.each( boundaries, function( boundary ) {
-                var loop = new google.maps.MVCArray();
-                _.each( boundary.vertices, function( vertex ) {
-                    var point = new google.maps.LatLng( vertex.y, vertex.x );
-                    loop.push( point );
-                    /*
-                    var marker = new google.maps.Marker({
-                      //position: new google.maps.LatLng( 59.3462, -135.0306 ),
-                      position: point,
-                      map: DDM.Map
-                    });
-                    */
-                });
-                paths.push( loop );
-            });
-            polygon.setPaths( paths );
-            polygon.setMap( DDM.Map );
-            
-            // Вешаем обработчики событий
-            google.maps.event.addListener( polygon, 'click', function() {
-                self.select();
-            });
-            google.maps.event.addListener( polygon, 'mouseover', function() {
-                self.mouseover( event );
-            });
-            google.maps.event.addListener( polygon, 'mouseout', function() {
-                self.mouseout();
-            });
-            
-            google.maps.event.addListener( polygon, 'mousemove', function (event) {
-                self.mousemove( event );
-            });
-            
-            this.polygon = polygon;
-            
-            this.on( 'change:selected change:hover', this.paint, this );
-            return this;
-        },
-        
-        // Перерисовка полигона
-        paint: function() {
-            var selected = this.get( 'selected' );
-            var hover = this.get( 'hover' );
-            var options = {};
-            if ( selected ) {
-                if ( hover ) { 
-                    options = _.extend( options, config.polygon.select, config.polygon.hover );
-                }
-                else {
-                    options = _.extend( options, config.polygon.select );
-                }
-            }
-            else {
-                if ( hover ) {
-                    options = _.extend( options, config.polygon.clean, config.polygon.hover );
-                }
-                else {
-                    options = _.extend( options, config.polygon.clean );
-                }
-            }
-            this.polygon.setOptions( options );
-            return this;
-        },
-
-        select: function() {
-            this.set( 'selected', true );
-            var countyId = this.get( 'id' );
-            DDM.setCurrentCountyFromJS( countyId );
-            return this;
-        },
-        
-        unselect: function() {
-            this.set( 'selected', false );
-            return this;
-        },
-        
-        mouseover: function() {
-            this.set( 'hover', true );
-            return this;
-        },
-        
-        mousemove: function( event ) {
-             DDM.getCurrentCoordsFromJS( event.latLng.lat() ,event.latLng.lng() );
-             return this;
-        },
-        
-        mouseout: function() {
-            this.set( 'hover', false );
-            return this;
-        },
-        
-        show: function() {
-            this.polygon.setVisible( true );
-            return this;
-        },
-        
-        hide: function() {
-            this.polygon.setVisible( false );
-            return this;
-        }
-    });
-    
-    /**
-     *  Описание класса представления карты
-     */
-    var MapView = Backbone.View.extend({
-        map: null,
-        active: null,
-        
-        initialize: function( options ) {
-        
-            var self = this;
-            this.map = DDM.Map;
-
-            var collection = new Backbone.Collection( [], { model:CountyModel });
-            collection.on( 'change:selected', function( model ) {
-                var select = model.get( 'selected' ); 
-                if ( select ) {
-                    if ( self.active ) self.active.unselect();
-                    self.active = model;
-                }
-            });
-            
-            collection.add( config.counties || [] );
-            this.collection = collection;
-            
-            return this;
-        },
-        
-        render: function() {
-            return this;
-        }
-        
-    });
-
-    /**
-     *  Инициализация карты
-     */
-    function ddm_init() {
-        
-        // Элемент DOM, на котором будет отрисовываться карта
-        var el = $( config.el );
-        DDM.Map = new google.maps.Map( el[0], config.map );
-
-        // Модель, которая пришла от приложения
-        DDM.Model = ddm_model.props;
-        DDM.setCurrentCountyFromJS = ddm_model.setCurrentCountyFromJS;
-        DDM.getCurrentCoordsFromJS  = ddm_model.getCurrentCoordsFromJS;
-        
-        // Представление DDM
-        DDM.View = new MapView({ el:el });
-        DDM.View.render();
-        
-        // 
-        DDM.Collection = DDM.View.collection;
-        
-        // Вешаем обработчик события 
-        google.maps.event.addDomListener( window, 'resize', ddm_resize );
-
-        window.DDM = DDM;
-        
-
-        if ( _.isFunction( config.success ) ) {
-            config.success.apply( DDM );
-        }
-        /*
-        marker = new google.maps.Marker({
-          //position: new google.maps.LatLng( 59.3462, -135.0306 ),
-          position: new google.maps.LatLng( 54.75864, -159.42634 ),
-          map: DDM.View.map
+﻿function ddm_load()
+{
+    window.ddmMap = { 
+      el: null,
+      loaded: false,
+      map: false,
+      center: false,
+      marker: false,
+      counties: {},
+      
+      initialize: function() {
+        // console.log( 'ddmMap.initialize' );
+        var self = this;
+        self.el = document.getElementById( 'map_canvas' ); 
+        self.map = new google.maps.Map( self.el, {
+          zoom: 8,
+          center: self._createPoint( 44.4024, -100.459 ),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-        */
-        return DDM;
         
-    }
+        ddmFilter = window.ddmFilter || {};
+        ddmMapView = window.ddmMapView || {};
+        
+        google.maps.event.addListener( self.map, 'idle', function() {
+          // console.log( 'self.map.idle' );
+          if ( !self.loaded ) {
+            self.loaded = self.load();
+          }
+        });
 
-    /**
-     *  Обновление карты после изменения размеров окна
-     */
-    function ddm_resize() {
-        var map = DDM.View.map;
-        var center = map.getCenter();
-        google.maps.event.trigger( map, 'resize' );
-        map.setCenter( center );
-    }
+        google.maps.event.addListener( self.map, 'click', function( event ) {
+          // console.log( 'self.map.click' );
+          self.panTo( event.latLng );
+        });
+        
+        google.maps.event.addListener( self.map, 'mousemove', function( event ) {
+          // console.log( 'self.map.mousemove' );
+          // console.log( event.latLng.toString() );
+          self.mousemove( event.latLng );
+        });
+        
+        if ( _.has( ddmFilter, 'selectionUpdated' ) ) {
+          ddmFilter.selectionUpdated.connect( self, self.update );
+        }
+        
+        if ( _.has( ddmMapView, 'resized' ) ) {
+          ddmMapView.resized.connect( self, self.resize );
+        }
+        
+        return this;
+      },
+      
+      panTo: function( lat, lng ) {
+        // console.log( 'ddmMap.panTo' );
+        var self = this;
+        var center = lat instanceof google.maps.LatLng ? lat : self._createPoint( lat, lng );
+        self.center = center;
+        self.map.panTo( center );
+        return this;
+      },
+      
+      mousemove: function( lat, lng ) {
+        // console.log( 'ddmMap.mousemove' );
+        var self = this;
+        var point = lat instanceof google.maps.LatLng ? lat : self._createPoint( lat, lng );
+        if ( _.has( ddmMapView, 'mousemove' ) ) {
+            ddmMapView.mousemove( point.lat(), point.lng() );
+        }
+        return this;
+      },
+      
+      click: function( lat, lng ) {
+        // console.log( 'ddmMap.click' );
+        this.panTo( lat, lng );
+        return this;
+      },
+      
+      setMarker: function( lat, lng ) {
+        // console.log( 'ddmMap.setMarker' );
+        var self = this;
+        var point = lat instanceof google.maps.LatLng ? lat : self._createPoint( lat, lng );
+        if ( !self.marker ) {
+          self.marker = new google.maps.Marker({
+            position: point,
+            map: self.map
+          });
+        }
+        self.marker.setPosition( point );
+        self.map.panTo( point );
+        return this;
+      },
+      
+      load: function() {
+        // console.log( 'ddmMap.load' );
+        var self = this;
+        if ( _.has( ddmMapView, 'loaded' ) ) {
+          ddmMapView.loaded();
+          // console.log( 'ddmMapView.loaded' );
+        }
+        self.update();
+        return true;
+      },
+      
+      update: function() {
+        console.log( 'ddmMap.update' );
+        var self = this;
+        var selection = _.result( ddmFilter, 'selection', [] );
+        console.log( 'ddmMap.update selection.length=' + selection.length );
+        _.each( selection, function( item ) {
+          if ( !_.has( self.counties, item.id ) ) {
+            self._addCounty( item.id );
+          }
+        });
+        return this;
+      },
+      
+      resize: function( width, height ) {
+        // console.log( 'ddmMap.resize (width=' + width + ', height=' + height + ')' );
+        var self = this;
+        self.el.style.width = width + 'px';
+        self.el.style.height = height + 'px';
+        //google.maps.event.trigger( self.map, 'resize' );
+        //self.panTo( self.center );
+      },
+      
+      _findCounty: function( id ) {
+        // console.log( 'ddmMap._findCounty' );
+        return _.find( ddmFilter.model.counties, function( county ) {
+          return ( county.id == id );
+        });
+      },
+      
+      _addCounty: function( id ) {
+        // console.log( 'ddmMap._addCounty (id=' + id + ')' );
+        var self = this;
+        var model = self._findCounty( id );
+        
+        var paths = self._createMVCArray();
+        _.each( model.boundaries, function( boundary ) {
+            var loop = self._createMVCArray();
+            _.each( boundary.vertices, function( vertex ) {
+                var point = self._createPoint( vertex.y, vertex.x );
+                loop.push( point );
+            });
+            paths.push( loop );
+        });
+        var polygon = new google.maps.Polygon({
+          fillColor: model.fillColor,
+          fillOpacity: model.fillOpacity,
+          strokeColor: model.strokeColor,
+          strokeWeight: model.strokeWeight,
+          strokeOpacity: model.strokeOpacity,
+          paths: paths,
+          map: self.map
+        });
+        
+        google.maps.event.addListener( polygon, 'click', function( event ) {
+          var p = event.latLng;
+          var county_id = this.get( 'county_id' );
+          var model = self.counties[county_id].model;
+          model.clicked( p.lat(), p.lng() );
+          self.click( p );
+        });
+        google.maps.event.addListener( polygon, 'mousemove', function( event ) {
+          self.mousemove( event.latLng );
+        });
+        google.maps.event.addListener( polygon, 'mouseover', function( event ) {
+          model.mouseover();
+        });
+        google.maps.event.addListener( polygon, 'mouseout', function( event ) {
+          model.mouseout();
+        });
+
+        polygon.set( 'county_id', model.id );
+        
+        model.visibleChanged.connect( function() {
+          polygon.setVisible( model.visible );
+        });
+        model.repaint.connect( function() {
+          polygon.setOptions({
+            fillColor: model.fillColor,
+            fillOpacity: model.fillOpacity,
+            strokeColor: model.strokeColor,
+            strokeWeight: model.strokeWeight,
+            strokeOpacity: model.strokeOpacity,
+          });
+        });
+        
+        self.counties[id] = {
+          polygon: polygon,
+          model: model
+        };
+        
+        return this;
+      },
+      
+      _createPoint: function( lat, lng ) {
+        return new google.maps.LatLng( lat, lng );
+      },
+      
+      _createMVCArray: function() {
+        return new google.maps.MVCArray();
+      },
+      
+      dummy: 1
+      
+    }; // window.ddmMap
     
-    google.maps.event.addDomListener( window, 'load', ddm_init );
-    
+    window.ddmMap.initialize();
 }
 

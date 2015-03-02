@@ -1,8 +1,8 @@
 #ifndef DDM_VERSION_H
 #define DDM_VERSION_H
 
-#define DDM_MAJOR_VERSION 1
-#define DDM_MINOR_VERSION 0
-#define DDM_BUILD_NUMBER  14
+#define DDM_MAJOR_VERSION 2
+#define DDM_MINOR_VERSION 3
+#define DDM_BUILD_NUMBER  23
 
 #endif // DDM_VERSION_H
