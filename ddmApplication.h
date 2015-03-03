@@ -25,6 +25,8 @@ public:
     ddmMainWindow* mainWindow() const;
     ddmCentralWidget* centralWidget() const;
 
+    virtual ~ddmApplication();
+
 Q_SIGNALS:
 
 public Q_SLOTS:
