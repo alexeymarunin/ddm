@@ -32,6 +32,7 @@ public:
     QVBoxLayout* widgetLayout() const;
     QVBoxLayout* mapLayout() const;
 
+    void appendFilter( const QString& title, ddmFilter* filter );
     ddmFilter* currentFilter() const;
     void setCurrentFilter( int index );
 
@@ -57,7 +58,6 @@ protected:
     ddmFilter*  m_currentFilter;
 
     void resizeEvent( QResizeEvent *event );
-    void fillFilterCombo();
     void installEvents();
 
 private:

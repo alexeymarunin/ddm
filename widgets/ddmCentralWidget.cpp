@@ -7,9 +7,7 @@
 #include "widgets/ddmCentralWidget.h"
 #include "ui_ddmCentralWidget.h"
 
-#include "filters/ddmEmptyFilter.h"
-#include "filters/ddmCountyFilter.h"
-#include "filters/ddmMinMaxFrictionFilter.h"
+#include "filters/ddmFilter.h"
 
 /**
  * @brief ddmCentralWidget::ddmCentralWidget
@@ -21,23 +19,14 @@ ddmCentralWidget::ddmCentralWidget( QWidget* parent ) : QWidget( parent ),
     this->ui = new Ui::ddmCentralWidget;
     this->ui->setupUi( this );
 
-    this->fillFilterCombo();
+    QObject::connect( this->comboFilter(), SIGNAL( currentIndexChanged(int) ), this, SLOT( slotChangedFilter(int) ) );
 
 }
 
-void ddmCentralWidget::fillFilterCombo()
+void ddmCentralWidget::appendFilter( const QString& title, ddmFilter* filter )
 {
     QComboBox* comboFilter = this->comboFilter();
-    ddmFilter* filter;
-
-    filter = new ddmEmptyFilter( this );
-    comboFilter->addItem( QString( "<выберите фильтр>" ), QVariant::fromValue( filter ) );
-
-    filter = new ddmCountyFilter( this );
-    comboFilter->addItem( QString( "Отобразить графство" ), QVariant::fromValue( filter ) );
-
-    filter = new ddmMinMaxFrictionFilter( this );
-    comboFilter->addItem( QString( "Диапазон трений" ), QVariant::fromValue( filter ) );
+    comboFilter->addItem( title, QVariant::fromValue( filter ) );
 
 }
 
@@ -89,7 +78,7 @@ void ddmCentralWidget::resizeEvent( QResizeEvent* event )
     QSize size = event->size();
     if ( this->currentFilter() )
     {
-        this->currentFilter()->widget()->mapView()->resize( size.width(), size.height() );
+        this->currentFilter()->mapView()->resize( size.width(), size.height() );
     }
 }
 
