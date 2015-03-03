@@ -36,6 +36,8 @@ public:
 
     QSqlDatabase& db();
 
+    void close();
+
     virtual ~ddmDatabase();
 
 private:

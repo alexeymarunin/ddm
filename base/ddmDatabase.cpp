@@ -164,6 +164,20 @@ bool ddmDatabase::hasErrors() const
 }
 
 /**
+ * Закрывает БД
+ *
+ * Данный метод не рекомендуется вызывать - это сделает приложение в конце своей работы.
+ *
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+void ddmDatabase::close()
+{
+    delete ddmDatabase::m_instance;
+    ddmDatabase::m_instance = NULL;
+}
+
+/**
  * Деструктор класса
  *
  * @author  Марунин А.В.
