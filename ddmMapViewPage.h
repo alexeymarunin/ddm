@@ -18,6 +18,8 @@ public:
 
     ddmMapViewPage( QObject* parent = 0 );
 
+    virtual ~ddmMapViewPage();
+
 protected:
 
     void javaScriptConsoleMessage( const QString& text, int line, const QString& source );
