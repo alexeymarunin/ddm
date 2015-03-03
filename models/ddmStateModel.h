@@ -73,8 +73,6 @@ protected:
     QVariantList    m_boundaries;
     QVariantList    m_vertices;
 
-private:
-
     void addState( ddmState* state );
     void addCounty( ddmCounty* county, ddmState* state );
     void addBoundary( ddmBoundary* boundary, ddmCounty* county );

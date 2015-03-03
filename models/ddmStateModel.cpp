@@ -32,6 +32,7 @@ void ddmStateModel::load()
         "CREATE TABLE IF NOT EXISTS cache_boundaries AS\n"
         "  SELECT s.id AS state_id, s.name AS state_name,\n"
         "      c.id AS county_id, c.geographic_name AS county_name,\n"
+        "      r.popul_est AS county_population, \n"
         "      b.id AS boundary_id, p.x AS center_x, p.y center_y, b.square AS boundary_square,\n"
         "      f.f_out_sum AS county_f_out_sum, f.f_out_mid AS county_f_out_mid,\n"
         "      f.f_in_sum AS county_f_in_sum, f.f_in_mid AS county_f_in_mid,\n"
@@ -39,6 +40,7 @@ void ddmStateModel::load()
         "    FROM ddm_county_boundaries AS cb\n"
         "    LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id\n"
         "    LEFT JOIN ddm_points AS p ON p.id = b.center_id\n"
+        "    LEFT JOIN ddm_residences  AS r ON r.county_id = cb.county_id\n"
         "    LEFT JOIN ddm_frictions AS f ON f.county_id = cb.county_id\n"
         "    LEFT JOIN ddm_counties AS c ON c.id = f.county_id\n"
         "    LEFT JOIN ddm_states AS s ON s.id = c.state_id\n"
@@ -122,19 +124,66 @@ void ddmStateModel::load()
     return;
 }
 
+/**
+ * Добавляет новый штат в модель
+ *
+ * Штаты с одинаковым id не будут дублироваться
+ *
+ * @param   state Добавляемый штат
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
 void ddmStateModel::addState( ddmState* state )
 {
-    state->setParent( this );
-    this->m_states.append( QVariant::fromValue( state ) );
+    bool newState = true;
+    QVariantList states = this->states();
+    foreach ( QVariant obj, states )
+    {
+        ddmState* value = obj.value<ddmState*>();
+        if ( value->id() == state->id() )
+        {
+            newState = false;
+            break;
+        }
+    }
+
+    if ( newState )
+    {
+        state->setParent( this );
+        this->m_states.append( QVariant::fromValue( state ) );
+    }
 }
 
+/**
+ * Добавляет графство в заданный штат
+ *
+ * Если такое графство уже добавлено ранее в штат, то ничего не произойдет
+ *
+ * @param   county Добавляемое графство
+ * @param   state Штат, в который добавляется графство
+ */
 void ddmStateModel::addCounty( ddmCounty* county, ddmState* state )
 {
-    state->addCounty( county );
-    this->m_counties.append( QVariant::fromValue( county ) );
+    bool newCounty = true;
+    QVariantList counties = state->counties();
+    foreach ( QVariant obj, counties )
+    {
+        ddmCounty* value = obj.value<ddmCounty*>();
+        if ( value->id() == county->id() )
+        {
+            newCounty = false;
+            break;
+        }
+    }
 
-    connect( county, SIGNAL( clicked(double,double) ), this, SLOT( slotClicked(double,double) ) );
-    connect( county, SIGNAL( mousemove(double,double) ), this, SLOT( slotMouseMove(double,double) ) );
+    if ( newCounty )
+    {
+        state->addCounty( county );
+        this->m_counties.append( QVariant::fromValue( county ) );
+
+        connect( county, SIGNAL( clicked(double,double) ), this, SLOT( slotClicked(double,double) ) );
+        connect( county, SIGNAL( mousemove(double,double) ), this, SLOT( slotMouseMove(double,double) ) );
+    }
 }
 
 void ddmStateModel::addBoundary( ddmBoundary* boundary, ddmCounty* county )
