@@ -6,7 +6,7 @@ ddmEmptyFilter::ddmEmptyFilter( QObject* parent ) : ddmFilter( parent )
 {
 }
 
-void ddmEmptyFilter::create()
+void ddmEmptyFilter::setup()
 {
     ddmEmptyFilterModel* model = new ddmEmptyFilterModel( this );
     ddmEmptyFilterWidget* widget = new ddmEmptyFilterWidget( this );
@@ -15,7 +15,7 @@ void ddmEmptyFilter::create()
     this->m_widget = widget;
 
     // Обязательно вызываем метод из базового класса!
-    ddmFilter::create();
+    ddmFilter::setup();
 
     this->apply();
 }

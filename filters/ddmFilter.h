@@ -4,6 +4,8 @@
 #include "models/ddmFilterModel.h"
 #include "widgets/ddmFilterWidget.h"
 
+class ddmMapView;
+
 /**
  * Класс ddmFilter является базовым классом для всех остальных фильтров
  * Определяет основные поля, методы, сигналы и слоты
@@ -14,7 +16,7 @@
  * входят все графства, для которых свойство visible = true
  *
  * Методы класса:
- *  - create()
+ *  - setup()
  *    Защищенный метод, служит для формирования внутренних полей фильтра.
  *    По умолчанию проверяет наличие модели и виджета, загружает модель и задает основные сигнал-слот связи.
  *    Должен быть перегружен в наследуемых классах, в перегруженном методе должны создаваться модель и виджет,
@@ -74,6 +76,7 @@ public:
     void setMapCenter( const QVariantMap& center );
     void setMapCenter( double x, double y );
 
+    bool valid() const;
     bool isMapLoaded() const;
 
     virtual ~ddmFilter();
@@ -96,12 +99,28 @@ protected:
 
     ddmFilterModel*     m_model;
     ddmFilterWidget*    m_widget;
+    ddmMapView*         m_mapView;
 
-    virtual void create();
-    bool isCreated() const;
+    template<typename T> T* model_cast() const;
+    template<typename T> T* widget_cast() const;
+
+    virtual void setup();
 
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
 };
 
+template<typename T>
+T* ddmFilter::model_cast() const
+{
+    return qobject_cast<T*>( this->model() );
+}
+
+template<typename T>
+T* ddmFilter::widget_cast() const
+{
+    return qobject_cast<T*>( this->widget() );
+}
+
 #endif // DDM_FILTER_H
+

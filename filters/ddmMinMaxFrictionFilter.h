@@ -22,7 +22,7 @@ public:
 
 protected:
 
-    virtual void create();
+    virtual void setup();
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
 

@@ -7,7 +7,7 @@ ddmMinMaxFrictionFilter::ddmMinMaxFrictionFilter( QObject* parent ) : ddmFilter(
 {
 }
 
-void ddmMinMaxFrictionFilter::create()
+void ddmMinMaxFrictionFilter::setup()
 {
     ddmMinMaxFrictionFilterModel* model = new ddmMinMaxFrictionFilterModel( this );
     ddmMinMaxFrictionFilterWidget* widget = new ddmMinMaxFrictionFilterWidget( this );
@@ -16,10 +16,12 @@ void ddmMinMaxFrictionFilter::create()
     this->m_widget = widget;
 
     // Обязательно вызываем метод из базового класса!
-    ddmFilter::create();
+    ddmFilter::setup();
 
+    // Задаем ограничения
     model->setMinBound( model->minFriction() );
     model->setMaxBound( model->maxFriction() );
+
     this->updateData( false );
 
     this->apply();
@@ -27,10 +29,10 @@ void ddmMinMaxFrictionFilter::create()
 
 void ddmMinMaxFrictionFilter::updateData( bool fromWidget )
 {
-    if ( this->isCreated() )
+    if ( this->valid() )
     {
-        ddmMinMaxFrictionFilterModel*  model  = qobject_cast<ddmMinMaxFrictionFilterModel*>( this->model() );
-        ddmMinMaxFrictionFilterWidget* widget = qobject_cast<ddmMinMaxFrictionFilterWidget*>( this->widget() );
+        ddmMinMaxFrictionFilterModel* model = this->model_cast<ddmMinMaxFrictionFilterModel>();
+        ddmMinMaxFrictionFilterWidget* widget = this->widget_cast<ddmMinMaxFrictionFilterWidget>();
         if ( fromWidget )
         {
             model->setMinBound( widget->minBound() );
@@ -49,7 +51,7 @@ void ddmMinMaxFrictionFilter::updateData( bool fromWidget )
 
 void ddmMinMaxFrictionFilter::updateSelection()
 {
-    ddmMinMaxFrictionFilterModel* model = qobject_cast<ddmMinMaxFrictionFilterModel*>( this->model() );
+    ddmMinMaxFrictionFilterModel* model = this->model_cast<ddmMinMaxFrictionFilterModel>();
     QVariantList counties = model->counties();
     double minBound = model->minBound();
     double maxBound = model->maxBound();

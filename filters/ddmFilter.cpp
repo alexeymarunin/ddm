@@ -1,6 +1,7 @@
 #include <QtGlobal>
 #include "base/ddmCounty.h"
 #include "widgets/ddmCentralWidget.h"
+#include "ddmMapView.h"
 #include "ddmApplication.h"
 #include "filters/ddmFilter.h"
 
@@ -13,9 +14,10 @@ ddmFilter::ddmFilter( QObject* parent ) : ddmObject( parent ),
     m_model( NULL ), m_widget( NULL )
 {
     this->setObjectName( "ddmFilter" );
+    this->m_mapView = new ddmMapView( this );
 }
 
-void ddmFilter::create()
+void ddmFilter::setup()
 {
     Q_ASSERT( this->model() != NULL );
     Q_ASSERT( this->widget() != NULL );
@@ -25,7 +27,7 @@ void ddmFilter::create()
     QObject::connect( this->model(),  SIGNAL( changed() ), this, SLOT( slotModelChanged()  ) );
     QObject::connect( this->widget(), SIGNAL( changed() ), this, SLOT( slotWidgetChanged() ) );
 
-    ddmMapView* mapView = this->widget()->mapView();
+    ddmMapView* mapView = this->mapView();
     QObject::connect( mapView, SIGNAL( javaScriptWindowObjectCleared() ), this, SLOT( slotJavaScriptWindowObjectCleared() ) );
     QObject::connect( mapView, SIGNAL( loaded() ), this, SLOT( slotMapLoaded() ) );
 
@@ -43,44 +45,24 @@ void ddmFilter::updateSelection()
 
 void ddmFilter::activate()
 {
-    if ( !this->isCreated() )
+    if ( !this->valid() )
     {
-        this->create();
+        this->setup();
     }
 
-    ddmCentralWidget* centralWidget = ddmApp->centralWidget();
-    QVBoxLayout* widgetLayout = centralWidget->widgetLayout();
-    QVBoxLayout* mapLayout = centralWidget->mapLayout();
-
-    ddmFilterWidget* filterWidget = this->widget();
-    if ( !filterWidget->parentWidget() ) filterWidget->setParent( centralWidget );
-    widgetLayout->addWidget( filterWidget );
-    filterWidget->show();
-
-    ddmMapView* filterMap = this->mapView();
-    if ( !filterMap->parentWidget() ) filterMap->setParent( centralWidget );
-    mapLayout->addWidget( filterMap );
-    filterMap->show();
+    this->widget()->show();
+    this->mapView()->show();
 }
 
 void ddmFilter::deactivate()
 {
-    ddmCentralWidget* centralWidget = ddmApp->centralWidget();
-    QVBoxLayout* widgetLayout = centralWidget->widgetLayout();
-    QVBoxLayout* mapLayout = centralWidget->mapLayout();
-
-    ddmFilterWidget* filterWidget = this->widget();
-    widgetLayout->removeWidget( filterWidget );
-    filterWidget->hide();
-
-    ddmMapView* filterMap = this->mapView();
-    mapLayout->removeWidget( filterMap );
-    filterMap->hide();
+    this->widget()->hide();
+    this->mapView()->hide();
 }
 
 void ddmFilter::apply()
 {
-    if ( this->isCreated() )
+    if ( this->valid() )
     {
         this->updateData();
         this->updateSelection();
@@ -122,28 +104,28 @@ QVariantList ddmFilter::selection() const
 
 void ddmFilter::setMapCenter( const QVariantMap& center )
 {
-    if ( this->isCreated() )
+    if ( this->valid() )
     {
-        this->widget()->mapView()->setCenter( center );
+        this->mapView()->setCenter( center );
     }
 }
 
 void ddmFilter::setMapCenter( double x, double y )
 {
-    if ( this->isCreated() )
+    if ( this->valid() )
     {
-        this->widget()->mapView()->setCenter( x, y );
+        this->mapView()->setCenter( x, y );
     }
 }
 
 bool ddmFilter::isMapLoaded() const
 {
-    return ( this->mapView() && this->mapView()->mapReady() );
+    return this->mapView()->mapReady();
 }
 
 void ddmFilter::slotModelChanged()
 {
-    this->updateData( false );
+    //this->updateData( false );
     // this->apply();
 }
 
@@ -158,12 +140,12 @@ void ddmFilter::slotMapLoaded()
 
 void ddmFilter::slotJavaScriptWindowObjectCleared()
 {
-    this->widget()->mapView()->addToJavaScriptWindowObject( "ddmFilter", this );
+    this->mapView()->addToJavaScriptWindowObject( "ddmFilter", this );
 }
 
-bool ddmFilter::isCreated() const
+bool ddmFilter::valid() const
 {
-    return ( this->model() && this->widget() );
+    return ( this->model() && this->widget() && this->mapView() );
 }
 
 /**
@@ -186,7 +168,7 @@ ddmFilterWidget* ddmFilter::widget() const
 
 ddmMapView* ddmFilter::mapView() const
 {
-    return ( this->isCreated() ? this->widget()->mapView() : NULL );
+    return this->m_mapView;
 }
 
 /**

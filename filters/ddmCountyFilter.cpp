@@ -1,19 +1,28 @@
 #include "filters/ddmCountyFilter.h"
 #include "models/ddmCountyFilterModel.h"
+#include "ddmMapView.h"
 #include "widgets/ddmCountyFilterWidget.h"
 
 /**
- * @brief ddmCountyFilter::ddmCountyFilter
- * @param parent
+ * Конструктор класса
+ *
+ * @param   parent Родитель (владелец)
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 ddmCountyFilter::ddmCountyFilter( QObject* parent ) : ddmFilter( parent )
 {
 }
 
 /**
- * @brief ddmCountyFilter::create
+ * Создает фильтр
+ *
+ * Создает модель фильтра и виджет, настраивает сигнал-слоты
+ *
+ * @author  Марунин А.В.
+ * @since   2.1
  */
-void ddmCountyFilter::create()
+void ddmCountyFilter::setup()
 {
 
     ddmCountyFilterModel* model = new ddmCountyFilterModel( this );
@@ -31,22 +40,27 @@ void ddmCountyFilter::create()
     widget->setCurrentCounty( model->currentCounty()->geographicName() );
 
     // Обязательно вызываем метод из базового класса!
-    ddmFilter::create();
+    ddmFilter::setup();
 
     this->apply();
 
 }
 
 /**
- * @brief ddmCountyFilter::updateData
- * @param fromWidget
+ * Синхронизирует данные между моделью и виджетом
+ *
+ * @param   fromWidget Флаг, указывающий направление синхронизации:
+ *              true - обновить данные модели из значений элементов управления виджета
+ *              false - обновить элементы управления на виджете по данным модели
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilter::updateData( bool fromWidget )
 {
-    if ( this->isCreated() )
+    if ( this->valid() )
     {
-        ddmCountyFilterModel*  model  = qobject_cast<ddmCountyFilterModel*>( this->model() );
-        ddmCountyFilterWidget* widget = qobject_cast<ddmCountyFilterWidget*>( this->widget() );
+        ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
+        ddmCountyFilterWidget* widget = this->widget_cast<ddmCountyFilterWidget>();
         if ( fromWidget )
         {
             model->setCurrentState( widget->currentState() );
@@ -62,7 +76,7 @@ void ddmCountyFilter::updateData( bool fromWidget )
 
 void ddmCountyFilter::updateSelection()
 {
-    ddmCountyFilterModel* model = qobject_cast<ddmCountyFilterModel*>( this->model() );
+    ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
 
     bool needUpdate = false;
     QVariantList selection = this->selection();
@@ -81,7 +95,7 @@ void ddmCountyFilter::updateSelection()
 
 void ddmCountyFilter::slotWidgetChangedState()
 {
-    ddmCountyFilterWidget* widget = qobject_cast<ddmCountyFilterWidget*>( this->widget() );
+    ddmCountyFilterWidget* widget = this->widget_cast<ddmCountyFilterWidget>();
     QString stateName = widget->currentState();
     if ( !stateName.isEmpty() )
     {
@@ -93,17 +107,17 @@ void ddmCountyFilter::slotWidgetChangedState()
 
 void ddmCountyFilter::slotWidgetChangedCounty()
 {
-    ddmCountyFilterWidget* widget = qobject_cast<ddmCountyFilterWidget*>( this->widget() );
+    ddmCountyFilterWidget* widget = this->widget_cast<ddmCountyFilterWidget>();
     QString countyName = widget->currentCounty();
     if ( !countyName.isEmpty() )
     {
-        ddmCountyFilterModel* model = qobject_cast<ddmCountyFilterModel*>( this->model() );
+        ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
         model->setCurrentCounty( countyName );
         this->apply();
 
         QVariantMap center = model->currentCounty()->center();
         this->setMapCenter( center );
-        widget->mapView()->setMarker( center );
+        this->mapView()->setMarker( center );
     }
 }
 
@@ -111,12 +125,11 @@ void ddmCountyFilter::slotMapLoaded()
 {
     this->updateData();
 
-    ddmCountyFilterModel* model = qobject_cast<ddmCountyFilterModel*>( this->model() );
-    ddmCountyFilterWidget* widget = qobject_cast<ddmCountyFilterWidget*>( this->widget() );
-
+    ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
     QVariantMap center = model->currentCounty()->center();
     this->setMapCenter( center );
-    widget->mapView()->setMarker( center );
+
+    this->mapView()->setMarker( center );
 }
 
 /**
