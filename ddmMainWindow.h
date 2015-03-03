@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 class ddmCentralWidget;
-class ddmTableView;
 class QLabel;
 
 namespace Ui {
@@ -14,7 +13,7 @@ namespace Ui {
 /**
  * Класс ddmMainWindow описывает главное окно приложения
  *
- * @author  Марунин А.В.
+ * @author  Цалко Т.В.
  * @since   2.0
  */
 class ddmMainWindow : public QMainWindow
@@ -33,29 +32,21 @@ public Q_SLOTS:
 
 private Q_SLOTS:
 
-    void slotQuit();
-
-    // void slotOpen();
-
     void slotReload();
-
     void slotIncreaseZoom();
-
     void slotDecreaseZoom();
-
-    //void createTableView();
+    void slotQuit();
 
 protected:
 
-    void InstallEvents();
+    void setupEvents();
 
 private:
 
     Ui::ddmMainWindow*  ui;
     ddmCentralWidget*   m_centralWidget;
-
-    QLabel* m_statusBarLat;
-    QLabel* m_statusBarLng;
+    QLabel*             m_statusBarLat;
+    QLabel*             m_statusBarLng;
 
 };
 
