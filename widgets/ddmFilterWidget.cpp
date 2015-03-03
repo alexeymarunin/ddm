@@ -1,4 +1,6 @@
 #include "filters/ddmFilter.h"
+#include "ddmApplication.h"
+#include "widgets/ddmCentralWidget.h"
 #include "widgets/ddmFilterWidget.h"
 
 
@@ -13,12 +15,11 @@ ddmFilterWidget::ddmFilterWidget( ddmFilter* filter, QWidget* parent ) : QWidget
     this->setObjectName( "widget" ); // делаем виджет доступным в JavaScript
     this->setMinimumSize( 150, 300 );
 
-    /**
-     * @todo Если перенести mapView в класс фильтра,
-     * то там можно сразу для него задать родителей centalWidget
-     * Нафига оно вообще здесь?
-     */
-    this->m_mapView = new ddmMapView( filter );
+    if ( !parent )
+    {
+        this->setParent( ddmApp->centralWidget() );
+    }
+    this->m_widgetLayout = ddmApp->centralWidget()->widgetLayout();
 }
 
 /**
@@ -35,14 +36,18 @@ void ddmFilterWidget::slotApplyFilter()
     this->filter()->apply();
 }
 
-/**
- * @brief ddmFilterWidget::mapView
- * @return
- */
-ddmMapView* ddmFilterWidget::mapView() const
+void ddmFilterWidget::show()
 {
-    return this->m_mapView;
+    QWidget::show();
+    this->m_widgetLayout->addWidget( this );
 }
+
+void ddmFilterWidget::hide()
+{
+    QWidget::hide();
+    this->m_widgetLayout->removeWidget( this );
+}
+
 
 /**
  * @brief ddmFilterWidget::~ddmFilterWidget

@@ -1,8 +1,8 @@
 #ifndef DDM_FILTER_WIDGET_H
 #define DDM_FILTER_WIDGET_H
 
+#include <QVBoxLayout>
 #include <QWidget>
-#include "ddmMapView.h"
 
 class ddmFilter;
 
@@ -22,7 +22,6 @@ public:
     ddmFilterWidget( ddmFilter* filter, QWidget* parent = NULL );
 
     ddmFilter* filter() const;
-    ddmMapView* mapView() const;
 
     virtual ~ddmFilterWidget();
 
@@ -33,11 +32,13 @@ Q_SIGNALS:
 public Q_SLOTS:
 
     void slotApplyFilter();
+    void show();
+    void hide();
 
 protected:
 
-    ddmFilter*  m_filter;
-    ddmMapView* m_mapView;  // TODO: на мой взгляд, mapView нужно перенести отсюда в класс фильтра
+    ddmFilter*      m_filter;
+    QVBoxLayout*    m_widgetLayout;
 
 };
 
