@@ -44,13 +44,15 @@ void ddmCounty::create( const QSqlRecord& record )
     int id = record.value( "county_id" ).toInt();
     QString geographicName = record.value( "county_name" ).toString();
 
+    int population = record.value( "county_population" ).toInt();
+
     int f_out_sum = record.value( "county_f_out_sum" ).toInt();
     double f_out_mid = record.value( "county_f_out_mid" ).toDouble();
     int f_in_sum = record.value( "county_f_in_sum" ).toInt();
     double f_in_mid = record.value( "county_f_in_mid" ).toDouble();
     double f_mid = record.value( "county_f_mid" ).toDouble();
 
-    this->create( id, geographicName, f_out_sum, f_out_mid, f_in_sum, f_in_mid, f_mid );
+    this->create( id, geographicName, population, f_out_sum, f_out_mid, f_in_sum, f_in_mid, f_mid );
 }
 
 /**
@@ -67,10 +69,13 @@ void ddmCounty::create( const QSqlRecord& record )
  * @since   2.1
  */
 void ddmCounty::create( int id, const QString& geographicName,
+                        int population,
                         int f_out_sum, double f_out_mid, int f_in_sum, double f_in_mid, double f_mid )
 {
     this->m_id = id;
     this->m_geographicName = geographicName;
+
+    this->m_population = population;
 
     this->m_f_out_sum = f_out_sum;
     this->m_f_out_mid = f_out_mid;
@@ -171,6 +176,18 @@ QVariantMap ddmCounty::center() const
 QString ddmCounty::geographicName() const
 {
     return this->m_geographicName;
+}
+
+/**
+ * Возвращает число жителей графства
+ *
+ * @return  Целое число
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+int ddmCounty::population() const
+{
+    return this->m_population;
 }
 
 /**

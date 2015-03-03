@@ -25,11 +25,13 @@ public:
     Q_PROPERTY( QVariantList boundaries READ boundaries     )
     Q_PROPERTY( QVariantMap  center     READ center         )
 
-    Q_PROPERTY( int     f_out_sum   READ f_out_sum )
-    Q_PROPERTY( double  f_out_mid   READ f_out_mid )
-    Q_PROPERTY( int     f_in_sum    READ f_in_sum  )
-    Q_PROPERTY( double  f_in_mid    READ f_in_mid  )
-    Q_PROPERTY( double  f_mid       READ f_mid     )
+    Q_PROPERTY( int     population  READ population )
+
+    Q_PROPERTY( int     f_out_sum   READ f_out_sum  )
+    Q_PROPERTY( double  f_out_mid   READ f_out_mid  )
+    Q_PROPERTY( int     f_in_sum    READ f_in_sum   )
+    Q_PROPERTY( double  f_in_mid    READ f_in_mid   )
+    Q_PROPERTY( double  f_mid       READ f_mid      )
 
     Q_PROPERTY( QString fillColor       MEMBER m_fillColor      NOTIFY repaint )
     Q_PROPERTY( double  fillOpacity     MEMBER m_fillOpacity    NOTIFY repaint )
@@ -45,6 +47,8 @@ public:
     QString     geographicName() const;
     QVariantMap center() const;
     ddmState*   state() const;
+
+    int population() const;
 
     // Значения трений
     int    f_out_sum() const;
@@ -73,6 +77,8 @@ protected:
 
     QString m_geographicName;
 
+    int     m_population;
+
     int     m_f_out_sum;
     double  m_f_out_mid;
     int     m_f_in_sum;
@@ -87,6 +93,7 @@ protected:
 
     virtual void create( const QSqlRecord& record );
     void create( int id, const QString& geographicName,
+                 int population = 0,
                  int f_out_sum = 0, double f_out_mid = 0.0,
                  int f_in_sum = 0, double f_in_mid = 0.0, double f_mid = 0.0 );
 
