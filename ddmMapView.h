@@ -2,6 +2,7 @@
 #define DDM_MAP_VIEW_H
 
 #include <QWebView>
+#include <QVBoxLayout>
 #include <QVariantMap>
 
 class ddmFilter;
@@ -34,11 +35,13 @@ public:
     void setCenter( const QVariantMap& center );
 
     void setMarker( double x, double y );
-    void setMarker( const QVariantMap& center );
+    void setMarker( const QVariantMap& point );
 
     bool mapReady() const;
 
     ddmFilter* filter() const;
+
+    virtual ~ddmMapView();
 
 Q_SIGNALS:
 
@@ -54,6 +57,8 @@ public Q_SLOTS:
     void slotReplyFinished( QNetworkReply* reply );
     void slotJavaScriptWindowObjectCleared();
     void resize( int w, int h );
+    void show();
+    void hide();
 
 protected Q_SLOTS:
 
@@ -65,6 +70,7 @@ protected:
     ddmFilter*              m_filter;
     int                     m_pendingRequests;
     bool                    m_mapReady;
+    QVBoxLayout*            m_mapLayout;
 
 };
 
