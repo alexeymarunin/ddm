@@ -69,8 +69,22 @@ void ddmBoundary::create( int id, double x, double y, double square )
  */
 ddmPointPtr ddmBoundary::addVertex( double x, double y )
 {
-    ddmPointPtr vertex = new ddmPoint( x, y, this );
-    return vertex;
+    /*
+    ddmPoint* point = NULL;
+    QVariantList vertices = this->vertices();
+    foreach ( QVariant obj, vertices )
+    {
+        ddmPoint* value = obj.value<ddmPoint*>();
+        if ( value->equal( x, y ) )
+        {
+            point = value;
+            break;
+        }
+    }
+
+    return ( point ? point : new ddmPoint( x, y, this ) );
+    */
+    return new ddmPoint( x, y, this );
 }
 
 /**
@@ -99,7 +113,8 @@ ddmPointPtr ddmBoundary::addVertex( const QSqlRecord& record )
  */
 ddmPointPtr ddmBoundary::vertex( int id ) const
 {
-    return qobject_cast<ddmPoint*>( this->findChildById( id, "ddmPoint" ) );
+    QVariantList vertices = this->vertices();
+    return vertices.at( id ).value<ddmPoint*>();
 }
 
 /**

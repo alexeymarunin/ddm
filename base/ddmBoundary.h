@@ -50,6 +50,7 @@ protected:
 
     virtual void create( const QSqlRecord& record );
     void create( int id, double x, double y, double square );
+
 };
 
 #endif // DDM_BOUNDARY_H
