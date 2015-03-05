@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariantList>
+#include <QtDebug>
 
 /**
  * Класс ddmObject является базовым классом во всем проекте
