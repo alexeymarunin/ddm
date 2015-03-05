@@ -31,7 +31,7 @@ void ddmMapViewPage::javaScriptConsoleMessage( const QString& text, int line, co
     QString filename = QUrl( source ).fileName();
     QString message = QString( "%1:%2 %3" ).arg( filename ).arg( line ).arg( text );
     if ( source.isEmpty() ) message = text;
-    qDebug() << message;
+    qDebug( ">> %s",  qPrintable( message ) );
 }
 
 /**
