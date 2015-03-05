@@ -69,7 +69,6 @@ void ddmBoundary::create( int id, double x, double y, double square )
  */
 ddmPointPtr ddmBoundary::addVertex( double x, double y )
 {
-    /*
     ddmPoint* point = NULL;
     QVariantList vertices = this->vertices();
     foreach ( QVariant obj, vertices )
@@ -83,8 +82,7 @@ ddmPointPtr ddmBoundary::addVertex( double x, double y )
     }
 
     return ( point ? point : new ddmPoint( x, y, this ) );
-    */
-    return new ddmPoint( x, y, this );
+//    return new ddmPoint( x, y, this );
 }
 
 /**
