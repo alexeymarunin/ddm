@@ -41,16 +41,14 @@ ddmCounty::ddmCounty( const QSqlRecord& record, QObject* parent ) : ddmMapObject
  */
 void ddmCounty::create( const QSqlRecord& record )
 {
-    int id = record.value( "county_id" ).toInt();
-    QString geographicName = record.value( "county_name" ).toString();
-
-    int population = record.value( "county_population" ).toInt();
-
-    int f_out_sum = record.value( "county_f_out_sum" ).toInt();
-    double f_out_mid = record.value( "county_f_out_mid" ).toDouble();
-    int f_in_sum = record.value( "county_f_in_sum" ).toInt();
-    double f_in_mid = record.value( "county_f_in_mid" ).toDouble();
-    double f_mid = record.value( "county_f_mid" ).toDouble();
+    int     id              = record.value( "county_id" ).toInt();
+    QString geographicName  = record.value( "county_name" ).toString();
+    int     population      = record.value( "county_population" ).toInt();
+    int     f_out_sum       = record.value( "county_f_out_sum" ).toInt();
+    double  f_out_mid       = record.value( "county_f_out_mid" ).toDouble();
+    int     f_in_sum        = record.value( "county_f_in_sum" ).toInt();
+    double  f_in_mid        = record.value( "county_f_in_mid" ).toDouble();
+    double  f_mid           = record.value( "county_f_mid" ).toDouble();
 
     this->create( id, geographicName, population, f_out_sum, f_out_mid, f_in_sum, f_in_mid, f_mid );
 }
@@ -83,11 +81,11 @@ void ddmCounty::create( int id, const QString& geographicName,
     this->m_f_in_mid = f_in_mid;
     this->m_f_mid = f_mid;
 
-    this->m_fillColor = "#FF5555";
-    this->m_fillOpacity = 0.3;
+    this->m_fillColor = "#FF0000";
+    this->m_fillOpacity = 0.35;
     this->m_strokeColor = "#FF0000";
-    this->m_strokeWeight = 1;
-    this->m_strokeOpacity = 0.9;
+    this->m_strokeWeight = 2;
+    this->m_strokeOpacity = 0.7;
 
     QObject::connect( this, SIGNAL( mouseover() ), this, SLOT( slotMouseover() ) );
     QObject::connect( this, SIGNAL( mouseout()  ), this, SLOT( slotMouseout()  ) );
@@ -105,6 +103,13 @@ void ddmCounty::create( int id, const QString& geographicName,
  */
 void ddmCounty::addBoundary( ddmBoundary* boundary )
 {
+    Q_ASSERT( boundary != NULL );
+    /*
+    if ( !this->boundary( boundary->id() ) )
+    {
+        boundary->setParent( this );
+    }
+    */
     boundary->setParent( this );
 }
 
@@ -259,8 +264,8 @@ double ddmCounty::f_mid() const
  */
 void ddmCounty::slotMouseover()
 {
-    this->setProperty( "strokeWeight", 2 );
-    this->setProperty( "fillOpacity", 0.7 );
+    this->setProperty( "strokeWeight", 3 );
+    this->setProperty( "fillOpacity", 0.8 );
 }
 
 /**
@@ -272,8 +277,8 @@ void ddmCounty::slotMouseover()
  */
 void ddmCounty::slotMouseout()
 {
-    this->setProperty( "strokeWeight", 1 );
-    this->setProperty( "fillOpacity", 0.3 );
+    this->setProperty( "strokeWeight", 2 );
+    this->setProperty( "fillOpacity", 0.7 );
 }
 
 /**
