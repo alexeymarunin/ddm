@@ -1,4 +1,3 @@
-#include <QtDebug>
 #include <QTime>
 #include <QStringList>
 #include <QCryptographicHash>
@@ -73,7 +72,7 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     db.exec( sql );
     Q_ASSERT( !db.hasErrors() );
 
-    qDebug() << sqlQuery;
+    // @DEBUG qDebug() << sqlQuery;
 
     // Выполняем новый запрос
     qDebug() << "Fetching counties...";
@@ -89,7 +88,7 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     rowCount = query->rowCount();
     for ( int i = 0; i < rowCount; i++ )
     {
-        if ( i > 1000 && i % 1000 == 0 ) qDebug() << i << "/" << rowCount << "rows...";
+        // @DEBUG if ( i > 1000 && i % 1000 == 0 ) qDebug() << i << "/" << rowCount << "rows...";
 
         QSqlRecord record = query->record( i );
         int state_id = record.value( "state_id" ).toInt();
@@ -137,11 +136,13 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
         }
     }
 
+    // @DEBUG
+    /*
     qDebug() << "States:" << this->stateCount();
     qDebug() << "Counties:" << this->countyCount();
     qDebug() << "Boundaries:" << this->boundaryCount();
     qDebug() << "Elapsed:" << timer.elapsed() / 1000.0 << "sec";
-
+    */
 
     // Извлекаем информацию о вершинах
     // Берем только те контура, которые относятся к найденным графствам
@@ -163,12 +164,15 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     rt.start();
     for ( int i = 0; i < rowCount; i++ )
     {
+        // @DEBUG
+        /*
         if ( i > 1000 && i % 1000 == 0 )
         {
             int elapsed = rt.elapsed();
             qDebug() << i << "/" << rowCount << "rows" << "(" << 0.001 * elapsed << "sec" << ")";
             rt.restart();
         }
+        */
         QSqlRecord record = query->record( i );
         int boundary_id = record.value( "boundary_id" ).toInt();
         Q_ASSERT( boundary_id > 0 );
@@ -180,7 +184,8 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
         this->addVertex( record, currentBoundary );
     }
 
-    qDebug() << "Vertices:" << this->vertexCount() << ", elapsed:" << timer.elapsed() / 1000.0 << "sec";
+    // @DEBUG
+    // qDebug() << "Vertices:" << this->vertexCount() << ", elapsed:" << timer.elapsed() / 1000.0 << "sec";
 
 }
 
