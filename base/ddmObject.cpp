@@ -23,8 +23,11 @@ QObject* ddmObject::findChildById( int id, const QString& className ) const
     QObjectList children = this->children();
     foreach( QObject* obj, children )
     {
-        QVariant child_id = obj->property( "id" );
-        if ( child_id.isValid() && child_id.toInt() == id && ( className.isEmpty() || this->isClass( className ) ) )
+        QVariant property = obj->property( "id" );
+        int child_id = property.isValid() ? property.toInt() : 0;
+        if ( child_id == 0 ) continue;
+        QString child_class = obj->metaObject()->className();
+        if ( child_id == id && ( className.isEmpty() || child_class == className ) )
         {
             child = obj;
             break;
