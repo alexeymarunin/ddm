@@ -1,4 +1,3 @@
-#include <QtDebug>
 #include <QTime>
 #include <QMap>
 
@@ -76,11 +75,6 @@ void ddmStateModel::prepareCache( bool force )
     db.exec( sql );
     Q_ASSERT( !db.hasErrors() );
     elapsed = timer.elapsed() - elapsed;
-
-    // "CREATE INDEX cache_state_id_idx ON cache_boundaries ( state_id )"
-    // "CREATE INDEX cache_county_id_idx ON cache_boundaries ( county_id )"
-    // "CREATE INDEX cache_boundary_id_idx ON cache_boundaries ( boundary_id )"
-    // "CREATE INDEX cache_bp_id_idx ON cache_boundary_points ( boundary_id )"
     qDebug() << "Elapsed:" << 0.001 * elapsed << "sec";
 
 
@@ -110,6 +104,26 @@ void ddmStateModel::prepareCache( bool force )
     elapsed = timer.elapsed() - elapsed;
     qDebug() << "Elapsed:" << 0.001 * elapsed;
 
+
+    // Создаем индексы в таблицах
+    sql = "CREATE INDEX IF NOT EXISTS cache_state_id_idx ON cache_boundaries ( state_id )";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    sql = "CREATE INDEX IF NOT EXISTS cache_county_id_idx ON cache_boundaries ( county_id )";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    sql = "CREATE INDEX IF NOT EXISTS cache_boundary_id_idx ON cache_boundaries ( boundary_id )";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    sql = "CREATE INDEX IF NOT EXISTS cache_bp_id_idx ON cache_boundary_points ( boundary_id )";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    elapsed = timer.elapsed() - elapsed;
+    qDebug() << "Elapsed:" << 0.001 * elapsed << "sec";
 
     qDebug() << "====================================================";
     qDebug() << "Total time:" << 0.001 * timer.elapsed() << "sec\n";
