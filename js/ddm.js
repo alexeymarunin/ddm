@@ -7,6 +7,7 @@
       center: false,
       marker: false,
       counties: {},
+      selection: [],
       
       initialize: function() {
         // console.log( 'ddmMap.initialize' );
@@ -104,16 +105,25 @@
       update: function() {
         //console.log( 'ddmMap.update' );
         var self = this;
+        
+        for ( var id in self.counties ) {
+          self.hide( id );
+        }
+
         var selection = _.result( ddmFilter, 'selection', [] ) || [];
         console.log( 'ddmMap.update selection.length=' + selection.length );
         _.each( selection, function( item ) {
           if ( !_.has( self.counties, item.id ) ) {
             _.defer( function() {
                 self._addCounty( item.id );
+                self.show( item.id );
             });
-            
+          }
+          else {
+            self.show( item.id );
           }
         });
+        self.selection = selection;
         return this;
       },
       
@@ -124,6 +134,18 @@
         self.el.style.height = height + 'px';
         //google.maps.event.trigger( self.map, 'resize' );
         //self.panTo( self.center );
+      },
+      
+      show: function( id, flag ) {
+        var self = this;
+        var county = self.counties[id];
+        if ( county ) {
+          county.polygon.setVisible( arguments.length == 1 ? true : flag );
+        }
+      },
+      
+      hide: function( id ) {
+        return this.show( id, false );
       },
       
       _findCounty: function( id ) {
@@ -139,13 +161,14 @@
         var model = self._findCounty( id );
         
         var paths = self._createMVCArray();
-        var vc = 0;
+        var bc = 0, vc = 0;
         _.each( model.boundaries, function( boundary ) {
             var loop = self._createMVCArray();
             _.each( boundary.vertices, function( vertex ) {
                 var point = self._createPoint( vertex.y, vertex.x );
                 loop.push( point );
             });
+            bc++;
             vc += loop.length;
             paths.push( loop );
         });
@@ -158,6 +181,7 @@
           paths: paths,
           map: self.map
         });
+        console.log( "Building polygons for " + model.name + " (" + bc + " boundaries, " + vc + " vertices)..." );
         
         google.maps.event.addListener( polygon, 'click', function( event ) {
           var p = event.latLng;
@@ -178,8 +202,13 @@
 
         polygon.set( 'county_id', model.id );
         
-        model.visibleChanged.connect( function() {
-          polygon.setVisible( model.visible );
+        model.hidden.connect( function() {
+          console.log( model.name + " hidden" );
+          polygon.setVisible( false );
+        });
+        model.shown.connect( function() {
+          console.log( model.name + " shown" );
+          polygon.setVisible( true );
         });
         model.repaint.connect( function() {
           polygon.setOptions({
@@ -195,7 +224,6 @@
           polygon: polygon,
           model: model
         };
-        console.log( "Building polygons for " + model.name + " (" + vc + " vertices)..." );
         return this;
       },
       
