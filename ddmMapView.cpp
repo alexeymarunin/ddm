@@ -122,21 +122,25 @@ void ddmMapView::slotLoaded()
 }
 
 /**
+ * Увеличить масштаб карты
  *
+ * @author  Цалко Т.В.
+ * @since   2.0
  */
 void ddmMapView::increaseZoomLevel()
 {
-    // TODO: реализовать
-    //this->evaluateJavaScript( QObject::tr( "ddm_increase_map_zoom();" ) );
+    this->evaluateJavaScript( QObject::tr( "ddmMap.zoom_in();" ) );
 }
 
 /**
+ * Уменьшить масштаб карты
  *
+ * @author  Цалко Т.В.
+ * @since   2.0
  */
 void ddmMapView::decreaseZoomLevel()
 {
-    // TODO: реализовать
-    // this->evaluateJavaScript( QObject::tr( "ddm_decrease_map_zoom();" ) );
+    this->evaluateJavaScript( QObject::tr( "ddmMap.zoom_out();" ) );
 }
 
 /**

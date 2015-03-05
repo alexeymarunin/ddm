@@ -14,7 +14,7 @@
         var self = this;
         self.el = document.getElementById( 'map_canvas' ); 
         self.map = new google.maps.Map( self.el, {
-          zoom: 8,
+          zoom: 4,
           center: self._createPoint( 44.4024, -100.459 ),
           mapTypeId: google.maps.MapTypeId.ROADMAP
         });
@@ -148,6 +148,20 @@
         return this.show( id, false );
       },
       
+      zoom_in: function() {
+        var map = this.map;
+        var zoom = map.getZoom();
+        this.map.setZoom( zoom + 1 );
+        return this;
+      },
+      
+      zoom_out: function() {
+        var map = this.map;
+        var zoom = map.getZoom();
+        this.map.setZoom( zoom - 1 );
+        return this;
+      },
+      
       _findCounty: function( id ) {
         // console.log( 'ddmMap._findCounty' );
         return _.find( ddmFilter.model.counties, function( county ) {
@@ -203,11 +217,11 @@
         polygon.set( 'county_id', model.id );
         
         model.hidden.connect( function() {
-          console.log( model.name + " hidden" );
+          // console.log( model.name + " hidden" );
           polygon.setVisible( false );
         });
         model.shown.connect( function() {
-          console.log( model.name + " shown" );
+          // console.log( model.name + " shown" );
           polygon.setVisible( true );
         });
         model.repaint.connect( function() {
