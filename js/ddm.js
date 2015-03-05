@@ -102,13 +102,16 @@
       },
       
       update: function() {
-        console.log( 'ddmMap.update' );
+        //console.log( 'ddmMap.update' );
         var self = this;
-        var selection = _.result( ddmFilter, 'selection', [] );
+        var selection = _.result( ddmFilter, 'selection', [] ) || [];
         console.log( 'ddmMap.update selection.length=' + selection.length );
         _.each( selection, function( item ) {
           if ( !_.has( self.counties, item.id ) ) {
-            self._addCounty( item.id );
+            _.defer( function() {
+                self._addCounty( item.id );
+            });
+            
           }
         });
         return this;
@@ -136,12 +139,14 @@
         var model = self._findCounty( id );
         
         var paths = self._createMVCArray();
+        var vc = 0;
         _.each( model.boundaries, function( boundary ) {
             var loop = self._createMVCArray();
             _.each( boundary.vertices, function( vertex ) {
                 var point = self._createPoint( vertex.y, vertex.x );
                 loop.push( point );
             });
+            vc += loop.length;
             paths.push( loop );
         });
         var polygon = new google.maps.Polygon({
@@ -190,7 +195,7 @@
           polygon: polygon,
           model: model
         };
-        
+        console.log( "Building polygons for " + model.name + " (" + vc + " vertices)..." );
         return this;
       },
       
