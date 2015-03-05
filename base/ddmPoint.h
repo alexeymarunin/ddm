@@ -24,6 +24,9 @@ public:
     double x() const;
     double y() const;
 
+    bool equal( double x, double y ) const;
+    bool equal( ddmPoint* point ) const;
+
     virtual ~ddmPoint();
 
 protected:
