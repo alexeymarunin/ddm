@@ -71,6 +71,13 @@ void ddmState::create( int id, const QString& geographicName )
  */
 void ddmState::addCounty( ddmCounty* county )
 {
+    /*
+    Q_ASSERT( county != NULL );
+    if ( !this->county( county->id() ) )
+    {
+        county->setParent( this );
+    }
+    */
     county->setParent( this );
 }
 
