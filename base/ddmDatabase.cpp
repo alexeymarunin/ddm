@@ -2,7 +2,6 @@
 #include <QStringList>
 #include <QDir>
 #include <QTime>
-#include <QtDebug>
 
 #include "ddmApplication.h"
 #include "base/ddmDatabase.h"

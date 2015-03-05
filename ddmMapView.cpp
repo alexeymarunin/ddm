@@ -1,5 +1,4 @@
 #include <QtGlobal>
-#include <QtDebug>
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QUrl>
