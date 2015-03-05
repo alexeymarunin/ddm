@@ -63,20 +63,32 @@ void ddmCountyFilter::updateData( bool fromWidget )
         ddmCountyFilterWidget* widget = this->widget_cast<ddmCountyFilterWidget>();
         if ( fromWidget )
         {
-            model->setCurrentState( widget->currentState() );
-            model->setCurrentCounty( widget->currentCounty() );
+            if ( model->currentState() && model->currentState()->geographicName() != widget->currentState() )
+            {
+                model->setCurrentState( widget->currentState() );
+            }
+            else if ( model->currentCounty() && model->currentCounty()->geographicName() != widget->currentCounty() )
+            {
+                model->setCurrentCounty( widget->currentCounty() );
+            }
         }
         else
         {
-            widget->setCurrentState( model->currentState()->geographicName() );
-            widget->setCurrentCounty( model->currentCounty()->geographicName() );
+            if ( model->currentState() )
+            {
+                widget->setCurrentState( model->currentState()->geographicName() );
+            }
+            if ( model->currentCounty() )
+            {
+                widget->setCurrentCounty( model->currentCounty()->geographicName() );
+            }
         }
     }
 }
 
 void ddmCountyFilter::updateSelection()
 {
-    ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
+    ddmCountyFilterModel* model  = this->model_cast<ddmCountyFilterModel>();
 
     bool needUpdate = false;
     QVariantList selection = this->selection();
@@ -99,8 +111,9 @@ void ddmCountyFilter::slotWidgetChangedState()
     QString stateName = widget->currentState();
     if ( !stateName.isEmpty() )
     {
+        this->updateData();
         ddmCountyFilterModel* model = qobject_cast<ddmCountyFilterModel*>( this->model() );
-        QStringList countyNames = model->state( stateName )->countyNames();
+        QStringList countyNames = model->currentState()->countyNames();
         widget->setCountyNames( countyNames );
     }
 }
