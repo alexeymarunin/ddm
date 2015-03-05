@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -34,6 +34,9 @@
    <widget class="QMenu" name="menuData">
     <property name="title">
      <string>Данные</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>false</bool>
     </property>
     <addaction name="createTableViewAction"/>
    </widget>
@@ -56,8 +59,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="quitAction"/>
-   <addaction name="openAction"/>
+   <addaction name="reloadAction"/>
+   <addaction name="increaseZoomAction"/>
+   <addaction name="decreaseZoomAction"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -69,11 +73,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="createTableViewAction"/>
    <addaction name="separator"/>
-   <addaction name="reloadAction"/>
-   <addaction name="increaseZoomAction"/>
-   <addaction name="decreaseZoomAction"/>
+   <addaction name="openAction"/>
+   <addaction name="createTableViewAction"/>
+   <addaction name="quitAction"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="openAction">

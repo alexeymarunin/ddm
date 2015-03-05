@@ -93,19 +93,15 @@ void ddmCentralWidget::reload()
 
 void ddmCentralWidget::increaseZoom()
 {
-    /*
-    if( ddmMapView* view = mapView() )
-        view->increaseZoomLevel();
-        */
+    if ( this->currentFilter() )
+        this->currentFilter()->mapView()->increaseZoomLevel();
 }
 
 
 void ddmCentralWidget::decreaseZoom()
 {
-    /*
-    if( ddmMapView* view = mapView() )
-        view->decreaseZoomLevel();
-        */
+    if ( this->currentFilter() )
+        this->currentFilter()->mapView()->decreaseZoomLevel();
 }
 
 QVBoxLayout* ddmCentralWidget::widgetLayout() const

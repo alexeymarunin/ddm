@@ -40,6 +40,9 @@ ddmMainWindow::ddmMainWindow( QWidget* parent ) : QMainWindow( parent )
 
     this->ui = ui;
 
+    this->ui->menuData->menuAction()->setVisible( false );
+    this->ui->openAction->setVisible( false );
+    this->ui->createTableViewAction->setVisible( false );
     this->setupEvents();
 
 }
@@ -56,7 +59,10 @@ void ddmMainWindow::setupEvents()
     connect( this->ui->quitAction, SIGNAL( triggered() ), this, SLOT( slotQuit() ) );
 
     // обновляем html страницу
+    this->ui->reloadAction->setShortcut( QKeySequence( tr( "F5" ) ) );
     connect( this->ui->reloadAction, SIGNAL( triggered() ), this, SLOT( slotReload() ) );
+    connect( this->ui->increaseZoomAction, SIGNAL( triggered() ), this, SLOT( slotIncreaseZoom() ) );
+    connect( this->ui->decreaseZoomAction, SIGNAL( triggered() ), this, SLOT( slotDecreaseZoom() ) );
 }
 
 /**
