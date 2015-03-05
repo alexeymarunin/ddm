@@ -52,7 +52,8 @@ public:
     ddmPoint* vertex( int id ) const;
     int vertexCount() const;
 
-    virtual void load();
+    virtual void reloadData();
+    void clear();
 
     virtual ~ddmStateModel();
 
@@ -78,6 +79,7 @@ protected:
     void addBoundary( ddmBoundary* boundary, ddmCounty* county );
     void addVertex( const QSqlRecord& record, ddmBoundary* boundary );
 
+    void prepareCache( bool force = false );
 };
 
 #endif // DDM_STATE_MODEL_H

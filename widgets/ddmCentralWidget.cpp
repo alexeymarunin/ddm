@@ -120,5 +120,5 @@ QVBoxLayout* ddmCentralWidget::mapLayout() const
 
 ddmCentralWidget::~ddmCentralWidget()
 {
-    delete ui;
+    delete this->ui;
 }

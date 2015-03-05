@@ -9,7 +9,7 @@ ddmEmptyFilterModel::ddmEmptyFilterModel( QObject* parent ) : ddmFilterModel( pa
 {
 }
 
-void ddmEmptyFilterModel::load()
+void ddmEmptyFilterModel::reloadData()
 {
     // Ничего не делаем :)
     // Перекрываем загрузку информации о графствах из БД

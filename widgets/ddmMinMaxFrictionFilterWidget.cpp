@@ -67,5 +67,5 @@ QDoubleSpinBox* ddmMinMaxFrictionFilterWidget::spinMaxValue() const
 
 ddmMinMaxFrictionFilterWidget::~ddmMinMaxFrictionFilterWidget()
 {
-    delete ui;
+    delete this->ui;
 }

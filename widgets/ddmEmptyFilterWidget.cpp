@@ -12,5 +12,5 @@ ddmEmptyFilterWidget::ddmEmptyFilterWidget( ddmEmptyFilter* filter, QWidget* par
 
 ddmEmptyFilterWidget::~ddmEmptyFilterWidget()
 {
-    delete ui;
+    delete this->ui;
 }

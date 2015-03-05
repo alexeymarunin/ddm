@@ -20,7 +20,7 @@ public:
 
     ddmEmptyFilterModel( QObject* parent = 0 );
 
-    virtual void load();
+    virtual void reloadData();
 
     virtual ~ddmEmptyFilterModel();
 

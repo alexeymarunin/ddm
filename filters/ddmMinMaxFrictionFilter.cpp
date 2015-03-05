@@ -20,7 +20,7 @@ void ddmMinMaxFrictionFilter::setup()
 
     // Задаем ограничения
     model->setMinBound( model->minFriction() );
-    model->setMaxBound( model->maxFriction() );
+    model->setMaxBound( 0.04 );
 
     this->updateData( false );
 
@@ -35,8 +35,7 @@ void ddmMinMaxFrictionFilter::updateData( bool fromWidget )
         ddmMinMaxFrictionFilterWidget* widget = this->widget_cast<ddmMinMaxFrictionFilterWidget>();
         if ( fromWidget )
         {
-            model->setMinBound( widget->minBound() );
-            model->setMaxBound( widget->maxBound() );
+            model->setBounds( widget->minBound(), widget->maxBound() );
         }
         else
         {

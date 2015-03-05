@@ -31,8 +31,10 @@ public:
 
     ddmCountyFilterModel( QObject* parent = 0 );
 
+    virtual void reloadData();
+
     ddmState* currentState() const;
-    void setCurrentState( int id );
+    void setCurrentState( int state_id );
     void setCurrentState( const QString& geographicName );
 
     ddmCounty* currentCounty() const;
@@ -46,10 +48,13 @@ public:
 
 protected:
 
-    ddmState*   m_currentState;
-    ddmCounty*  m_currentCounty;
-    QStringList m_stateNames;
-    QStringList m_countyNames;
+    ddmState*           m_currentState;
+    ddmCounty*          m_currentCounty;
+    QStringList         m_stateNames;
+    QStringList         m_countyNames;
+    QMap<int, QString>  m_stateMap;
+
+    ddmState* loadState( int state_id );
 
     void setCurrentState( ddmState* state );
     void setCurrentCounty( ddmCounty* county );

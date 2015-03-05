@@ -8,29 +8,87 @@
 #include "base/ddmBoundary.h"
 
 /**
- * @brief ddmStateModel::ddmStateModel
- * @param parent
+ * Конструктор класса
+ *
+ * @param   parent Родитель (владелец) модели
+ * @author  Марунин А.В.
+ * @since   2.0
  */
 ddmStateModel::ddmStateModel( QObject* parent ) : ddmModel( parent )
 {
+    // Кэшируем данные
+    // Операция хоть и долгая, но будет выполнена лишь 1 раз
+    this->prepareCache();
+    //this->prepareCache( true );
 }
 
-void ddmStateModel::load()
+/**
+ * Загружает данные из БД
+ *
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
+void ddmStateModel::reloadData()
 {
-    if ( this->stateCount() > 0 ) return;
+}
 
+/**
+ * Кэширует данные из БД
+ *
+ * Создает временные таблицы на основе "тяжелых" запросов,
+ * чтобы при последующих вызовах сократить время обработки
+ *
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+void ddmStateModel::prepareCache( bool force )
+{
     ddmDatabase& db = this->database();
-
     QString sql;
-    QSqlQueryModel* query;
-    int rowCount;
 
     QTime timer;
     timer.start();
+    int elapsed = 0;
 
+    if ( force )
+    {
+        qDebug() << "Dropping cache...";
+
+        sql = "DROP TABLE IF EXISTS cache_boundary_points";
+        db.exec( sql );
+        Q_ASSERT( !db.hasErrors() );
+
+        sql = "DROP TABLE IF EXISTS cache_boundaries";
+        db.exec( sql );
+        Q_ASSERT( !db.hasErrors() );
+
+        elapsed = timer.elapsed() - elapsed;
+        qDebug() << "Elapsed:" << 0.001 * elapsed << "sec";
+    }
+
+
+    qDebug() << "Preparing vertices cache...";
+    sql =
+        "CREATE TABLE IF NOT EXISTS cache_boundary_points AS\n"
+        "  SELECT bp.boundary_id, p.x, p.y\n"
+        "    FROM ddm_boundary_points AS bp\n"
+        "    LEFT JOIN ddm_points AS p ON p.id = bp.point_id\n";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+    elapsed = timer.elapsed() - elapsed;
+
+    // "CREATE INDEX cache_state_id_idx ON cache_boundaries ( state_id )"
+    // "CREATE INDEX cache_county_id_idx ON cache_boundaries ( county_id )"
+    // "CREATE INDEX cache_boundary_id_idx ON cache_boundaries ( boundary_id )"
+    // "CREATE INDEX cache_bp_id_idx ON cache_boundary_points ( boundary_id )"
+    qDebug() << "Elapsed:" << 0.001 * elapsed << "sec";
+
+
+    qDebug() << "Preparing boundaries cache...";
     sql =
         "CREATE TABLE IF NOT EXISTS cache_boundaries AS\n"
-        "  SELECT s.id AS state_id, s.name AS state_name,\n"
+        "  SELECT "
+        "      s.id AS state_id, s.name AS state_name,\n"
         "      c.id AS county_id, c.geographic_name AS county_name,\n"
         "      r.popul_est AS county_population, \n"
         "      b.id AS boundary_id, p.x AS center_x, p.y center_y, b.square AS boundary_square,\n"
@@ -41,7 +99,7 @@ void ddmStateModel::load()
         "    LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id\n"
         "    LEFT JOIN ddm_points AS p ON p.id = b.center_id\n"
         "    LEFT JOIN ddm_residences  AS r ON r.county_id = cb.county_id\n"
-        "    LEFT JOIN ddm_frictions AS f ON f.county_id = cb.county_id\n"
+        "    INNER JOIN ddm_frictions AS f ON f.county_id = cb.county_id\n"
         "    LEFT JOIN ddm_counties AS c ON c.id = f.county_id\n"
         "    LEFT JOIN ddm_states AS s ON s.id = c.state_id\n"
         "    WHERE b.outer = 1\n"
@@ -49,85 +107,19 @@ void ddmStateModel::load()
 
     db.exec( sql );
     Q_ASSERT( !db.hasErrors() );
+    elapsed = timer.elapsed() - elapsed;
+    qDebug() << "Elapsed:" << 0.001 * elapsed;
 
-    sql = "SELECT * FROM cache_boundaries";
-    query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
 
-    QMap<int, ddmBoundary*> boundaryMap;
-
-    ddmState* currentState = NULL;
-    ddmCounty* currentCounty = NULL;
-    ddmBoundary* currentBoundary = NULL;
-    rowCount = query->rowCount();
-    for ( int i = 0; i < rowCount; i++ )
-    {
-        QSqlRecord record = query->record( i );
-        int state_id = record.value( "state_id" ).toInt();
-        if ( !state_id ) continue;
-
-        if ( !currentState || state_id != currentState->id() )
-        {
-            ddmState* state = new ddmState( record );
-            this->addState( state );
-            currentState = state;
-        }
-
-        int county_id = record.value( "county_id" ).toInt();
-        Q_ASSERT( county_id > 0 );
-        if ( !currentCounty || county_id != currentCounty->id() )
-        {
-            ddmCounty* county = new ddmCounty( record );
-            this->addCounty( county, currentState );
-            currentCounty = county;
-        }
-
-        int boundary_id = record.value( "boundary_id" ).toInt();
-        Q_ASSERT( boundary_id > 0 );
-        if ( !currentBoundary || boundary_id != currentBoundary->id() )
-        {
-            ddmBoundary* boundary = new ddmBoundary( record );
-            this->addBoundary( boundary, currentCounty );
-            currentBoundary = boundary;
-            boundaryMap.insert( boundary_id, boundary );
-        }
-    }
-
-    sql =
-        "CREATE TABLE IF NOT EXISTS cache_boundary_points AS\n"
-        "  SELECT bp.boundary_id, p.x, p.y\n"
-        "    FROM ddm_boundary_points AS bp\n"
-        "    LEFT JOIN ddm_points AS p ON p.id = bp.point_id\n";
-    db.exec( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    sql = "SELECT * FROM cache_boundary_points";
-    query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    rowCount = query->rowCount();
-    for ( int i = 0; i < rowCount; i++ )
-    {
-        QSqlRecord record = query->record( i );
-        int boundary_id = record.value( "boundary_id" ).toInt();
-        QMap<int, ddmBoundary*>::iterator it = boundaryMap.find( boundary_id );
-        if ( it != boundaryMap.end() )
-        {
-            ddmBoundary* boundary = it.value();
-            this->addVertex( record, boundary );
-        }
-    }
-
-    qDebug() << "Elapsed:" << timer.elapsed() / 1000.0 << "sec";
-    //qDebug( "Found %d vertices on %d boundaries in %d counties for %d states\n", this->vertexCount(), this->boundaryCount(), this->countyCount(), this->stateCount() );
-
-    return;
+    qDebug() << "====================================================";
+    qDebug() << "Total time:" << 0.001 * timer.elapsed() << "sec\n";
 }
+
 
 /**
  * Добавляет новый штат в модель
  *
- * Штаты с одинаковым id не будут дублироваться
+ * Проверка на дубликаты не производится!
  *
  * @param   state Добавляемый штат
  * @author  Марунин А.В.
@@ -135,56 +127,27 @@ void ddmStateModel::load()
  */
 void ddmStateModel::addState( ddmState* state )
 {
-    bool newState = true;
-    QVariantList states = this->states();
-    foreach ( QVariant obj, states )
-    {
-        ddmState* value = obj.value<ddmState*>();
-        if ( value->id() == state->id() )
-        {
-            newState = false;
-            break;
-        }
-    }
-
-    if ( newState )
-    {
-        state->setParent( this );
-        this->m_states.append( QVariant::fromValue( state ) );
-    }
+    state->setParent( this );
+    this->m_states.append( QVariant::fromValue( state ) );
 }
 
 /**
  * Добавляет графство в заданный штат
  *
- * Если такое графство уже добавлено ранее в штат, то ничего не произойдет
+ * Проверка на дубликаты не производится!
  *
  * @param   county Добавляемое графство
  * @param   state Штат, в который добавляется графство
  */
 void ddmStateModel::addCounty( ddmCounty* county, ddmState* state )
 {
-    bool newCounty = true;
-    QVariantList counties = state->counties();
-    foreach ( QVariant obj, counties )
-    {
-        ddmCounty* value = obj.value<ddmCounty*>();
-        if ( value->id() == county->id() )
-        {
-            newCounty = false;
-            break;
-        }
-    }
+    state->addCounty( county );
+    this->m_counties.append( QVariant::fromValue( county ) );
 
-    if ( newCounty )
-    {
-        state->addCounty( county );
-        this->m_counties.append( QVariant::fromValue( county ) );
-
-        connect( county, SIGNAL( clicked(double,double) ), this, SLOT( slotClicked(double,double) ) );
-        connect( county, SIGNAL( mousemove(double,double) ), this, SLOT( slotMouseMove(double,double) ) );
-    }
+    connect( county, SIGNAL( clicked(double,double) ), this, SLOT( slotClicked(double,double) ) );
+    connect( county, SIGNAL( mousemove(double,double) ), this, SLOT( slotMouseMove(double,double) ) );
 }
+
 
 void ddmStateModel::addBoundary( ddmBoundary* boundary, ddmCounty* county )
 {
@@ -205,14 +168,13 @@ QVariantList ddmStateModel::states() const
 
 int ddmStateModel::stateCount() const
 {
-    return this->states().count();
+    return this->m_states.count();
 }
 
 ddmState* ddmStateModel::state( int id ) const
 {
     ddmState* state = NULL;
-    QVariantList states = this->states();
-    foreach ( QVariant obj, states )
+    foreach ( QVariant obj, this->m_states )
     {
         ddmState* value = obj.value<ddmState*>();
         if ( value->id() == id )
@@ -228,8 +190,7 @@ ddmState* ddmStateModel::state( int id ) const
 ddmState* ddmStateModel::state( const QString& geographicName ) const
 {
     ddmState* state = NULL;
-    QVariantList states = this->states();
-    foreach ( QVariant obj, states )
+    foreach ( QVariant obj, this->m_states )
     {
         ddmState* value = obj.value<ddmState*>();
         if ( value->geographicName() == geographicName )
@@ -249,14 +210,13 @@ QVariantList ddmStateModel::counties() const
 
 int ddmStateModel::countyCount() const
 {
-    return this->counties().count();
+    return this->m_counties.count();
 }
 
 ddmCounty* ddmStateModel::county( int id ) const
 {
     ddmCounty* county = NULL;
-    QVariantList counties = this->counties();
-    foreach ( QVariant obj, counties )
+    foreach ( QVariant obj, this->m_counties )
     {
         ddmCounty* value = obj.value<ddmCounty*>();
         if ( value->id() == id )
@@ -272,8 +232,7 @@ ddmCounty* ddmStateModel::county( int id ) const
 ddmCounty* ddmStateModel::county( const QString& geographicName ) const
 {
     ddmCounty* county = NULL;
-    QVariantList counties = this->counties();
-    foreach ( QVariant obj, counties )
+    foreach ( QVariant obj, this->m_counties )
     {
         ddmCounty* value = obj.value<ddmCounty*>();
         if ( value->geographicName() == geographicName )
@@ -294,8 +253,7 @@ QVariantList ddmStateModel::boundaries() const
 ddmBoundary* ddmStateModel::boundary( int id ) const
 {
     ddmBoundary* boundary = NULL;
-    QVariantList boundaries = this->boundaries();
-    foreach ( QVariant obj, boundaries )
+    foreach ( QVariant obj, this->m_boundaries )
     {
         ddmBoundary* value = obj.value<ddmBoundary*>();
         if ( value->id() == id )
@@ -310,7 +268,7 @@ ddmBoundary* ddmStateModel::boundary( int id ) const
 
 int ddmStateModel::boundaryCount() const
 {
-    return this->boundaries().size();
+    return this->m_boundaries.size();
 }
 
 QVariantList ddmStateModel::vertices() const
@@ -328,6 +286,18 @@ int ddmStateModel::vertexCount() const
     return this->m_vertices.size();
 }
 
+/**
+ * @brief ddmStateModel::clear
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+void ddmStateModel::clear()
+{
+    this->m_states.clear();
+    this->m_counties.clear();
+    this->m_boundaries.clear();
+    this->m_vertices.clear();
+}
 
 void ddmStateModel::slotClicked( double x, double y )
 {

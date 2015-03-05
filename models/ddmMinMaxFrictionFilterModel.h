@@ -28,13 +28,15 @@ public:
 
     ddmMinMaxFrictionFilterModel( QObject* parent = 0 );
 
-    virtual void load();
+    virtual void reloadData();
 
     double minBound() const;
     void setMinBound( double bound );
 
     double maxBound() const;
     void setMaxBound( double bound );
+
+    void setBounds( double minBound, double maxBound );
 
     double minFriction() const;
     double maxFriction() const;
@@ -48,6 +50,8 @@ protected:
 
     double  m_minFriction;
     double  m_maxFriction;
+
+    void updateMinMaxFrictions();
 
 };
 
