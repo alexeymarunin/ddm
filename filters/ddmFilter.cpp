@@ -22,7 +22,7 @@ void ddmFilter::setup()
     Q_ASSERT( this->model() != NULL );
     Q_ASSERT( this->widget() != NULL );
 
-    this->model()->load();
+    this->model()->reloadData();
 
     QObject::connect( this->model(),  SIGNAL( changed() ), this, SLOT( slotModelChanged()  ) );
     QObject::connect( this->widget(), SIGNAL( changed() ), this, SLOT( slotWidgetChanged() ) );
@@ -125,7 +125,7 @@ bool ddmFilter::isMapLoaded() const
 
 void ddmFilter::slotModelChanged()
 {
-    //this->updateData( false );
+    this->updateData( false );
     // this->apply();
 }
 
