@@ -24,14 +24,8 @@ public:
     ddmMapObject( int id = 0, QObject* parent = 0 );
 
     Q_PROPERTY( int id READ id )
-    Q_PROPERTY( bool visible READ visible WRITE setVisible NOTIFY visibleChanged )
 
     int id() const;
-
-    bool visible() const;
-    void setVisible( bool visible );
-    void show();
-    void hide();
 
     virtual ~ddmMapObject();
 
@@ -41,7 +35,6 @@ Q_SIGNALS:
 
 protected:
     int     m_id;
-    bool    m_visible;
 
     virtual void create( const QSqlRecord& record ) = 0;
 

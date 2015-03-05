@@ -13,7 +13,8 @@
  * @author  Марунин А.В.
  * @since   2.1
  */
-ddmCounty::ddmCounty( int id, const QString& geographicName, QObject* parent ) : ddmMapObject( id, parent )
+ddmCounty::ddmCounty( int id, const QString& geographicName, QObject* parent ) : ddmMapObject( id, parent ),
+    m_visible( false )
 {
     this->create( id, geographicName );
 }
@@ -26,7 +27,8 @@ ddmCounty::ddmCounty( int id, const QString& geographicName, QObject* parent ) :
  * @author  Марунин А.В.
  * @since   2.0
  */
-ddmCounty::ddmCounty( const QSqlRecord& record, QObject* parent ) : ddmMapObject( 0, parent )
+ddmCounty::ddmCounty( const QSqlRecord& record, QObject* parent ) : ddmMapObject( 0, parent ),
+    m_visible( false )
 {
     this->create( record );
 }
@@ -256,6 +258,60 @@ double ddmCounty::f_mid() const
 }
 
 /**
+ * Возвращает видимость графства на карте
+ *
+ * @return  true, если графство отображается
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
+bool ddmCounty::visible() const
+{
+    return this->m_visible;
+}
+
+/**
+ * Изменяет видимость графства на карте.
+ *
+ * Если графство становится видимым, то испускается сигнал shown()
+ * Если графство становится невидимым, то испускается сигнал hidden()
+ *
+ * @param   visible Флаг, определяющий, будет ли видно графство
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
+void ddmCounty::setVisible( bool visible )
+{
+    if ( this->m_visible != visible )
+    {
+        this->m_visible = visible;
+        qDebug() << this->metaObject()->className() << this->id() << ( this->visible() ? "show" : "hide" );
+        Q_EMIT ( this->visible() ? shown() : hidden() );
+    }
+}
+
+/**
+ * Показывает графство на карте
+ *
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
+void ddmCounty::show()
+{
+    this->setVisible( true );
+}
+
+/**
+ * Скрывает графство с карты
+ *
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
+void ddmCounty::hide()
+{
+    this->setVisible( false );
+}
+
+/**
  * Слот для обработки сигнала mouseout
  * Вызывается, когда курсор входит в пределы графства
  *
@@ -264,8 +320,9 @@ double ddmCounty::f_mid() const
  */
 void ddmCounty::slotMouseover()
 {
-    this->setProperty( "strokeWeight", 3 );
     this->setProperty( "fillOpacity", 0.8 );
+    this->setProperty( "strokeWeight", 3 );
+    this->setProperty( "strokeOpacity", 0.8 );
 }
 
 /**
@@ -277,8 +334,11 @@ void ddmCounty::slotMouseover()
  */
 void ddmCounty::slotMouseout()
 {
+    this->setProperty( "fillColor", "#FF0000" );
+    this->setProperty( "fillOpacity", 0.35 );
+    this->setProperty( "strokeColor", "#FF0000" );
     this->setProperty( "strokeWeight", 2 );
-    this->setProperty( "fillOpacity", 0.7 );
+    this->setProperty( "strokeOpacity", 0.7 );
 }
 
 /**

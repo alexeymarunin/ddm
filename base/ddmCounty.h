@@ -39,6 +39,8 @@ public:
     Q_PROPERTY( int     strokeWeight    MEMBER m_strokeWeight   NOTIFY repaint )
     Q_PROPERTY( double  strokeOpacity   MEMBER m_strokeOpacity  NOTIFY repaint )
 
+    Q_PROPERTY( bool visible READ visible WRITE setVisible )
+
     void         addBoundary( ddmBoundary* boundary );
     ddmBoundary* boundary( int id ) const;
     QVariantList boundaries() const;
@@ -57,6 +59,11 @@ public:
     double f_in_mid()  const;
     double f_mid()     const;
 
+    bool visible() const;
+    void setVisible( bool visible );
+    void show();
+    void hide();
+
     virtual ~ddmCounty();
 
 Q_SIGNALS:
@@ -66,6 +73,8 @@ Q_SIGNALS:
     void mouseout();
     void mousemove( double x, double y );
 
+    void shown();
+    void hidden();
     void repaint();
 
 protected Q_SLOTS:
@@ -90,6 +99,8 @@ protected:
     QString m_strokeColor;
     int     m_strokeWeight;
     double  m_strokeOpacity;
+
+    bool    m_visible;
 
     virtual void create( const QSqlRecord& record );
     void create( int id, const QString& geographicName,
