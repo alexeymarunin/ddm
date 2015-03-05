@@ -17,8 +17,8 @@ ddmStateModel::ddmStateModel( QObject* parent ) : ddmModel( parent )
 {
     // Кэшируем данные
     // Операция хоть и долгая, но будет выполнена лишь 1 раз
-    this->prepareCache();
-    //this->prepareCache( true );
+    //this->prepareCache();
+    this->prepareCache( true );
 }
 
 /**
@@ -78,6 +78,24 @@ void ddmStateModel::prepareCache( bool force )
     qDebug() << "Elapsed:" << 0.001 * elapsed << "sec";
 
 
+    qDebug() << "Preparing migrations cache...";
+    sql =
+        "CREATE TABLE IF NOT EXISTS cache_deltas AS\n"
+        "  SELECT "
+        "      m.county_b AS county_id, c.geographic_name AS county_name,\n"
+        "      SUM( m.in_estimate ) AS county_in_sum, SUM( m.out_estimate ) AS county_out_sum,\n"
+        "      SUM( m.in_estimate ) - SUM( m.out_estimate ) AS county_delta \n"
+        "    FROM ddm_mirgations AS m\n"
+        "    LEFT JOIN ddm_counties AS c ON c.id = m.county_b\n"
+        "    GROUP BY m.county_b\n"
+        "    ORDER BY m.county_b";
+
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+    elapsed = timer.elapsed() - elapsed;
+    qDebug() << "Elapsed:" << 0.001 * elapsed;
+
+
     qDebug() << "Preparing boundaries cache...";
     sql =
         "CREATE TABLE IF NOT EXISTS cache_boundaries AS\n"
@@ -88,12 +106,14 @@ void ddmStateModel::prepareCache( bool force )
         "      b.id AS boundary_id, p.x AS center_x, p.y center_y, b.square AS boundary_square,\n"
         "      f.f_out_sum AS county_f_out_sum, f.f_out_mid AS county_f_out_mid,\n"
         "      f.f_in_sum AS county_f_in_sum, f.f_in_mid AS county_f_in_mid,\n"
-        "      f.f_mid AS county_f_mid \n"
+        "      f.f_mid AS county_f_mid,\n"
+        "      d.county_in_sum AS county_in_sum, d.county_out_sum AS county_out_sum, d.county_delta AS county_delta\n"
         "    FROM ddm_county_boundaries AS cb\n"
         "    LEFT JOIN ddm_boundaries AS b ON b.id = cb.boundary_id\n"
         "    LEFT JOIN ddm_points AS p ON p.id = b.center_id\n"
         "    LEFT JOIN ddm_residences  AS r ON r.county_id = cb.county_id\n"
         "    INNER JOIN ddm_frictions AS f ON f.county_id = cb.county_id\n"
+        "    INNER JOIN cache_deltas AS d ON d.county_id = cb.county_id\n"
         "    LEFT JOIN ddm_counties AS c ON c.id = f.county_id\n"
         "    LEFT JOIN ddm_states AS s ON s.id = c.state_id\n"
         "    WHERE b.outer = 1\n"
@@ -115,6 +135,10 @@ void ddmStateModel::prepareCache( bool force )
     Q_ASSERT( !db.hasErrors() );
 
     sql = "CREATE INDEX IF NOT EXISTS cache_boundary_id_idx ON cache_boundaries ( boundary_id )";
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    sql = "CREATE INDEX IF NOT EXISTS cache_delta_idx ON cache_boundaries ( county_delta\n )";
     db.exec( sql );
     Q_ASSERT( !db.hasErrors() );
 

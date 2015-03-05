@@ -46,13 +46,20 @@ void ddmCounty::create( const QSqlRecord& record )
     int     id              = record.value( "county_id" ).toInt();
     QString geographicName  = record.value( "county_name" ).toString();
     int     population      = record.value( "county_population" ).toInt();
+    int     in_sum          = record.value( "county_in_sum" ).toInt();
+    int     out_sum         = record.value( "county_out_sum" ).toInt();
+    int     delta           = record.value( "county_delta" ).toInt();
     int     f_out_sum       = record.value( "county_f_out_sum" ).toInt();
     double  f_out_mid       = record.value( "county_f_out_mid" ).toDouble();
     int     f_in_sum        = record.value( "county_f_in_sum" ).toInt();
     double  f_in_mid        = record.value( "county_f_in_mid" ).toDouble();
     double  f_mid           = record.value( "county_f_mid" ).toDouble();
 
-    this->create( id, geographicName, population, f_out_sum, f_out_mid, f_in_sum, f_in_mid, f_mid );
+    this->create(
+        id, geographicName,
+        population, in_sum, out_sum, delta,
+        f_out_sum, f_out_mid, f_in_sum, f_in_mid, f_mid
+    );
 }
 
 /**
@@ -69,13 +76,16 @@ void ddmCounty::create( const QSqlRecord& record )
  * @since   2.1
  */
 void ddmCounty::create( int id, const QString& geographicName,
-                        int population,
+                        int population, int in_sum, int out_sum, int delta,
                         int f_out_sum, double f_out_mid, int f_in_sum, double f_in_mid, double f_mid )
 {
     this->m_id = id;
     this->m_geographicName = geographicName;
 
     this->m_population = population;
+    this->m_in_sum = in_sum;
+    this->m_out_sum = out_sum;
+    this->m_delta = delta;
 
     this->m_f_out_sum = f_out_sum;
     this->m_f_out_mid = f_out_mid;
@@ -198,6 +208,42 @@ int ddmCounty::population() const
 }
 
 /**
+ * Возвращает общее число жителей, приехавших в графство
+ *
+ * @return  Целое число
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+int ddmCounty::in_sum() const
+{
+    return this->m_in_sum;
+}
+
+/**
+ * Возвращает общее число жителей, уехавших из графства
+ *
+ * @return  Целое число
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+int ddmCounty::out_sum() const
+{
+    return this->m_out_sum;
+}
+
+/**
+ * Возвращает разницу между приехавшими и уехавшими
+ *
+ * @return  Целое число
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
+int ddmCounty::delta() const
+{
+    return this->m_delta;
+}
+
+/**
  * Возвращает число уехавших из графства
  *
  * @return  Значение столбца f_out_sum из таблицы ddm_frictions
@@ -284,7 +330,7 @@ void ddmCounty::setVisible( bool visible )
     if ( this->m_visible != visible )
     {
         this->m_visible = visible;
-        qDebug() << this->metaObject()->className() << this->id() << ( this->visible() ? "show" : "hide" );
+        // qDebug() << this->metaObject()->className() << this->id() << ( this->visible() ? "show" : "hide" );
         Q_EMIT ( this->visible() ? shown() : hidden() );
     }
 }

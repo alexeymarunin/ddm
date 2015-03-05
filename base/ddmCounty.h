@@ -26,6 +26,9 @@ public:
     Q_PROPERTY( QVariantMap  center     READ center         )
 
     Q_PROPERTY( int     population  READ population )
+    Q_PROPERTY( int     in_sum      READ in_sum     )
+    Q_PROPERTY( int     out_sum     READ out_sum    )
+    Q_PROPERTY( int     delta       READ delta      )
 
     Q_PROPERTY( int     f_out_sum   READ f_out_sum  )
     Q_PROPERTY( double  f_out_mid   READ f_out_mid  )
@@ -51,6 +54,9 @@ public:
     ddmState*   state() const;
 
     int population() const;
+    int in_sum() const;
+    int out_sum() const;
+    int delta() const;
 
     // Значения трений
     int    f_out_sum() const;
@@ -87,6 +93,9 @@ protected:
     QString m_geographicName;
 
     int     m_population;
+    int     m_in_sum;
+    int     m_out_sum;
+    int     m_delta;
 
     int     m_f_out_sum;
     double  m_f_out_mid;
@@ -104,7 +113,7 @@ protected:
 
     virtual void create( const QSqlRecord& record );
     void create( int id, const QString& geographicName,
-                 int population = 0,
+                 int population = 0, int in_sum = 0, int out_sum = 0, int delta = 0,
                  int f_out_sum = 0, double f_out_mid = 0.0,
                  int f_in_sum = 0, double f_in_mid = 0.0, double f_mid = 0.0 );
 

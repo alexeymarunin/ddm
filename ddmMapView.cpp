@@ -61,7 +61,7 @@ ddmMapView::ddmMapView( ddmFilter* filter, QWidget* parent ) : QWebView( parent 
         QString path = QDir( QObject::tr( "%1/%2" ).arg( dir ).arg( DDM_INDEX_PAGE ) ).absolutePath();
         if ( QFile::exists( path ) )
         {
-            qDebug() << "Found page " << path;
+            // qDebug() << "Found page " << path;
             pathIndex = path;
             break;
         }
