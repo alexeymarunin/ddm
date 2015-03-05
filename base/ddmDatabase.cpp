@@ -173,8 +173,11 @@ bool ddmDatabase::hasErrors() const
  */
 void ddmDatabase::close()
 {
-    delete ddmDatabase::m_instance;
-    ddmDatabase::m_instance = NULL;
+    if ( ddmDatabase::m_instance )
+    {
+        ddmDatabase::m_instance->setParent( NULL );
+        delete ddmDatabase::m_instance;
+    }
 }
 
 /**
@@ -185,4 +188,5 @@ void ddmDatabase::close()
  */
 ddmDatabase::~ddmDatabase()
 {
+    ddmDatabase::m_instance = NULL;
 }
