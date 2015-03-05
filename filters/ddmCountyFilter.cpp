@@ -89,20 +89,9 @@ void ddmCountyFilter::updateData( bool fromWidget )
 void ddmCountyFilter::updateSelection()
 {
     ddmCountyFilterModel* model  = this->model_cast<ddmCountyFilterModel>();
-
-    bool needUpdate = false;
-    QVariantList selection = this->selection();
-    if ( selection.isEmpty() || selection.takeAt( 0 ).value<ddmCounty*>()->id() != model->currentCounty()->id() )
-    {
-        needUpdate = true;
-    }
-
-    if ( needUpdate )
-    {
-        this->resetSelection();
-        model->currentCounty()->show();
-        Q_EMIT selectionUpdated();
-    }
+    this->resetSelection();
+    model->currentCounty()->show();
+    Q_EMIT selectionUpdated();
 }
 
 void ddmCountyFilter::slotWidgetChangedState()

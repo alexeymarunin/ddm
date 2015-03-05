@@ -76,8 +76,11 @@ void ddmFilter::resetSelection()
     foreach ( QVariant obj, selection )
     {
         ddmCounty* value = obj.value<ddmCounty*>();
-        value->hide();
-        updated = true;
+        if ( value->visible() )
+        {
+            value->hide();
+            updated = true;
+        }
     }
 
     if ( updated )

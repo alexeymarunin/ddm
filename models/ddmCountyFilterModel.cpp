@@ -1,5 +1,4 @@
 #include <QSqlRecord>
-#include <QtDebug>
 
 #include "models/ddmCountyFilterModel.h"
 
@@ -11,7 +10,9 @@ ddmCountyFilterModel::ddmCountyFilterModel( QObject* parent ) : ddmFilterModel( 
     m_currentState( NULL ), m_currentCounty( NULL )
 {
     this->updateStateNames();
-    this->setCurrentState( "Alabama" );
+    ddmState* state = this->loadState( 1 );
+    ddmCounty* county = state->county( 1 );
+    this->setCurrentCounty( county );
 }
 
 /**
@@ -24,9 +25,14 @@ void ddmCountyFilterModel::reloadData()
 {
     if ( this->currentState() )
     {
-        // Выбираем графства текущего штата
         this->loadState( this->currentState()->id() );
         this->updateCountyNames();
+        if ( this->currentCounty() )
+        {
+            // Выбираем графства текущего штата
+            QString sqlQuery = QString( "SELECT * FROM cache_boundaries WHERE county_id = %1" ).arg( this->currentCounty()->id() );
+            this->execQuery( sqlQuery );
+        }
     }
 }
 
@@ -84,9 +90,14 @@ void ddmCountyFilterModel::setCurrentState( ddmState* state )
         if ( this->m_currentState != state )
         {
             this->m_currentState = state;
+            if ( !this->currentCounty() || this->currentCounty()->state() != state )
+            {
+                QVariantList counties = state->counties();
+                ddmCounty* county = counties.first().value<ddmCounty*>();
+                this->m_currentCounty = county;
+            }
             this->reloadData();
-            QVariantList counties = state->counties();
-            this->setCurrentCounty( counties.first().value<ddmCounty*>() );
+            Q_EMIT changed();
         }
     }
 }
@@ -151,10 +162,17 @@ void ddmCountyFilterModel::setCurrentCounty( ddmCounty* county )
     {
         if ( this->m_currentCounty != county )
         {
-            this->m_currentCounty = county;
-            // Делаем текущим штат выбранного графства
-            this->setCurrentState( county->state() );
-            Q_EMIT changed();
+            if ( !this->currentState() || this->currentState() != county->state() )
+            {
+                this->m_currentCounty = county;
+                this->setCurrentState( county->state() );
+            }
+            else
+            {
+                this->m_currentCounty = county;
+                this->reloadData();
+                Q_EMIT changed();
+            }
         }
     }
 }
