@@ -41,7 +41,10 @@ SOURCES += main.cpp \
     models/ddmEmptyFilterModel.cpp \
     models/ddmMinMaxFrictionFilterModel.cpp \
     widgets/ddmMinMaxFrictionFilterWidget.cpp \
-    filters/ddmMinMaxFrictionFilter.cpp
+    filters/ddmMinMaxFrictionFilter.cpp \
+    models/ddmPosNegDeltaFilterModel.cpp \
+    widgets/ddmPosNegDeltaFilterWidget.cpp \
+    filters/ddmPosNegDeltaFilter.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -71,13 +74,17 @@ HEADERS += \
     models/ddmEmptyFilterModel.h \
     models/ddmMinMaxFrictionFilterModel.h \
     widgets/ddmMinMaxFrictionFilterWidget.h \
-    filters/ddmMinMaxFrictionFilter.h
+    filters/ddmMinMaxFrictionFilter.h \
+    models/ddmPosNegDeltaFilterModel.h \
+    widgets/ddmPosNegDeltaFilterWidget.h \
+    filters/ddmPosNegDeltaFilter.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCountyFilterWidget.ui \
     widgets/ddmCentralWidget.ui \
     widgets/ddmEmptyFilterWidget.ui \
-    widgets/ddmMinMaxFrictionFilterWidget.ui
+    widgets/ddmMinMaxFrictionFilterWidget.ui \
+    widgets/ddmPosNegDeltaFilterWidget.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release
@@ -87,6 +94,7 @@ OBJECTS_DIR = $${DESTDIR}
 UI_DIR      = $${DESTDIR}
 
 #INCLUDEPATH += bld $${DESTDIR} $${DESTDIR}/..
+
 
 RESOURCES += \
     icons.qrc
