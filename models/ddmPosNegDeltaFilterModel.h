@@ -13,11 +13,6 @@
  * @since   2.3
  */
 
-enum ddmDeltaViewMode
-{
-    DVM_POSITIVE_DELTA,
-    DVM_NEGATIVE_DELTA
-};
 
 class ddmPosNegDeltaFilterModel: public ddmFilterModel
 {

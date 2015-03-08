@@ -1,9 +1,10 @@
-#include "models\ddmPosNegDeltaFilterModel.h"
+#include "base/ddmDefines.h"
+#include "models/ddmPosNegDeltaFilterModel.h"
 
 
 ddmPosNegDeltaFilterModel::ddmPosNegDeltaFilterModel( QObject *parent ):ddmFilterModel( parent )
 {
-
+    this->setDeltaMode( DVM_POSITIVE_DELTA );
 }
 
 void ddmPosNegDeltaFilterModel::reloadData()

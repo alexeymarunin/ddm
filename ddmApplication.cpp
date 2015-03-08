@@ -8,6 +8,7 @@
 #include "filters/ddmCountyFilter.h"
 #include "filters/ddmMinMaxFrictionFilter.h"
 #include "filters/ddmPosNegDeltaFilter.h"
+#include "filters/ddmFrictionDeltaFilter.h"
 
 /**
  * @Конструктор класса
@@ -50,6 +51,7 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( this ) );
     centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( this ) );
     centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений по центры миграции", new ddmFrictionDeltaFilter( this ) );
 
     //centralWidget->setCurrentFilter( 0 );
 }

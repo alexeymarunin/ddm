@@ -54,7 +54,6 @@ void ddmPosNegDeltaFilter::updateSelection()
     ddmFilter::resetSelection();
     ddmPosNegDeltaFilterModel* model = this->model_cast<ddmPosNegDeltaFilterModel>();
     QVariantList counties = model->counties();
-    int mode = model->deltaMode();
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
     {
