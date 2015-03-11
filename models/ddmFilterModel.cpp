@@ -74,12 +74,16 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
 
     // @DEBUG qDebug() << sqlQuery;
 
+    // Резервируем память
+    //this->reserveStatesMemory( tempTable );
+    //this->reserveCountiesMemory( tempTable );
+    //this->reserveBoundariesMemory( tempTable );
+
     // Выполняем новый запрос
     qDebug() << "Fetching counties...";
     sql = QString( "SELECT * FROM %1" ).arg( tempTable );
     query = db.select( sql );
     Q_ASSERT( !db.hasErrors() );
-
 
     ddmState* currentState = NULL;
     ddmCounty* currentCounty = NULL;
@@ -149,7 +153,7 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     qDebug() << "Fetching vertices...";
 
     sql = QString(
-        "SELECT tt.boundary_id, bp.x AS x, bp.y AS y\n"
+        "SELECT tt.boundary_id, bp.x AS x, bp.y AS y, bp.point_id AS point_id\n"
         "  FROM %1 AS tt\n"
         "  LEFT JOIN cache_boundary_points AS bp ON tt.boundary_id = bp.boundary_id"
         "  ORDER BY tt.boundary_id"
@@ -159,6 +163,8 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     Q_ASSERT( !db.hasErrors() );
 
     rowCount = query->rowCount();
+    this->m_vertices.reserve( rowCount );
+    qDebug() << rowCount << "vertices";
     currentBoundary = NULL;
     QTime rt;
     rt.start();
@@ -249,6 +255,70 @@ ddmBoundaryMap& ddmFilterModel::totalBoundaries() const
 {
     return const_cast<ddmFilterModel*>( this )->m_totalBoundaries;
 }
+
+/**
+ * Резервирует память для штатов
+ *
+ * Определяет, сколько памяти нужно выделить для хранения списка штатов
+ *
+ * @param table_name Имя таблицы
+ */
+void ddmFilterModel::reserveStatesMemory( const QString& table_name )
+{
+    ddmDatabase& db = this->database();
+    QString sql = QString( "SELECT COUNT(state_id) FROM %1 GROUP BY state_id" ).arg( table_name );
+    QSqlQueryModel* query = db.select( sql );
+    Q_ASSERT( !db.hasErrors() );
+    int n = query->data( query->index( 0, 0 ) ).toInt();
+    if ( n > 0 )
+    {
+        this->m_states.reserve( n );
+    }
+    qDebug() << n << "states";
+}
+
+/**
+ * Резервирует память для графств
+ *
+ * Определяет, сколько памяти нужно выделить для хранения списка графств
+ *
+ * @param table_name Имя таблицы
+ */
+void ddmFilterModel::reserveCountiesMemory( const QString& table_name )
+{
+    ddmDatabase& db = this->database();
+    QString sql = QString( "SELECT COUNT(county_id) FROM %1 GROUP BY county_id" ).arg( table_name );
+    QSqlQueryModel* query = db.select( sql );
+    Q_ASSERT( !db.hasErrors() );
+    int n = query->data( query->index( 0, 0 ) ).toInt();
+    if ( n > 0 )
+    {
+        this->m_counties.reserve( n );
+    }
+    qDebug() << n << "counties";
+}
+
+/**
+ * Резервирует память для контуров графств
+ *
+ * Определяет, сколько памяти нужно выделить для хранения списка контуров графств
+ *
+ * @param table_name Имя таблицы
+ */
+void ddmFilterModel::reserveBoundariesMemory( const QString& table_name )
+{
+    ddmDatabase& db = this->database();
+    QString sql = QString( "SELECT COUNT(boundary_id) FROM %1 GROUP BY boundary_id" ).arg( table_name );
+    QSqlQueryModel* query = db.select( sql );
+    Q_ASSERT( !db.hasErrors() );
+    int n = query->data( query->index( 0, 0 ) ).toInt();
+    if ( n > 0 )
+    {
+        this->m_boundaries.reserve( n );
+    }
+    qDebug() << n << "boundaries";
+}
+
 
 /**
  * @brief ddmFilterModel::~ddmFilterModel

@@ -44,6 +44,9 @@ protected:
     ddmCounty* findCounty( const QString& county_name ) const;
     ddmBoundary* findBoundary( int boundary_id ) const;
 
+    void reserveStatesMemory( const QString& table_name );
+    void reserveCountiesMemory( const QString& table_name );
+    void reserveBoundariesMemory( const QString& table_name );
 };
 
 #endif // DDM_FILTER_MODEL_H
