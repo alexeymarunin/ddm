@@ -103,7 +103,7 @@
       },
       
       update: function() {
-        //console.log( 'ddmMap.update' );
+        // console.log( 'ddmMap.update' );
         var self = this;
         
         for ( var id in self.counties ) {
@@ -114,10 +114,9 @@
         //console.log( 'ddmMap.update selection.length=' + selection.length );
         _.each( selection, function( item ) {
           if ( !_.has( self.counties, item.id ) ) {
-            _.defer( function() {
+            //_.defer( function() {
                 self._addCounty( item.id );
-                self.show( item.id );
-            });
+            //});
           }
           else {
             self.show( item.id );
@@ -192,6 +191,7 @@
           strokeColor: model.strokeColor,
           strokeWeight: model.strokeWeight,
           strokeOpacity: model.strokeOpacity,
+          visible: false,
           paths: paths,
           map: self.map
         });
@@ -238,6 +238,9 @@
           polygon: polygon,
           model: model
         };
+        
+        polygon.setVisible( true );
+        
         return this;
       },
       
