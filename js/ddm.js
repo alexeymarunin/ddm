@@ -111,7 +111,7 @@
         }
 
         var selection = _.result( ddmFilter, 'selection', [] ) || [];
-        console.log( 'ddmMap.update selection.length=' + selection.length );
+        //console.log( 'ddmMap.update selection.length=' + selection.length );
         _.each( selection, function( item ) {
           if ( !_.has( self.counties, item.id ) ) {
             _.defer( function() {
@@ -195,7 +195,7 @@
           paths: paths,
           map: self.map
         });
-        console.log( "Building polygons for " + model.name + " (" + bc + " boundaries, " + vc + " vertices)..." );
+        //console.log( "Building polygons for " + model.name + " (" + bc + " boundaries, " + vc + " vertices)..." );
         
         google.maps.event.addListener( polygon, 'click', function( event ) {
           var p = event.latLng;
