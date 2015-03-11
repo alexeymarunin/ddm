@@ -27,13 +27,14 @@ class ddmPosNegDeltaFilterWidget: public ddmFilterWidget
 public:
 
     ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* filter, QWidget* parent = 0 );
-    ~ddmPosNegDeltaFilterWidget();
 
     void setDeltaMode( int mode );
 
     int deltaMode() const;
 
     QComboBox* comboDeltaMode() const;
+
+    ~ddmPosNegDeltaFilterWidget();
 
 private:
     Ui::ddmPosNegDeltaFilterWidget* ui;

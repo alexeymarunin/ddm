@@ -17,8 +17,8 @@ ddmStateModel::ddmStateModel( QObject* parent ) : ddmModel( parent )
 {
     // Кэшируем данные
     // Операция хоть и долгая, но будет выполнена лишь 1 раз
-    //this->prepareCache();
-    this->prepareCache( true );
+    this->prepareCache();
+    //this->prepareCache( true );
 }
 
 /**

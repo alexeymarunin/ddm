@@ -13,11 +13,6 @@ ddmPosNegDeltaFilterWidget::ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* fi
     QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SLOT( slotApplyFilter() ) );
 }
 
-ddmPosNegDeltaFilterWidget::~ddmPosNegDeltaFilterWidget()
-{
-    delete ui;
-}
-
 
 void ddmPosNegDeltaFilterWidget::setDeltaMode( int mode )
 {
@@ -35,3 +30,9 @@ QComboBox *ddmPosNegDeltaFilterWidget::comboDeltaMode() const
 {
     return ui->m_cbDeltaMode;
 }
+
+ddmPosNegDeltaFilterWidget::~ddmPosNegDeltaFilterWidget()
+{
+    delete ui;
+}
+

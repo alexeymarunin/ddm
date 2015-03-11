@@ -2,7 +2,7 @@
 #include "models/ddmPosNegDeltaFilterModel.h"
 
 
-ddmPosNegDeltaFilterModel::ddmPosNegDeltaFilterModel( QObject *parent ):ddmFilterModel( parent )
+ddmPosNegDeltaFilterModel::ddmPosNegDeltaFilterModel( QObject *parent ) : ddmFilterModel( parent )
 {
     this->setDeltaMode( DVM_POSITIVE_DELTA );
 }
@@ -11,10 +11,14 @@ void ddmPosNegDeltaFilterModel::reloadData()
 {
     int mode = this->deltaMode();
     QString sqlQuery;
-    if( mode == DVM_POSITIVE_DELTA )
+    if ( mode == DVM_POSITIVE_DELTA )
+    {
         sqlQuery = QString( "SELECT * FROM cache_boundaries WHERE county_delta > 0" );
+    }
     else if ( mode == DVM_NEGATIVE_DELTA )
+    {
         sqlQuery = QString( "SELECT * FROM cache_boundaries WHERE county_delta < 0" );
+    }
 
     this->execQuery( sqlQuery );
 
@@ -22,7 +26,7 @@ void ddmPosNegDeltaFilterModel::reloadData()
 
 void ddmPosNegDeltaFilterModel::setDeltaMode( int mode )
 {
-    m_deltaMode = mode;
+    this->m_deltaMode = mode;
     this->reloadData();
     Q_EMIT changed();
 }
@@ -31,5 +35,9 @@ void ddmPosNegDeltaFilterModel::setDeltaMode( int mode )
 int ddmPosNegDeltaFilterModel::deltaMode()
 {
     return m_deltaMode;
+}
+
+ddmPosNegDeltaFilterModel::~ddmPosNegDeltaFilterModel()
+{
 }
 

@@ -5,16 +5,10 @@
 #include "widgets/ddmFrictionDeltaFilterWidget.h"
 
 
-ddmFrictionDeltaFilter::ddmFrictionDeltaFilter(QObject *parent)
+ddmFrictionDeltaFilter::ddmFrictionDeltaFilter( QObject* parent ) : ddmFilter( parent )
 {
 
 }
-
-ddmFrictionDeltaFilter::~ddmFrictionDeltaFilter()
-{
-
-}
-
 
 void ddmFrictionDeltaFilter::setup()
 {
@@ -84,4 +78,10 @@ void ddmFrictionDeltaFilter::updateSelection()
     if ( needUpdate )
         Q_EMIT selectionUpdated();
 }
+
+ddmFrictionDeltaFilter::~ddmFrictionDeltaFilter()
+{
+
+}
+
 

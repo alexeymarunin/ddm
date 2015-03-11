@@ -106,3 +106,8 @@ void ddmFrictionDeltaFilterModel::updateMinMaxFrictions()
     this->m_minFriction = record.value( "min_friction" ).toDouble();
     this->m_maxFriction = record.value( "max_friction" ).toDouble();
 }
+
+ddmFrictionDeltaFilterModel::~ddmFrictionDeltaFilterModel()
+{
+}
+

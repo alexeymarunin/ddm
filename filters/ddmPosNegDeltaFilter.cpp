@@ -12,12 +12,6 @@ ddmPosNegDeltaFilter::ddmPosNegDeltaFilter( QObject *parent ) : ddmFilter( paren
 }
 
 
-ddmPosNegDeltaFilter::~ddmPosNegDeltaFilter()
-{
-
-}
-
-
 void ddmPosNegDeltaFilter::setup()
 {
     ddmPosNegDeltaFilterWidget* widget = new ddmPosNegDeltaFilterWidget( this );
@@ -42,9 +36,13 @@ void ddmPosNegDeltaFilter::updateData( bool fromWidget )
         ddmPosNegDeltaFilterModel* model = this->model_cast<ddmPosNegDeltaFilterModel>();
         ddmPosNegDeltaFilterWidget* widget = this->widget_cast<ddmPosNegDeltaFilterWidget>();
         if ( fromWidget )
+        {
             model->setDeltaMode( widget->deltaMode() );
+        }
         else
+        {
             widget->setDeltaMode( model->deltaMode() );
+        }
     }
 }
 
@@ -67,5 +65,13 @@ void ddmPosNegDeltaFilter::updateSelection()
 
 
     if ( needUpdate )
+    {
         Q_EMIT selectionUpdated();
+    }
 }
+
+ddmPosNegDeltaFilter::~ddmPosNegDeltaFilter()
+{
+}
+
+

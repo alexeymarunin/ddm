@@ -28,6 +28,8 @@ public:
     void setDeltaMode( int mode );
     int  deltaMode();
 
+    virtual ~ddmFrictionDeltaFilterModel();
+
 protected:
 
     double  m_minBound;

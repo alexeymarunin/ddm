@@ -44,7 +44,7 @@ public:
     QDoubleSpinBox* spinMinValue() const;
     QDoubleSpinBox* spinMaxValue() const;
 
-    ~ddmMinMaxFrictionFilterWidget();
+    virtual ~ddmMinMaxFrictionFilterWidget();
 
 private:
 

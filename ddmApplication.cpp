@@ -51,7 +51,7 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( this ) );
     centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( this ) );
     centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений по центры миграции", new ddmFrictionDeltaFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( this ) );
 
     //centralWidget->setCurrentFilter( 0 );
 }

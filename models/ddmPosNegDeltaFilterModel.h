@@ -26,6 +26,8 @@ public:
     void setDeltaMode( int mode );
     int  deltaMode();
 
+    virtual ~ddmPosNegDeltaFilterModel();
+
 private:
     int m_deltaMode;
 };

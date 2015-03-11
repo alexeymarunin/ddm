@@ -16,10 +16,10 @@ class QComboBox;
 class ddmFrictionDeltaFilterWidget: public ddmFilterWidget
 {
     Q_OBJECT
+
 public:
 
     ddmFrictionDeltaFilterWidget( ddmFrictionDeltaFilter* filter, QWidget* parent = 0 );
-    ~ddmFrictionDeltaFilterWidget();
 
     double minBound() const;
     void setMinBound( double bound );
@@ -42,7 +42,10 @@ public:
     QDoubleSpinBox* spinMinValue() const;
     QDoubleSpinBox* spinMaxValue() const;
 
+    virtual ~ddmFrictionDeltaFilterWidget();
+
 private:
+
     Ui::ddmFrictionDeltaFilterWidget* ui;
 };
 

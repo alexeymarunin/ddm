@@ -21,11 +21,6 @@ ddmFrictionDeltaFilterWidget::ddmFrictionDeltaFilterWidget( ddmFrictionDeltaFilt
 }
 
 
-ddmFrictionDeltaFilterWidget::~ddmFrictionDeltaFilterWidget()
-{
-    delete ui;
-}
-
 
 double ddmFrictionDeltaFilterWidget::minBound() const
 {
@@ -106,3 +101,9 @@ QDoubleSpinBox *ddmFrictionDeltaFilterWidget::spinMaxValue() const
 {
     return ui->spinMaxValue;
 }
+
+ddmFrictionDeltaFilterWidget::~ddmFrictionDeltaFilterWidget()
+{
+    delete ui;
+}
+
