@@ -83,7 +83,8 @@ QSqlQueryModel* ddmDatabase::select( const QString& sql, bool force )
 
     if ( this->hasErrors() )
     {
-        qDebug() << this->lastError().text();
+        qDebug() << sql;
+        qDebug() << "ddmDatabase::select error -" << this->lastError().text();
     }
 
     return queryModel;
@@ -104,7 +105,8 @@ QSqlQuery ddmDatabase::exec( const QString& sql )
     this->m_lastError = query.lastError();
     if ( this->hasErrors() )
     {
-        qDebug() << this->lastError().text();
+        qDebug() << sql;
+        qDebug() << "ddmDatabase::exec error -" << this->lastError().text();
     }
     return query;
 }
