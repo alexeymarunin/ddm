@@ -16,8 +16,6 @@ void ddmEmptyFilter::setup()
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
-
-    this->apply();
 }
 
 void ddmEmptyFilter::slotMapLoaded()

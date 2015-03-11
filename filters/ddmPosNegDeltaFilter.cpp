@@ -16,16 +16,15 @@ void ddmPosNegDeltaFilter::setup()
 {
     ddmPosNegDeltaFilterWidget* widget = new ddmPosNegDeltaFilterWidget( this );
     ddmPosNegDeltaFilterModel*  model  = new ddmPosNegDeltaFilterModel( this );
+
     this->m_widget = widget;
     this->m_model  = model;
+
     model->setDeltaMode( widget->deltaMode() );
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
 
-
-    this->updateData( false );
-    this->apply();
 }
 
 
@@ -62,7 +61,6 @@ void ddmPosNegDeltaFilter::updateSelection()
             needUpdate = true;
         }
     }
-
 
     if ( needUpdate )
     {

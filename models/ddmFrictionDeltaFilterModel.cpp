@@ -2,10 +2,10 @@
 #include "ddmFrictionDeltaFilterModel.h"
 
 
-ddmFrictionDeltaFilterModel::ddmFrictionDeltaFilterModel( QObject *parent ) : ddmFilterModel( parent )
+ddmFrictionDeltaFilterModel::ddmFrictionDeltaFilterModel( QObject* parent ) : ddmFilterModel( parent )
 {
     this->updateMinMaxFrictions();
-    this->setDeltaMode( 0 );
+    this->m_deltaMode = 0;
 }
 
 void ddmFrictionDeltaFilterModel::reloadData()
@@ -25,11 +25,10 @@ void ddmFrictionDeltaFilterModel::reloadData()
 double ddmFrictionDeltaFilterModel::minBound() const
 {
     return this->m_minBound;
-
 }
 
 
-void ddmFrictionDeltaFilterModel::setMinBound(double bound)
+void ddmFrictionDeltaFilterModel::setMinBound( double bound )
 {
     if ( this->minBound() != bound )
     {
@@ -57,7 +56,7 @@ void ddmFrictionDeltaFilterModel::setMaxBound(double bound)
 }
 
 
-void ddmFrictionDeltaFilterModel::setBounds(double minBound, double maxBound)
+void ddmFrictionDeltaFilterModel::setBounds( double minBound, double maxBound )
 {
     if ( this->minBound() != minBound || this->maxBound() != maxBound )
     {
@@ -82,11 +81,18 @@ double ddmFrictionDeltaFilterModel::maxFriction() const
 }
 
 
-void ddmFrictionDeltaFilterModel::setDeltaMode(int mode)
+void ddmFrictionDeltaFilterModel::setDeltaMode( int mode )
 {
-    m_deltaMode = mode;
-    this->reloadData();
-    Q_EMIT changed();
+    // Тарас, обязательно проверяй, что изменения действительно есть!
+    // Иначе:
+    //  а) будут вызываться ненужные обработки
+    //  б) рискуешь попасть в бесконечный цикл
+    if ( this->deltaMode() != mode )
+    {
+        m_deltaMode = mode;
+        this->reloadData();
+        Q_EMIT changed();
+    }
 }
 
 
@@ -102,9 +108,8 @@ void ddmFrictionDeltaFilterModel::updateMinMaxFrictions()
     QSqlQueryModel* query = db.select( sql );
     Q_ASSERT( !db.hasErrors() );
 
-    QSqlRecord record = query->record( 0 );
-    this->m_minFriction = record.value( "min_friction" ).toDouble();
-    this->m_maxFriction = record.value( "max_friction" ).toDouble();
+    this->m_minFriction = query->data( query->index( 0, 0 ) ).toDouble();
+    this->m_maxFriction = query->data( query->index( 0, 1 ) ).toDouble();
 }
 
 ddmFrictionDeltaFilterModel::~ddmFrictionDeltaFilterModel()

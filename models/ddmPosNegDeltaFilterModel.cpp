@@ -2,9 +2,9 @@
 #include "models/ddmPosNegDeltaFilterModel.h"
 
 
-ddmPosNegDeltaFilterModel::ddmPosNegDeltaFilterModel( QObject *parent ) : ddmFilterModel( parent )
+ddmPosNegDeltaFilterModel::ddmPosNegDeltaFilterModel( QObject* parent ) : ddmFilterModel( parent )
 {
-    this->setDeltaMode( DVM_POSITIVE_DELTA );
+    this->m_deltaMode = DVM_POSITIVE_DELTA;
 }
 
 void ddmPosNegDeltaFilterModel::reloadData()
@@ -26,9 +26,12 @@ void ddmPosNegDeltaFilterModel::reloadData()
 
 void ddmPosNegDeltaFilterModel::setDeltaMode( int mode )
 {
-    this->m_deltaMode = mode;
-    this->reloadData();
-    Q_EMIT changed();
+    if ( this->deltaMode() != mode )
+    {
+        this->m_deltaMode = mode;
+        this->reloadData();
+        Q_EMIT changed();
+    }
 }
 
 

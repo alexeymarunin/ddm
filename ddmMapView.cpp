@@ -262,7 +262,6 @@ void ddmMapView::show()
     this->setParent( ddmApp->centralWidget() ); // родителя для карты нужно устанавливать именно при активации фильтра
 
     QWebView::show();
-    this->reload();
     this->m_mapLayout->addWidget( this );
 }
 

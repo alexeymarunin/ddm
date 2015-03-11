@@ -15,16 +15,12 @@ void ddmMinMaxFrictionFilter::setup()
     this->m_model = model;
     this->m_widget = widget;
 
+    // Задаем начальные значения
+    model->setBounds( 0.02, 0.04 );
+
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
 
-    // Задаем ограничения
-    model->setMinBound( model->minFriction() );
-    model->setMaxBound( 0.04 );
-
-    this->updateData( false );
-
-    this->apply();
 }
 
 void ddmMinMaxFrictionFilter::updateData( bool fromWidget )

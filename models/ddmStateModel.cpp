@@ -69,7 +69,7 @@ void ddmStateModel::prepareCache( bool force )
     qDebug() << "Preparing vertices cache...";
     sql =
         "CREATE TABLE IF NOT EXISTS cache_boundary_points AS\n"
-        "  SELECT bp.boundary_id, p.x, p.y\n"
+        "  SELECT bp.boundary_id, p.x, p.y, bp.point_id \n"
         "    FROM ddm_boundary_points AS bp\n"
         "    LEFT JOIN ddm_points AS p ON p.id = bp.point_id\n";
     db.exec( sql );

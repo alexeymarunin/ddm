@@ -8,6 +8,8 @@
 ddmMinMaxFrictionFilterModel::ddmMinMaxFrictionFilterModel( QObject* parent ) : ddmFilterModel( parent )
 {
     this->updateMinMaxFrictions();
+    this->m_minBound = 0;
+    this->m_maxBound = 0;
 }
 
 void ddmMinMaxFrictionFilterModel::reloadData()
@@ -77,9 +79,10 @@ void ddmMinMaxFrictionFilterModel::updateMinMaxFrictions()
     QSqlQueryModel* query = db.select( sql );
     Q_ASSERT( !db.hasErrors() );
 
-    QSqlRecord record = query->record( 0 );
-    this->m_minFriction = record.value( "min_friction" ).toDouble();
-    this->m_maxFriction = record.value( "max_friction" ).toDouble();
+    this->m_minFriction = query->data( query->index( 0, 0 ) ).toDouble();
+    this->m_maxFriction = query->data( query->index( 0, 1 ) ).toDouble();
+    qDebug() << "minFriction:" << this->m_minFriction;
+    qDebug() << "maxFriction:" << this->m_maxFriction;
 }
 
 /**

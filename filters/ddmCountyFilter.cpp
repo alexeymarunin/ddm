@@ -31,18 +31,16 @@ void ddmCountyFilter::setup()
     this->m_model = model;
     this->m_widget = widget;
 
-    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ) );
-    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ) );
-
     widget->setStateNames( model->stateNames() );
     widget->setCurrentState( model->currentState()->geographicName() );
     widget->setCountyNames( model->currentState()->countyNames() );
     widget->setCurrentCounty( model->currentCounty()->geographicName() );
 
+    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ) );
+    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ) );
+
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
-
-    this->apply();
 
 }
 

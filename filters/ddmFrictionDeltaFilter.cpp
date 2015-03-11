@@ -18,18 +18,13 @@ void ddmFrictionDeltaFilter::setup()
     this->m_model = model;
     this->m_widget = widget;
 
-    // Обязательно вызываем метод из базового класса!
-    ddmFilter::setup();
-
     // Задаем ограничения
-    model->setMinBound( model->minFriction() );
-    model->setMaxBound( 0.04 );
+    model->setBounds( 0.02, 0.04 );
     // задаем режим дельты (положительная/отрицательная)
     model->setDeltaMode( widget->deltaMode() );
 
-    this->updateData( false );
-
-    this->apply();
+    // Обязательно вызываем метод из базового класса!
+    ddmFilter::setup();
 }
 
 
