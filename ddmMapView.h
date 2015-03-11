@@ -2,15 +2,28 @@
 #define DDM_MAP_VIEW_H
 
 #include <QWebView>
+#include <QVBoxLayout>
+#include <QVariantMap>
 
+class ddmFilter;
+
+/**
+ * Класс ddmMapView определяет мини-браузер, в котором отображается
+ * веб-страница с Google Map
+ *
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
 class ddmMapView : public QWebView
 {
+    Q_OBJECT
+
 public:
-    ddmMapView( QWidget* parent );
 
-    void selectCounty( int id );
+    ddmMapView( ddmFilter* filter, QWidget* parent = NULL );
 
-    void injectModel( QObject* model );
+    void addToJavaScriptWindowObject( const QString& name, QObject* object );
+    QVariant evaluateJavaScript( const QString& scriptSource );
 
     // увеличить приближение
     void increaseZoomLevel();
@@ -18,20 +31,47 @@ public:
     // уменьшить приближение
     void decreaseZoomLevel();
 
-public slots:
-    void replyFinished( QNetworkReply* reply );
-    void loadCoordinates();
-    void geoCode(const QString &address);
-    void resize( int w, int h );
+    void setCenter( double x, double y );
+    void setCenter( const QVariantMap& center );
 
-signals:
+    void setMarker( double x, double y );
+    void setMarker( const QVariantMap& point );
+
+    bool mapReady() const;
+
+    ddmFilter* filter() const;
+
+    virtual ~ddmMapView();
+
+Q_SIGNALS:
+
+    void mousemove( double lat, double lng );
+    void resized( int width, int height );
+    void loaded();
+
+    void javaScriptWindowObjectCleared();
     void reloadMap();
 
-private:
-    QNetworkAccessManager*  m_manager;
+public Q_SLOTS:
 
-    QList<QPointF> m_coordinates;
-    int m_pendingRequests;
+    void slotReplyFinished( QNetworkReply* reply );
+    void slotJavaScriptWindowObjectCleared();
+    void resize( int w, int h );
+    void show();
+    void hide();
+
+protected Q_SLOTS:
+
+    void slotLoaded();
+
+protected:
+
+    QNetworkAccessManager*  m_manager;
+    ddmFilter*              m_filter;
+    int                     m_pendingRequests;
+    bool                    m_mapReady;
+    QVBoxLayout*            m_mapLayout;
+
 };
 
 

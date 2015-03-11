@@ -1,103 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%; width: 100%;">
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCq1wAq2gmenvXvgCCqT6pfkUGcKLGV_PA"></script>
-    <script type="text/javascript" src="js/jquery-1.11.2.js"></script>
-    <script type="text/javascript" src="js/underscore-1.7.0.js"></script>
-    <script type="text/javascript" src="js/backbone-1.1.2.js"></script>
+    <script type="text/javascript" src="js/underscore-min.1.7.0.js"></script>
     <script type="text/javascript" src="js/ddm.js"></script>
   </head>
-  <body>
-    <div id="map_canvas" style="width: 800px; height: 600px;"></div>
-    
+  <body style="height:100%; width:100%; margin:0; padding:0;">
+    <div id="map_canvas" style="height:100%; width:100%; margin:0; padding:0;"></div>
     <script type="text/javascript">
-      // Маркер для отображения центра текущего графства
-      var COUNTY_MARKER = null;
-      
-      ddm_map( jQuery, {
-        counties: ddm_model.props.counties,
-        el: '#map_canvas',
-        map: {
-          zoom: 8,
-          center: new google.maps.LatLng( 54.75864, -159.42634 ),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        },
-        polygon: {
-          clean: {
-            fillColor: '#FFFFEE',
-            fillOpacity: 0.3,
-            strokeColor: '#FFFFEE',
-            strokeWeight: 1,
-            strokeOpacity: 0.3
-          },
-          hover: {
-            fillOpacity: 0.9,
-            strokeWeight: 3,
-            strokeOpacity: 0.9
-          },
-          select: {
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            strokeColor: '#FF0000',
-            strokeWeight: 2,
-            strokeOpacity: 0.7
-          }
-        },
-        success: function() {
-          ddm_select_county( DDM.Model.currentCounty );
-        }
-      });
-      
-      function ddm_select_county( county_id ) {
-        var county = DDM.Collection.get( county_id );
-        county.select();
-        var center = county.get( 'center' );
-        var LatLng = ddm_set_map_center( center.x, center.y );
-        if ( !COUNTY_MARKER ) {
-          COUNTY_MARKER = new google.maps.Marker({
-            position: LatLng,
-            map: DDM.View.map
-          });
-        }
-        COUNTY_MARKER.setPosition( LatLng );
-      }
-      
-      function ddm_set_map_center( x, y ) {
-        var LatLng = new google.maps.LatLng( x, y );
-        DDM.Map.panTo( LatLng );
-        return LatLng;
-      }
-      
-      function ddm_map_resize( width, height ) {
-        var  w = width.toString();
-        var  h = height.toString();
-        var map = DDM.View.map;
-        var center = map.getCenter();
-        var elem = document.getElementById( "map_canvas" );
-        elem.style.width = w + 'px';
-        elem.style.height = h + 'px';
-        google.maps.event.trigger( map, 'resize' );
-        map.setCenter( center );
-        // надо потом разобраться
-        // почему не отрабатывет этот же код в ddm_resize()
-      }
-	  
-	  function ddm_increase_map_zoom() {
-	     var map = DDM.View.map;
-		 var currentZoom = map.getZoom();
-		 currentZoom++;
-		 map.setZoom( currentZoom );
-	  }
-	  
-	  function ddm_decrease_map_zoom() {
-	     var map = DDM.View.map;
-		 var currentZoom = map.getZoom();
-		 if( currentZoom > 0 )
-             --currentZoom;		 
-		 map.setZoom( currentZoom );
-	  }
-      
+      google.maps.event.addDomListener( window, 'load', ddm_load );
     </script>
   </body>
 </html>
