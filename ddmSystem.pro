@@ -50,7 +50,8 @@ SOURCES += main.cpp \
     widgets/ddmFrictionDeltaFilterWidget.cpp \
     filters/ddmFrictionPopulationFilter.cpp \
     models/ddmFrictionPopulationFilterModel.cpp \
-    widgets/ddmFrictionPopulationFilterWidget.cpp
+    widgets/ddmFrictionPopulationFilterWidget.cpp \
+    ddmSettings.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -90,7 +91,8 @@ HEADERS += \
     base/ddmDefines.h \
     filters/ddmFrictionPopulationFilter.h \
     models/ddmFrictionPopulationFilterModel.h \
-    widgets/ddmFrictionPopulationFilterWidget.h
+    widgets/ddmFrictionPopulationFilterWidget.h \
+    ddmSettings.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCountyFilterWidget.ui \
