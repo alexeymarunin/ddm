@@ -84,6 +84,17 @@
       </widget>
      </item>
      <item>
+      <widget class="QTextBrowser" name="countyInfo">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(234, 234, 234);
+border-color: rgb(234, 234, 234);</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

@@ -35,6 +35,8 @@ protected:
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
 
+    void updateInfo();
+
     virtual void loadSettings();
     virtual void saveSettings();
 

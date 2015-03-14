@@ -166,7 +166,6 @@ void ddmCountyFilterModel::setCurrentCounty( int id )
         ddmCounty* county = state->county( id );
         if ( county )
         {
-            qDebug() << county->geographicName();
             this->setCurrentCounty( county );
             found = true;
             break;

@@ -38,6 +38,8 @@ public:
     void setStateNames( const QStringList& names );
     void setCountyNames( const QStringList& names );
 
+    void setCountyInfo( const QString& html );
+
     QComboBox* comboState() const;
     QComboBox* comboCounty() const;
 

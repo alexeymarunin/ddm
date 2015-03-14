@@ -62,6 +62,19 @@ void ddmCountyFilterWidget::setCountyNames( const QStringList& names )
     }
 }
 
+/**
+ * Задает текст с информацией о текущем графстве
+ *
+ * @param   html Строка HTML
+ * @author  Марунин А.В.
+ * @since   2.6
+ *
+ */
+void ddmCountyFilterWidget::setCountyInfo( const QString& html )
+{
+    this->ui->countyInfo->setHtml( html );
+}
+
 QComboBox* ddmCountyFilterWidget::comboState() const
 {
     return this->ui->comboState;

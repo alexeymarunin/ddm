@@ -87,17 +87,14 @@ void ddmMainWindow::loadSettings()
 {
     ddmSettings* settings = ddmSettings::instance();
 
+    QSize size = settings->value( "mainwindow/size", QSize( 800, 600 ) ).toSize();
+    QPoint pos = settings->value( "mainwindow/position", QPoint( 0, 0 ) ).toPoint();
+    this->move( pos );
+    this->resize( size );
     bool maximized = settings->value( "mainwindow/maximized", true ).toBool();
     if ( maximized )
     {
         this->setWindowState( Qt::WindowMaximized );
-    }
-    else
-    {
-        QSize size = settings->value( "mainwindow/size", QSize( 800, 600 ) ).toSize();
-        QPoint pos = settings->value( "mainwindow/position", QPoint( 0, 0 ) ).toPoint();
-        this->move( pos );
-        this->resize( size );
     }
 }
 

@@ -34,7 +34,6 @@ void ddmCountyFilter::setup()
 
     // Загружаем предыдущие значения
     this->loadSettings();
-    qDebug() << model->currentCounty()->geographicName();
 
     widget->setStateNames( model->stateNames() );
     widget->setCurrentState( model->currentState()->geographicName() );
@@ -46,6 +45,8 @@ void ddmCountyFilter::setup()
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
+
+    this->updateInfo();
 
 }
 
@@ -120,12 +121,82 @@ void ddmCountyFilter::slotWidgetChangedCounty()
         model->setCurrentCounty( countyName );
         this->apply();
 
+        this->updateInfo();
+
         QVariantMap center = model->currentCounty()->center();
         this->setMapCenter( center );
         this->mapView()->setMarker( center );
 
         this->saveSettings();
     }
+}
+
+/**
+ * Обновляет на виджете информацию о текущем графстве
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCountyFilter::updateInfo()
+{
+    ddmCountyFilterModel* model  = this->model_cast<ddmCountyFilterModel>();
+    ddmCounty* county = model->currentCounty();
+    QString countyInfoHTML;
+    if ( county )
+    {
+        countyInfoHTML = QString(
+            "<table>"
+            "<tr>"
+                "<td><b>Название: </b></td>"
+                "<td>%1</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Штат: </b></td>"
+                "<td>%2</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Население: </b></td>"
+                "<td>%3 чел.</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Приехавших: </b></td>"
+                "<td>%4 чел.</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Уехавших: </b></td>"
+                "<td>%5 чел.</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Дельта: </b></td>"
+                "<td>%6 чел.</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Трение приехав.: </b></td>"
+                "<td>%7</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Трение уехав.: </b></td>"
+                "<td>%8</td>"
+            "</tr>"
+            "<tr>"
+                "<td><b>Трение средн.: </b></td>"
+                "<td>%9</td>"
+            "</tr>"
+            "</table>"
+            )
+            .arg( county->geographicName() )
+            .arg( county->state()->geographicName() )
+            .arg( county->population() )
+            .arg( county->in_sum() )
+            .arg( county->out_sum() )
+            .arg( county->delta() )
+            .arg( county->f_in_mid() )
+            .arg( county->f_out_mid() )
+            .arg( county->f_mid() );
+    }
+
+    ddmCountyFilterWidget* widget = this->widget_cast<ddmCountyFilterWidget>();
+    widget->setCountyInfo( countyInfoHTML );
 }
 
 void ddmCountyFilter::slotMapLoaded()
