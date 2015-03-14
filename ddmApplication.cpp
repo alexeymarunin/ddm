@@ -10,6 +10,7 @@
 #include "filters/ddmPosNegDeltaFilter.h"
 #include "filters/ddmFrictionDeltaFilter.h"
 #include "filters/ddmFrictionPopulationFilter.h"
+#include "filters/ddmDeltaPopulationFilter.h"
 
 /**
  * @Конструктор класса
@@ -54,6 +55,7 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
     centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( this ) );
     centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( this ) );
+    centralWidget->appendFilter( "Процент делты от населения",  new ddmDeltaPopulationFilter( this ) );
 
     //centralWidget->setCurrentFilter( 0 );
 }
