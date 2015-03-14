@@ -51,7 +51,10 @@ SOURCES += main.cpp \
     filters/ddmFrictionPopulationFilter.cpp \
     models/ddmFrictionPopulationFilterModel.cpp \
     widgets/ddmFrictionPopulationFilterWidget.cpp \
-    ddmSettings.cpp
+    ddmSettings.cpp \
+    widgets/ddmDeltaPopulationFilterWidget.cpp \
+    models/ddmDeltaPopulationFilterModel.cpp \
+    filters/ddmDeltaPopulationFilter.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -92,7 +95,10 @@ HEADERS += \
     filters/ddmFrictionPopulationFilter.h \
     models/ddmFrictionPopulationFilterModel.h \
     widgets/ddmFrictionPopulationFilterWidget.h \
-    ddmSettings.h
+    ddmSettings.h \
+    widgets/ddmDeltaPopulationFilterWidget.h \
+    models/ddmDeltaPopulationFilterModel.h \
+    filters/ddmDeltaPopulationFilter.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCountyFilterWidget.ui \
@@ -101,7 +107,8 @@ FORMS += ddmMainWindow.ui \
     widgets/ddmMinMaxFrictionFilterWidget.ui \
     widgets/ddmPosNegDeltaFilterWidget.ui \
     widgets/ddmFrictionDeltaFilterWidget.ui \
-    widgets/ddmFrictionPopulationFilterWidget.ui
+    widgets/ddmFrictionPopulationFilterWidget.ui \
+    widgets/ddmDeltaPopulationFilterWidget.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release

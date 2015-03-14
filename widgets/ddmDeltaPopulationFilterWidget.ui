@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ddmFrictionPopulationFilterWidget</class>
- <widget class="QWidget" name="ddmFrictionPopulationFilterWidget">
+ <class>ddmDeltaPopulationFilterWidget</class>
+ <widget class="QWidget" name="ddmDeltaPopulationFilterWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>172</width>
-    <height>306</height>
+    <width>161</width>
+    <height>181</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="sizeConstraint">
@@ -22,7 +22,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Задать диапозон трений</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Задать диапазон численности населения в процентах (1 = 100%)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -37,7 +37,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spFrMinValue"/>
+      <widget class="QDoubleSpinBox" name="spinMinValue">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelMaxValue">
@@ -47,37 +51,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spFrMaxValue"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Задать диапозон численности населения (1 = 1000 чел., 0,066 = 66 чел)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
+      <widget class="QDoubleSpinBox" name="spinMaxValue">
+       <property name="decimals">
+        <number>5</number>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelMinValue_2">
-       <property name="text">
-        <string>Мин.значение</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="m_spPopMinValue"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelMaxValue_2">
-       <property name="text">
-        <string>Макс.значение</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="m_spPopMaxValue"/>
      </item>
      <item>
       <widget class="QPushButton" name="buttonApply">

@@ -11,6 +11,7 @@
 #include "filters/ddmPosNegDeltaFilter.h"
 #include "filters/ddmFrictionDeltaFilter.h"
 #include "filters/ddmFrictionPopulationFilter.h"
+#include "filters/ddmDeltaPopulationFilter.h"
 
 /**
  * @Конструктор класса
@@ -50,12 +51,13 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     this->mainWindow()->setCentralWidget( centralWidget );
 
     // Фильтры
-    centralWidget->appendFilter( "<выберите фильтр>",       new ddmEmptyFilter( centralWidget ) );
-    centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( centralWidget ) );
-    centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( centralWidget ) );
-    centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( centralWidget ) );
-    centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( centralWidget ) );
-    centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( centralWidget ) );
+    centralWidget->appendFilter( "<выберите фильтр>",       new ddmEmptyFilter( this ) );
+    centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( this ) );
+    centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( this ) );
+    centralWidget->appendFilter( "Процент дельты от населения",  new ddmDeltaPopulationFilter( this ) );
 
     //centralWidget->setCurrentFilter( 0 );
     ddmSettings* settings = ddmSettings::instance();
