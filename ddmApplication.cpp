@@ -1,5 +1,6 @@
 #include <QDebug>
 #include "ddmVersion.h"
+#include "ddmSettings.h"
 #include "ddmMainWindow.h"
 #include "widgets/ddmCentralWidget.h"
 #include "ddmApplication.h"
@@ -21,6 +22,13 @@
  */
 ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, argv )
 {
+    QCoreApplication::setOrganizationName( "Fake Org" );
+    QCoreApplication::setOrganizationDomain( "fake.com" );
+    QCoreApplication::setApplicationName( "Distance Decay Map" );
+    QCoreApplication::setApplicationVersion( this->version() );
+
+    this->loadSettings();
+
     // Инициализируем БД
     ddmDatabase& db = ddmDatabase::instance();
     Q_UNUSED( db );
@@ -34,13 +42,7 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     qDebug() << "Mode: Release";
 #endif
     this->m_mainWindow = new ddmMainWindow;
-
-    QString title = QString( "Distance Decay Map, v.%1" ).arg( this->version() );
-#ifdef QT_DEBUG
-    title += QString( " [DEBUG MODE]" );
-#endif
-    this->m_mainWindow->setWindowTitle( title );
-    this->m_mainWindow->show();
+    this->mainWindow()->show();
 
 
     // Создаем и настраиваем центральный виджет приложения
@@ -48,14 +50,41 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     this->mainWindow()->setCentralWidget( centralWidget );
 
     // Фильтры
-    centralWidget->appendFilter( "<выберите фильтр>",       new ddmEmptyFilter( this ) );
-    centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( this ) );
-    centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( this ) );
+    centralWidget->appendFilter( "<выберите фильтр>",       new ddmEmptyFilter( centralWidget ) );
+    centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( centralWidget ) );
+    centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( centralWidget ) );
+    centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( centralWidget ) );
+    centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( centralWidget ) );
+    centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( centralWidget ) );
 
     //centralWidget->setCurrentFilter( 0 );
+    ddmSettings* settings = ddmSettings::instance();
+    QString lastFilter = settings->value( "panel/filter", "" ).toString();
+    centralWidget->setCurrentFilter( lastFilter );
+}
+
+/**
+ * Загружает настройки приложения
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmApplication::loadSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+    Q_UNUSED( settings );
+}
+
+/**
+ * Сохраняет настройки приложения
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmApplication::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+    settings->setValue( "version", this->version() );
 }
 
 /**
@@ -84,6 +113,7 @@ ddmCentralWidget* ddmApplication::centralWidget() const
 
 /**
  * Возвращает текущую версию приложения
+ *
  * @return  Строка - версия приложения
  * @author  Марунин А.В.
  * @since   2.1
@@ -103,4 +133,10 @@ ddmApplication::~ddmApplication()
 {
     // Закрываем БД
     ddmDatabase::instance().close();
+
+    // Сохраняем настройки приложения
+    this->saveSettings();
+
+    delete this->m_mainWindow;
 }
+

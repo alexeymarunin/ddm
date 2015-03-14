@@ -32,8 +32,10 @@ Q_SIGNALS:
 public Q_SLOTS:
 
 private:
+    ddmMainWindow*  m_mainWindow;
 
-    ddmMainWindow* m_mainWindow;
+    void loadSettings();
+    void saveSettings();
 
 };
 
