@@ -37,6 +37,8 @@ public:
     void setMarker( double x, double y );
     void setMarker( const QVariantMap& point );
 
+    void fitCounty( int county_id );
+
     bool mapReady() const;
 
     ddmFilter* filter() const;

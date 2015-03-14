@@ -24,6 +24,7 @@ public:
     Q_PROPERTY( QString      name       READ geographicName )
     Q_PROPERTY( QVariantList boundaries READ boundaries     )
     Q_PROPERTY( QVariantMap  center     READ center         )
+    Q_PROPERTY( QVariantMap  bounds     READ bounds         )
 
     Q_PROPERTY( int     population  READ population )
     Q_PROPERTY( int     in_sum      READ in_sum     )
@@ -52,6 +53,7 @@ public:
     QString     geographicName() const;
     QVariantMap center() const;
     ddmState*   state() const;
+    QVariantMap bounds() const;
 
     int population() const;
     int in_sum() const;

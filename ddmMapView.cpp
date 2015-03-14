@@ -205,6 +205,21 @@ void ddmMapView::setMarker( double x, double y )
 }
 
 /**
+ * Задает графство, которое должно отобразиться на карте
+ *
+ * @param   county_id Идентификатор графства
+ * @author  Марунин А.В.
+ * @since   2.7
+ */
+void ddmMapView::fitCounty( int county_id )
+{
+    if ( this->mapReady() )
+    {
+        this->evaluateJavaScript( QString( "window.ddmMap.fitCounty( %1 );" ).arg( county_id ) );
+    }
+}
+
+/**
  *
  *
  */

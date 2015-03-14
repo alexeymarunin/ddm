@@ -184,6 +184,48 @@ QVariantMap ddmCounty::center() const
 }
 
 /**
+ * Возвращает прямоугольник, в который вписано графство
+ *
+ * Прямоугольник описывается 4 координатами: верхнего левого угла и нижнего правого.
+ *
+ * @return  Объект типа QVariantMap с четыремя элементами: ax, ay, bx, by
+ * @author  Марунин А.В.
+ * @since   2.7
+ */
+QVariantMap ddmCounty::bounds() const
+{
+    double ax = 99999.99;
+    double ay = 99999.99;
+    double bx = -99999.99;
+    double by = -99999.99;
+
+    QVariantList boundaries = this->boundaries();
+    foreach ( QVariant obj, boundaries )
+    {
+        ddmBoundary* boundary = obj.value<ddmBoundary*>();
+        QVariantList vertices = boundary->vertices();
+        foreach ( QVariant v, vertices )
+        {
+            ddmPoint* point = v.value<ddmPoint*>();
+            double x = point->x();
+            double y = point->y();
+            if ( x <= ax ) ax = x;
+            if ( y <= ay ) ay = y;
+            if ( x >= bx ) bx = x;
+            if ( y >= by ) by = y;
+        }
+    }
+
+    QVariantMap bounds;
+    bounds["ax"] = ax;
+    bounds["ay"] = ay;
+    bounds["bx"] = bx;
+    bounds["by"] = by;
+
+    return bounds;
+}
+
+/**
  * Возвращает географическое имя графства (название + штат)
  *
  * @return  Географическое имя графства

@@ -123,9 +123,7 @@ void ddmCountyFilter::slotWidgetChangedCounty()
 
         this->updateInfo();
 
-        QVariantMap center = model->currentCounty()->center();
-        this->setMapCenter( center );
-        this->mapView()->setMarker( center );
+        this->fitCounty();
 
         this->saveSettings();
     }
@@ -199,15 +197,24 @@ void ddmCountyFilter::updateInfo()
     widget->setCountyInfo( countyInfoHTML );
 }
 
+void ddmCountyFilter::fitCounty()
+{
+    ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
+    if ( model->currentCounty() )
+    {
+        QVariantMap center = model->currentCounty()->center();
+        this->setMapCenter( center );
+
+        this->mapView()->setMarker( center );
+        this->mapView()->fitCounty( model->currentCounty()->id() );
+    }
+}
+
 void ddmCountyFilter::slotMapLoaded()
 {
     this->updateData();
 
-    ddmCountyFilterModel*  model  = this->model_cast<ddmCountyFilterModel>();
-    QVariantMap center = model->currentCounty()->center();
-    this->setMapCenter( center );
-
-    this->mapView()->setMarker( center );
+    this->fitCounty();
 }
 
 /**

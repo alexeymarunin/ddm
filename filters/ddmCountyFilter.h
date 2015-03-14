@@ -36,6 +36,7 @@ protected:
     virtual void updateSelection();
 
     void updateInfo();
+    void fitCounty();
 
     virtual void loadSettings();
     virtual void saveSettings();

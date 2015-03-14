@@ -161,6 +161,19 @@
         return this;
       },
       
+      fitCounty: function( id ) {
+        var self = this;
+        // console.log( 'id=' + id );
+        var county = self.counties[id];
+        if ( !county ) {
+          self._addCounty( id );
+        }
+        county = self.counties[id];
+        // console.log( county.bounds.toString() );
+        self.map.fitBounds( county.bounds );
+        return this;
+      },
+      
       _findCounty: function( id ) {
         // console.log( 'ddmMap._findCounty' );
         return _.find( ddmFilter.model.counties, function( county ) {
@@ -173,6 +186,7 @@
         var self = this;
         var model = self._findCounty( id );
         
+        var bounds = new google.maps.LatLngBounds();
         var paths = self._createMVCArray();
         var bc = 0, vc = 0;
         _.each( model.boundaries, function( boundary ) {
@@ -180,6 +194,7 @@
             _.each( boundary.vertices, function( vertex ) {
                 var point = self._createPoint( vertex.y, vertex.x );
                 loop.push( point );
+                bounds.extend( point );
             });
             bc++;
             vc += loop.length;
@@ -236,7 +251,8 @@
         
         self.counties[id] = {
           polygon: polygon,
-          model: model
+          model: model,
+          bounds: bounds
         };
         
         polygon.setVisible( true );
