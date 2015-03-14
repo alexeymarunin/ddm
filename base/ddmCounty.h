@@ -111,6 +111,17 @@ protected:
     int     m_strokeWeight;
     double  m_strokeOpacity;
 
+    QString m_defaultFillColor;
+    double  m_defaultFillOpacity;
+    QString m_defaultStrokeColor;
+    int     m_defaultStrokeWeight;
+    double  m_defaultStrokeOpacity;
+    QString m_defaultFillColorHover;
+    double  m_defaultFillOpacityHover;
+    QString m_defaultStrokeColorHover;
+    int     m_defaultStrokeWeightHover;
+    double  m_defaultStrokeOpacityHover;
+
     bool    m_visible;
 
     virtual void create( const QSqlRecord& record );

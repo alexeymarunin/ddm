@@ -1,4 +1,5 @@
 #include <QDebug>
+#include "ddmSettings.h"
 #include "base/ddmCounty.h"
 #include "base/ddmState.h"
 #include "base/ddmBoundary.h"
@@ -93,11 +94,26 @@ void ddmCounty::create( int id, const QString& geographicName,
     this->m_f_in_mid = f_in_mid;
     this->m_f_mid = f_mid;
 
-    this->m_fillColor = "#FF0000";
-    this->m_fillOpacity = 0.35;
-    this->m_strokeColor = "#FF0000";
-    this->m_strokeWeight = 2;
-    this->m_strokeOpacity = 0.7;
+
+    ddmSettings* settings = ddmSettings::instance();
+
+    this->m_defaultFillColor = settings->value( "palette/fillColor", "#FF0000" ).toString();
+    this->m_defaultFillOpacity = settings->value( "palette/fillOpacity", 0.35 ).toDouble();
+    this->m_defaultStrokeColor = settings->value( "palette/strokeColor", this->m_defaultFillColor ).toString();
+    this->m_defaultStrokeWeight = settings->value( "palette/strokeWeight", 2 ).toInt();
+    this->m_defaultStrokeOpacity = settings->value( "palette/strokeOpacity", 0.7 ).toDouble();
+
+    this->m_defaultFillColorHover = settings->value( "palette/fillColorHover", this->m_defaultFillColor ).toString();
+    this->m_defaultFillOpacityHover = settings->value( "palette/fillOpacityHover", 0.8 ).toDouble();
+    this->m_defaultStrokeColorHover = settings->value( "palette/strokeColorHover", this->m_defaultStrokeColor ).toString();
+    this->m_defaultStrokeWeightHover = settings->value( "palette/strokeWeightHover", 3 ).toInt();
+    this->m_defaultStrokeOpacityHover = settings->value( "palette/strokeOpacityHover", 0.8 ).toDouble();
+
+    this->m_fillColor = this->m_defaultFillColor;
+    this->m_fillOpacity = this->m_defaultFillOpacity;
+    this->m_strokeColor = this->m_defaultStrokeColor;
+    this->m_strokeWeight = this->m_defaultStrokeWeight;
+    this->m_strokeOpacity = this->m_defaultStrokeOpacity;
 
     QObject::connect( this, SIGNAL( mouseover() ), this, SLOT( slotMouseover() ) );
     QObject::connect( this, SIGNAL( mouseout()  ), this, SLOT( slotMouseout()  ) );
@@ -408,9 +424,11 @@ void ddmCounty::hide()
  */
 void ddmCounty::slotMouseover()
 {
-    this->setProperty( "fillOpacity", 0.8 );
-    this->setProperty( "strokeWeight", 3 );
-    this->setProperty( "strokeOpacity", 0.8 );
+    this->setProperty( "fillColor", this->m_defaultFillColorHover );
+    this->setProperty( "fillOpacity", this->m_defaultFillOpacityHover );
+    this->setProperty( "strokeColor", this->m_defaultStrokeColorHover );
+    this->setProperty( "strokeWeight", this->m_defaultStrokeWeightHover );
+    this->setProperty( "strokeOpacity", this->m_defaultStrokeOpacityHover );
 }
 
 /**
@@ -422,11 +440,11 @@ void ddmCounty::slotMouseover()
  */
 void ddmCounty::slotMouseout()
 {
-    this->setProperty( "fillColor", "#FF0000" );
-    this->setProperty( "fillOpacity", 0.35 );
-    this->setProperty( "strokeColor", "#FF0000" );
-    this->setProperty( "strokeWeight", 2 );
-    this->setProperty( "strokeOpacity", 0.7 );
+    this->setProperty( "fillColor", this->m_defaultFillColor );
+    this->setProperty( "fillOpacity", this->m_defaultFillOpacity );
+    this->setProperty( "strokeColor", this->m_defaultStrokeColor );
+    this->setProperty( "strokeWeight", this->m_defaultStrokeWeight );
+    this->setProperty( "strokeOpacity", this->m_defaultStrokeOpacity );
 }
 
 /**
