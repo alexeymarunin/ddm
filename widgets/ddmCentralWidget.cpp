@@ -6,18 +6,23 @@
 #include "ddmMapView.h"
 #include "widgets/ddmCentralWidget.h"
 #include "ui_ddmCentralWidget.h"
-
+#include "ddmSettings.h"
 #include "filters/ddmFilter.h"
 
 /**
- * @brief ddmCentralWidget::ddmCentralWidget
- * @param parent
+ * Конструктор класса
+ *
+ * @param   parent Владелец виджета
+ * @author  Марунин А.В.
+ * @since   2.0
  */
 ddmCentralWidget::ddmCentralWidget( QWidget* parent ) : QWidget( parent ),
     m_currentFilter( NULL )
 {
     this->ui = new Ui::ddmCentralWidget;
     this->ui->setupUi( this );
+
+    this->loadSettings();
 
     QObject::connect( this->comboFilter(), SIGNAL( currentIndexChanged(int) ), this, SLOT( slotChangedFilter(int) ) );
 
@@ -40,6 +45,31 @@ void ddmCentralWidget::setCurrentFilter( int index )
     else
     {
         this->slotChangedFilter( index );
+    }
+}
+
+/**
+ * Задает текущий фильтр по названию класса
+ *
+ * @param className Имя класса фильтра
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCentralWidget::setCurrentFilter( const QString& className )
+{
+    if ( !className.isEmpty() )
+    {
+        QComboBox* comboFilter = this->comboFilter();
+        int filterCount = comboFilter->count();
+        for ( int i = 0; i < filterCount; i++ )
+        {
+            ddmFilter* filter = comboFilter->itemData( i ).value<ddmFilter*>();
+            if ( filter->metaObject()->className() ==  className )
+            {
+                this->setCurrentFilter( i );
+                break;
+            }
+        }
     }
 }
 
@@ -114,7 +144,43 @@ QVBoxLayout* ddmCentralWidget::mapLayout() const
     return this->ui->mapLayout;
 }
 
+/**
+ * Загружает настройки виджета
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCentralWidget::loadSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+   QByteArray splitterState = settings->value( "panel/state", QByteArray() ).toByteArray();
+   if ( splitterState.size() )
+   {
+       this->ui->splitter->restoreState( splitterState );
+   }
+}
+
+/**
+ * Сохраняет настройки виджета
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCentralWidget::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    if ( this->currentFilter() )
+    {
+        QString lastFilter = this->currentFilter()->metaObject()->className();
+        settings->setValue( "panel/filter", lastFilter );
+    }
+    settings->setValue( "panel/state", this->ui->splitter->saveState() );
+}
+
 ddmCentralWidget::~ddmCentralWidget()
 {
+    this->saveSettings();
+
     delete this->ui;
 }

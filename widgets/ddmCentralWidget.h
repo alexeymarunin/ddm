@@ -35,6 +35,7 @@ public:
     void appendFilter( const QString& title, ddmFilter* filter );
     ddmFilter* currentFilter() const;
     void setCurrentFilter( int index );
+    void setCurrentFilter( const QString& className );
 
     QComboBox* comboFilter() const;
 
@@ -63,6 +64,9 @@ protected:
 private:
 
     Ui::ddmCentralWidget* ui;
+
+    void loadSettings();
+    void saveSettings();
 
 };
 
