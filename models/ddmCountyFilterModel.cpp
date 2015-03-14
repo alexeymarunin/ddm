@@ -3,8 +3,11 @@
 #include "models/ddmCountyFilterModel.h"
 
 /**
- * @brief ddmCountyFilterModel::ddmCountyFilterModel
- * @param parent
+ * Конструктор класса
+ *
+ * @param   parent Владелец модели
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 ddmCountyFilterModel::ddmCountyFilterModel( QObject* parent ) : ddmFilterModel( parent ),
     m_currentState( NULL ), m_currentCounty( NULL )
@@ -37,8 +40,11 @@ void ddmCountyFilterModel::reloadData()
 }
 
 /**
- * @brief ddmCountyFilterModel::currentState
- * @return
+ * Возвращает текущий штат
+ *
+ * @return  Указатель на объект типа ddmState или NULL
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 ddmState* ddmCountyFilterModel::currentState() const
 {
@@ -46,8 +52,13 @@ ddmState* ddmCountyFilterModel::currentState() const
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentState
- * @param id
+ * Задает текущим штат с заданным идентификатором
+ *
+ * Текущим графством становится первое по имени графство в штате.
+ *
+ * @param   id Идентификатор штата
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentState( int state_id )
 {
@@ -61,8 +72,13 @@ void ddmCountyFilterModel::setCurrentState( int state_id )
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentState
- * @param geographicName
+ * Делает текущим штат с заданным названием
+ *
+ * Текущим графством становится первое по имени графство в штате.
+ *
+ * @param   geographicName Географическое название штат
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentState( const QString& geographicName )
 {
@@ -80,8 +96,11 @@ void ddmCountyFilterModel::setCurrentState( const QString& geographicName )
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentState
- * @param state
+ * Задает текущий штат
+ *
+ * @param   state Указатель на объект типа ddmState
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentState( ddmState* state )
 {
@@ -103,8 +122,11 @@ void ddmCountyFilterModel::setCurrentState( ddmState* state )
 }
 
 /**
- * @brief ddmCountyFilterModel::stateNames
- * @return
+ * Возвращает список имен штатов
+ *
+ * @return  Объект типа QStringList
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 QStringList ddmCountyFilterModel::stateNames() const
 {
@@ -112,8 +134,11 @@ QStringList ddmCountyFilterModel::stateNames() const
 }
 
 /**
- * @brief ddmCountyFilterModel::currentCounty
- * @return
+ * Возвращает текущее графство
+ *
+ * @return  Указатель на объект типа ddmCounty или NULL
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 ddmCounty* ddmCountyFilterModel::currentCounty() const
 {
@@ -121,40 +146,98 @@ ddmCounty* ddmCountyFilterModel::currentCounty() const
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentCounty
- * @param id
+ * Делает текущим графство с заданным идентификатором
+ *
+ * Если графства с таким id нет, то ничего не происходит.
+ *
+ * @param   id Идентификатор графства
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentCounty( int id )
 {
-    if ( this->currentState() )
+    bool found = false;
+
+    QVariantList states = this->states();
+    foreach ( QVariant obj, states )
     {
-        ddmCounty* county = this->currentState()->county( id );
+        ddmState* state = obj.value<ddmState*>();
+        Q_ASSERT( state != NULL );
+        ddmCounty* county = state->county( id );
         if ( county )
         {
+            qDebug() << county->geographicName();
             this->setCurrentCounty( county );
+            found = true;
+            break;
+        }
+    }
+
+    if ( !found )
+    {
+        ddmDatabase& db = this->database();
+        QString sql = QString( "SELECT state_id FROM ddm_counties WHERE id = %1 LIMIT 1" ).arg( id );
+        QSqlQueryModel* query = db.select( sql );
+        Q_ASSERT( db.hasErrors() == false );
+        int state_id = query->data( query->index( 0, 0 ) ).toInt();
+        if ( state_id )
+        {
+            ddmState* state = this->loadState( state_id );
+            this->setCurrentState( state );
+            this->setCurrentCounty( id );
         }
     }
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentCounty
- * @param geographicName
+ * Делает текущим графство с заданномым названием
+ *
+ * Если графство не найдено, то ничего не происходит.
+ *
+ * @param   geographicName Название графства
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentCounty( const QString& geographicName )
 {
-    if ( this->currentState() )
+    bool found = false;
+
+    QVariantList states = this->states();
+    foreach ( QVariant obj, states )
     {
-        ddmCounty* county = this->currentState()->county( geographicName );
+        ddmState* state = obj.value<ddmState*>();
+        Q_ASSERT( state != NULL );
+        ddmCounty* county = state->county( geographicName );
         if ( county )
         {
             this->setCurrentCounty( county );
+            found = true;
+            break;
+        }
+    }
+
+    if ( !found )
+    {
+        ddmDatabase& db = this->database();
+        QString sql = QString( "SELECT state_id FROM ddm_counties WHERE geographic_name = '%1'' LIMIT 1" ).arg( geographicName );
+        QSqlQueryModel* query = db.select( sql );
+        Q_ASSERT( db.hasErrors() == false );
+        int state_id = query->data( query->index( 0, 0 ) ).toInt();
+        if ( state_id )
+        {
+            ddmState* state = this->loadState( state_id );
+            this->setCurrentState( state );
+            this->setCurrentCounty( geographicName );
         }
     }
 }
 
 /**
- * @brief ddmCountyFilterModel::setCurrentCounty
- * @param county
+ * Задает текущее графство
+ *
+ * @param   county Указатель на объект типа ddmCounty
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::setCurrentCounty( ddmCounty* county )
 {
@@ -178,8 +261,11 @@ void ddmCountyFilterModel::setCurrentCounty( ddmCounty* county )
 }
 
 /**
- * @brief ddmCountyFilterModel::countyNames
- * @return
+ * Возвращает список имен графств текущего штата
+ *
+ * @return  Объект типа QStringList
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 QStringList ddmCountyFilterModel::countyNames() const
 {
@@ -220,7 +306,10 @@ ddmState* ddmCountyFilterModel::loadState( int state_id )
 }
 
 /**
- * @brief ddmCountyFilterModel::updateStateNames
+ * Обновляет список штатов
+ *
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::updateStateNames()
 {
@@ -242,7 +331,10 @@ void ddmCountyFilterModel::updateStateNames()
 }
 
 /**
- * @brief ddmCountyFilterModel::updateCountyNames
+ * Обновляет список имен графств текущего штата
+ *
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 void ddmCountyFilterModel::updateCountyNames()
 {
@@ -259,7 +351,10 @@ void ddmCountyFilterModel::updateCountyNames()
 }
 
 /**
- * @brief ddmCountyFilterModel::~ddmCountyFilterModel
+ * Деструктор класса
+ *
+ * @author  Марунин А.В.
+ * @since   2.1
  */
 ddmCountyFilterModel::~ddmCountyFilterModel()
 {
