@@ -1,6 +1,7 @@
 #include "filters/ddmCountyFilter.h"
 #include "models/ddmCountyFilterModel.h"
 #include "ddmMapView.h"
+#include "ddmSettings.h"
 #include "widgets/ddmCountyFilterWidget.h"
 
 /**
@@ -30,6 +31,10 @@ void ddmCountyFilter::setup()
 
     this->m_model = model;
     this->m_widget = widget;
+
+    // Загружаем предыдущие значения
+    this->loadSettings();
+    qDebug() << model->currentCounty()->geographicName();
 
     widget->setStateNames( model->stateNames() );
     widget->setCurrentState( model->currentState()->geographicName() );
@@ -118,6 +123,8 @@ void ddmCountyFilter::slotWidgetChangedCounty()
         QVariantMap center = model->currentCounty()->center();
         this->setMapCenter( center );
         this->mapView()->setMarker( center );
+
+        this->saveSettings();
     }
 }
 
@@ -130,6 +137,38 @@ void ddmCountyFilter::slotMapLoaded()
     this->setMapCenter( center );
 
     this->mapView()->setMarker( center );
+}
+
+/**
+ * Загружает настройки фильтра
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCountyFilter::loadSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    int lastCounty = settings->value( "ddmCountyFilter/county", 0 ).toInt();
+    if ( lastCounty > 0 )
+    {
+        ddmCountyFilterModel* model  = this->model_cast<ddmCountyFilterModel>();
+        model->setCurrentCounty( lastCounty );
+    }
+}
+
+/**
+ * Сохраняет настройки фильтра
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmCountyFilter::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    ddmCountyFilterModel* model  = this->model_cast<ddmCountyFilterModel>();
+    settings->setValue( "ddmCountyFilter/county", model->currentCounty()->id() );
 }
 
 /**
