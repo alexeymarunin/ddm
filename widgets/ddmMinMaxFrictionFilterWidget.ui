@@ -60,7 +60,11 @@
      <item>
       <widget class="QPushButton" name="buttonApply">
        <property name="text">
-        <string>Отобразить графства</string>
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/icons/accept.png</normaloff>:/icons/icons/accept.png</iconset>
        </property>
       </widget>
      </item>
@@ -81,6 +85,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
