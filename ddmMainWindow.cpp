@@ -2,12 +2,14 @@
 #include <QLabel>
 #include <QList>
 #include <QWebSettings>
+#include <QDebug>
+#include <QDesktopWidget>
 
 #include "ddmApplication.h"
 #include "ddmMainWindow.h"
 #include "ui_ddmMainWindow.h"
 #include "widgets/ddmCentralWidget.h"
-
+#include "ddmSettings.h"
 
 /**
  * Конструктор класса
@@ -24,6 +26,13 @@ ddmMainWindow::ddmMainWindow( QWidget* parent ) : QMainWindow( parent )
     ui->setupUi( this );
 
     this->setWindowFlags( this->windowFlags() | Qt::WindowMaximizeButtonHint );
+
+    // Заголовок окна
+    QString title = QString( "%1, v.%2" ).arg( QCoreApplication::applicationName() ).arg( QCoreApplication::applicationVersion() );
+#ifdef QT_DEBUG
+    title += QString( " [DEBUG MODE]" );
+#endif
+    this->setWindowTitle( title );
 
     // Панель статуса
     this->m_statusBarLat = new QLabel( this );
@@ -43,7 +52,10 @@ ddmMainWindow::ddmMainWindow( QWidget* parent ) : QMainWindow( parent )
     this->ui->menuData->menuAction()->setVisible( false );
     this->ui->openAction->setVisible( false );
     this->ui->createTableViewAction->setVisible( false );
+
     this->setupEvents();
+
+    this->loadSettings();
 
 }
 
@@ -63,6 +75,45 @@ void ddmMainWindow::setupEvents()
     connect( this->ui->reloadAction, SIGNAL( triggered() ), this, SLOT( slotReload() ) );
     connect( this->ui->increaseZoomAction, SIGNAL( triggered() ), this, SLOT( slotIncreaseZoom() ) );
     connect( this->ui->decreaseZoomAction, SIGNAL( triggered() ), this, SLOT( slotDecreaseZoom() ) );
+}
+
+/**
+ * Загружает настройки окна
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmMainWindow::loadSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    bool maximized = settings->value( "mainwindow/maximized", true ).toBool();
+    if ( maximized )
+    {
+        this->setWindowState( Qt::WindowMaximized );
+    }
+    else
+    {
+        QSize size = settings->value( "mainwindow/size", QSize( 800, 600 ) ).toSize();
+        QPoint pos = settings->value( "mainwindow/position", QPoint( 0, 0 ) ).toPoint();
+        this->move( pos );
+        this->resize( size );
+    }
+}
+
+/**
+ * Сохраняет настройки окна
+ *
+ * @author  Марунин А.В.
+ * @since   2.6
+ */
+void ddmMainWindow::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    settings->setValue( "mainwindow/size", this->size() );
+    settings->setValue( "mainwindow/position", this->pos() );
+    settings->setValue( "mainwindow/maximized", this->isMaximized() );
 }
 
 /**
@@ -129,5 +180,6 @@ void ddmMainWindow::slotQuit()
  */
 ddmMainWindow::~ddmMainWindow()
 {
+    this->saveSettings();
 }
 

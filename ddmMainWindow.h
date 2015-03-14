@@ -48,6 +48,8 @@ private:
     QLabel*             m_statusBarLat;
     QLabel*             m_statusBarLng;
 
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif // DDM_MAINWINDOW_H
