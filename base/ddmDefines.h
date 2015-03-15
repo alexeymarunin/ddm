@@ -1,5 +1,5 @@
-#ifndef DDMDEFINES_H
-#define DDMDEFINES_H
+#ifndef DDM_DEFINES_H
+#define DDM_DEFINES_H
 
 enum ddmDeltaViewMode
 {
@@ -7,5 +7,5 @@ enum ddmDeltaViewMode
     DVM_NEGATIVE_DELTA
 };
 
-#endif // DDMDEFINES_H
+#endif // DDM_DEFINES_H
 
