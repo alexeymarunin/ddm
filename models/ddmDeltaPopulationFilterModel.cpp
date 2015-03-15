@@ -14,7 +14,7 @@ void ddmDeltaPopulationFilterModel::reloadData()
 {
     double minBound = this->minBound() * 100; // переводим в проценты
     double maxBound = this->maxBound() * 100; // переводим в проценты
-    QString sqlQuery = QString( "SELECT * FROM cache_boundaries WHERE county_delta >= county_population* 0.01 * %1 AND county_delta <= county_population* 0.01 * %2" ).arg( minBound ).arg( maxBound );
+    QString sqlQuery = QString( "SELECT * FROM cache_boundaries WHERE ABS(county_delta) >= county_population* 0.01 * %1 AND ABS(county_delta) <= county_population* 0.01 * %2" ).arg( minBound ).arg( maxBound );
     this->execQuery( sqlQuery );
 
 
