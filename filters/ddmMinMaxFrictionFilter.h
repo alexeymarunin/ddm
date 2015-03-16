@@ -26,6 +26,8 @@ protected:
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
 
+    virtual void loadSettings();
+    virtual void saveSettings();
 };
 
 #endif // DDM_MIN_MAX_FRICTION_FILTER_H

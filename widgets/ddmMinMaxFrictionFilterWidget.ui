@@ -45,7 +45,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="spinMinValue"/>
+      <widget class="QDoubleSpinBox" name="spinMinValue">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelMaxValue">
@@ -55,7 +62,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="spinMaxValue"/>
+      <widget class="QDoubleSpinBox" name="spinMaxValue">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonApply">

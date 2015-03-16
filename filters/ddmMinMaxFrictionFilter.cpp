@@ -2,11 +2,25 @@
 #include "models/ddmMinMaxFrictionFilterModel.h"
 #include "widgets/ddmMinMaxFrictionFilterWidget.h"
 #include "filters/ddmMinMaxFrictionFilter.h"
+#include "ddmSettings.h"
 
+
+/**
+ * @brief ddmMinMaxFrictionFilter::ddmMinMaxFrictionFilter
+ * @param parent
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
 ddmMinMaxFrictionFilter::ddmMinMaxFrictionFilter( QObject* parent ) : ddmFilter( parent )
 {
 }
 
+/**
+ * Выполняет инициализацию фильтра при создании
+ *
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
 void ddmMinMaxFrictionFilter::setup()
 {
     ddmMinMaxFrictionFilterModel* model = new ddmMinMaxFrictionFilterModel( this );
@@ -15,14 +29,23 @@ void ddmMinMaxFrictionFilter::setup()
     this->m_model = model;
     this->m_widget = widget;
 
-    // Задаем начальные значения
-    model->setBounds( 0.02, 0.04 );
+    // Загружаем настройки
+    this->loadSettings();
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
 
 }
 
+/**
+ * Синхронизирует данные между виджетом и моделью
+ *
+ * Если параметр fromWidget = true (по умолчанию), то данные с виджета заносятся в модель
+ *
+ * @param   Флаг, который указывает направление синхронизации.
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
 void ddmMinMaxFrictionFilter::updateData( bool fromWidget )
 {
     if ( this->valid() )
@@ -40,10 +63,18 @@ void ddmMinMaxFrictionFilter::updateData( bool fromWidget )
 
             widget->setMinBound( model->minBound() );
             widget->setMaxBound( model->maxBound() );
+
+            this->saveSettings();
         }
     }
 }
 
+/**
+ * Обновляет выделенные графства
+ *
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
 void ddmMinMaxFrictionFilter::updateSelection()
 {
     ddmMinMaxFrictionFilterModel* model = this->model_cast<ddmMinMaxFrictionFilterModel>();
@@ -81,6 +112,44 @@ void ddmMinMaxFrictionFilter::updateSelection()
     }
 }
 
+/**
+ * Загружает настройки фильтра
+ *
+ * @author  Марунин А.В.
+ * @since   2.7
+ */
+void ddmMinMaxFrictionFilter::loadSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    double minFriction = settings->value( "ddmMinMaxFrictionFilter/min_friction", 0.02 ).toDouble();
+    double maxFriction = settings->value( "ddmMinMaxFrictionFilter/max_friction", 0.04 ).toDouble();
+
+    ddmMinMaxFrictionFilterModel* model  = this->model_cast<ddmMinMaxFrictionFilterModel>();
+    model->setBounds( minFriction, maxFriction );
+}
+
+/**
+ * Сохраняет настройки фильтра
+ *
+ * @author  Марунин А.В.
+ * @since   2.7
+ */
+void ddmMinMaxFrictionFilter::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    ddmMinMaxFrictionFilterModel* model  = this->model_cast<ddmMinMaxFrictionFilterModel>();
+    settings->setValue( "ddmMinMaxFrictionFilter/min_friction", model->minBound() );
+    settings->setValue( "ddmMinMaxFrictionFilter/max_friction", model->maxBound() );
+}
+
+/**
+ * Деструктор класса
+ *
+ * @author  Марунин А.В.
+ * @since   2.3
+ */
 ddmMinMaxFrictionFilter::~ddmMinMaxFrictionFilter()
 {
 }
