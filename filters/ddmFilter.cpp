@@ -22,7 +22,10 @@ ddmFilter::ddmFilter( QObject* parent ) : ddmObject( parent ),
 }
 
 /**
- * @brief ddmFilter::setup
+ * Выполняет инициализацию фильтра при создании
+ *
+ * Может (и должен) перегружаться в наследуемых классах.
+ * При этом настоятельно рекомендуется вызывать в конце и базовый метод.
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -45,9 +48,11 @@ void ddmFilter::setup()
 }
 
 /**
- * @brief ddmFilter::updateData
+ * Синхронизирует данные между виджетом и моделью
  *
- * @param   fromWidget
+ * Если параметр fromWidget = true (по умолчанию), то данные с виджета заносятся в модель
+ *
+ * @param   Флаг, который указывает направление синхронизации.
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -57,7 +62,7 @@ void ddmFilter::updateData( bool fromWidget )
 }
 
 /**
- * @brief ddmFilter::updateSelection
+ * Обновляет выделенные графства
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -67,7 +72,7 @@ void ddmFilter::updateSelection()
 }
 
 /**
- * @brief ddmFilter::activate
+ * Активирует фильтр
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -91,7 +96,7 @@ void ddmFilter::activate()
 }
 
 /**
- * @brief ddmFilter::deactivate
+ * Деактивирует фильтр
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -103,7 +108,9 @@ void ddmFilter::deactivate()
 }
 
 /**
- * @brief ddmFilter::apply
+ * Применяет фильтр
+ *
+ * При этом данные с виджета заносятся в модель, карта обновляется.
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -122,7 +129,7 @@ void ddmFilter::apply()
 }
 
 /**
- * @brief ddmFilter::resetSelection
+ * Сбрасывает все выделенные на карте графства
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -148,9 +155,11 @@ void ddmFilter::resetSelection()
 }
 
 /**
- * @brief ddmFilter::selection
+ * Возвращает список выделенных графств
  *
- * @return
+ * Используется в JavaScript
+ *
+ * @return  Возвращаает объект типа QVariantList
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -171,9 +180,9 @@ QVariantList ddmFilter::selection() const
 }
 
 /**
- * @brief ddmFilter::setMapCenter
+ * Задает центр отображаемой области карты (центрирует карту)
  *
- * @param   center
+ * @param   center Объект типа QVariantMap, который содержит координаты центра
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -186,10 +195,10 @@ void ddmFilter::setMapCenter( const QVariantMap& center )
 }
 
 /**
- * @brief ddmFilter::setMapCenter
+ * Задает центр отображаемой области карты (центрирует карту)
  *
- * @param   x
- * @param   y
+ * @param   x Координата х центра
+ * @param   y Координата y центра
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -202,9 +211,9 @@ void ddmFilter::setMapCenter( double x, double y )
 }
 
 /**
- * @brief ddmFilter::isMapLoaded
+ * Определяет, полностью ли загружена карта
  *
- * @return
+ * @return  true если карта полностью прогрузилась
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -214,7 +223,7 @@ bool ddmFilter::isMapLoaded() const
 }
 
 /**
- * @brief ddmFilter::slotModelChanged
+ * Обработчик изменений в моделе фильтра
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -226,7 +235,7 @@ void ddmFilter::slotModelChanged()
 }
 
 /**
- * @brief ddmFilter::slotWidgetChanged
+ * Обработчик изменений в виджете фильтра
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -237,7 +246,7 @@ void ddmFilter::slotWidgetChanged()
 }
 
 /**
- * @brief ddmFilter::slotMapLoaded
+ * Обработчик окончания загрузки карты
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -247,7 +256,7 @@ void ddmFilter::slotMapLoaded()
 }
 
 /**
- * @brief ddmFilter::slotJavaScriptWindowObjectCleared
+ * Вызывается, когда карта обновляется (до slotMapLoaded)
  *
  * @author  Марунин А.В.
  * @since   2.0
@@ -258,9 +267,11 @@ void ddmFilter::slotJavaScriptWindowObjectCleared()
 }
 
 /**
- * @brief ddmFilter::valid
+ * Проверяет валидность фильтра
  *
- * @return
+ * Проверяет, созданы ли модель, виджет и карта.
+ *
+ * @return  true если фильтр полностью готов к работе
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -270,9 +281,9 @@ bool ddmFilter::valid() const
 }
 
 /**
- * @brief ddmFilter::model
+ * Возвращает модель
  *
- * @return
+ * @return  Указатель на объект типа ddmFilterModel
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -282,9 +293,9 @@ ddmFilterModel* ddmFilter::model() const
 }
 
 /**
- * @brief ddmFilter::widget
+ * Возвращает виджет
  *
- * @return
+ * @return  Указатель на объект типа ddmFilterWidget
  * @author  Марунин А.В.
  * @since   2.0
  */
@@ -293,6 +304,13 @@ ddmFilterWidget* ddmFilter::widget() const
     return this->m_widget;
 }
 
+/**
+ * Возвращает карту
+ *
+ * @return  Указатель на объект типа ddmMapView
+ * @author  Марунин А.В.
+ * @since   2.0
+ */
 ddmMapView* ddmFilter::mapView() const
 {
     return this->m_mapView;
@@ -336,7 +354,7 @@ void ddmFilter::saveSettings()
 }
 
 /**
- * @brief ddmFilter::~ddmFilter
+ * Деструктор класса
  *
  * @author  Марунин А.В.
  * @since   2.0
