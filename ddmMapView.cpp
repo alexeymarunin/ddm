@@ -220,6 +220,22 @@ void ddmMapView::fitCounty( int county_id )
 }
 
 /**
+ * Центрирует и масштабирует текущее выделение на карте
+ *
+ * Устанавливает центр карты и масштаб таким образом, чтобы все выделенные графства попали в отображаемую область.
+ *
+ * @author  Марунин А.В.
+ * @since   2.7
+ */
+void ddmMapView::fitSelection()
+{
+    if ( this->mapReady() )
+    {
+        this->evaluateJavaScript( QString( "window.ddmMap.fitSelection();" ) );
+    }
+}
+
+/**
  *
  *
  */

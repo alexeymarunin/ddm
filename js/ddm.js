@@ -8,6 +8,7 @@
       marker: false,
       counties: {},
       selection: [],
+      bounds: false,
       
       initialize: function() {
         // console.log( 'ddmMap.initialize' );
@@ -47,6 +48,8 @@
         if ( _.has( ddmMapView, 'resized' ) ) {
           ddmMapView.resized.connect( self, self.resize );
         }
+        
+        self.bounds = new google.maps.LatLngBounds();
         
         return this;
       },
@@ -112,17 +115,24 @@
 
         var selection = _.result( ddmFilter, 'selection', [] ) || [];
         //console.log( 'ddmMap.update selection.length=' + selection.length );
+        var bounds = new google.maps.LatLngBounds();
         _.each( selection, function( item ) {
           if ( !_.has( self.counties, item.id ) ) {
             //_.defer( function() {
-                self._addCounty( item.id );
+                county = self._addCounty( item.id );
+                bounds.union( county.bounds );
             //});
           }
           else {
             self.show( item.id );
+            county = self.counties[id];
+            bounds.union( county.bounds );
           }
         });
         self.selection = selection;
+        self.bounds = bounds;
+        // console.log( bounds.toString() );
+        self.fitSelection();
         return this;
       },
       
@@ -171,6 +181,14 @@
         county = self.counties[id];
         // console.log( county.bounds.toString() );
         self.map.fitBounds( county.bounds );
+        return this;
+      },
+      
+      fitSelection: function() {
+        var self = this;
+        if ( !self.bounds.isEmpty() ) {
+          self.map.fitBounds( self.bounds );
+        }
         return this;
       },
       
@@ -257,7 +275,7 @@
         
         polygon.setVisible( true );
         
-        return this;
+        return self.counties[id];
       },
       
       _createPoint: function( lat, lng ) {

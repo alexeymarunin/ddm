@@ -38,6 +38,7 @@ public:
     void setMarker( const QVariantMap& point );
 
     void fitCounty( int county_id );
+    void fitSelection();
 
     bool mapReady() const;
 
