@@ -20,6 +20,9 @@ protected:
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
 
+    virtual void loadSettings();
+    virtual void saveSettings();
+
 };
 
 #endif // DDM_FRICTION_POPULATION_FILTER_H

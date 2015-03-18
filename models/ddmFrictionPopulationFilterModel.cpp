@@ -184,3 +184,9 @@ double ddmFrictionPopulationFilterModel::maxFrBound() const
 {
     return this->m_maxFrBound;
 }
+
+
+void ddmFrictionPopulationFilterModel::valueChanged()
+{
+    Q_EMIT changed();
+}
