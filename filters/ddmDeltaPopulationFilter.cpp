@@ -2,8 +2,9 @@
 #include "models/ddmDeltaPopulationFilterModel.h"
 #include "widgets/ddmDeltaPopulationFilterWidget.h"
 
-#include <base/ddmCounty.h>
+#include "base/ddmCounty.h"
 
+#include "ddmSettings.h"
 
 
 ddmDeltaPopulationFilter::ddmDeltaPopulationFilter( QObject *parent ) : ddmFilter( parent )
@@ -21,8 +22,8 @@ void ddmDeltaPopulationFilter::setup()
     this->m_model = model;
     this->m_widget = widget;
 
-    // Задаем начальные значения
-    model->setBounds( 0.05, 0.051 );
+    // Загружаем настройки
+    this->loadSettings();
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
@@ -45,6 +46,8 @@ void ddmDeltaPopulationFilter::updateData( bool fromWidget )
 
             widget->setMinBound( model->minBound() );
             widget->setMaxBound( model->maxBound() );
+
+            this->saveSettings();
         }
     }
 }
@@ -69,6 +72,39 @@ void ddmDeltaPopulationFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
+}
+
+
+/**
+ * Загружает настройки фильтра
+ *
+ * @author  Цалко Т.В.
+ * @since   2.7
+ */
+void ddmDeltaPopulationFilter::loadSettings()
+{
+   ddmSettings* settings = ddmSettings::instance();
+   ddmDeltaPopulationFilterModel* model  = this->model_cast<ddmDeltaPopulationFilterModel>();
+   double minBound = settings->value( "ddmDeltaPopulationFilter/min_population", 0.05 ).toDouble();
+   double maxBound = settings->value( "ddmDeltaPopulationFilter/max_population", 0.051 ).toDouble();
+   model->setBounds( minBound, maxBound );
+
+}
+
+
+/**
+ * Сохраняет настройки фильтра
+ *
+ * @author  Цалко Т.В.
+ * @since   2.7
+ */
+void ddmDeltaPopulationFilter::saveSettings()
+{
+    ddmSettings* settings = ddmSettings::instance();
+
+    ddmDeltaPopulationFilterModel* model  = this->model_cast<ddmDeltaPopulationFilterModel>();
+    settings->setValue( "ddmDeltaPopulationFilter/min_population", model->minBound() );
+    settings->setValue( "ddmDeltaPopulationFilter/max_population", model->maxBound() );
 }
 
 

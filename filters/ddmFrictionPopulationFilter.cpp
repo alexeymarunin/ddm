@@ -29,7 +29,6 @@ void ddmFrictionPopulationFilter::setup()
 
     // Загружаем настройки
     this->loadSettings();
-    //model->reloadData();
 
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
