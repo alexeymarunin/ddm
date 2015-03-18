@@ -10,6 +10,7 @@ ddmDeltaPopulationFilterWidget::ddmDeltaPopulationFilterWidget( ddmDeltaPopulati
     this->ui->setupUi( this );
 
     ui->horizontalLayout->setContentsMargins( 0,0,0,0 );
+    this->setContentsMargins( 0,0,0,0 );
 
     QObject::connect( this->spinMinValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
     QObject::connect( this->spinMaxValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );

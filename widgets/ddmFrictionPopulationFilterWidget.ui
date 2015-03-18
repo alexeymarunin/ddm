@@ -37,7 +37,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spFrMinValue"/>
+      <widget class="QDoubleSpinBox" name="m_spFrMinValue">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelMaxValue">
@@ -47,7 +51,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spFrMaxValue"/>
+      <widget class="QDoubleSpinBox" name="m_spFrMaxValue">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -67,7 +75,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spPopMinValue"/>
+      <widget class="QDoubleSpinBox" name="m_spPopMinValue">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelMaxValue_2">
@@ -77,7 +89,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_spPopMaxValue"/>
+      <widget class="QDoubleSpinBox" name="m_spPopMaxValue">
+       <property name="decimals">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonApply">

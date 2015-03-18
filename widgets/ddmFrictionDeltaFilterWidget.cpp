@@ -9,6 +9,7 @@ ddmFrictionDeltaFilterWidget::ddmFrictionDeltaFilterWidget( ddmFrictionDeltaFilt
     this->ui = new Ui::ddmFrictionDeltaFilterWidget;
     this->ui->setupUi( this );
     this->ui->verticalLayout_2->setContentsMargins( 0,0,0,0 );
+    this->setContentsMargins( 0,0,0,0 );
     this->ui->m_cbDeltaMode->addItem( "положительная дельта" );
     this->ui->m_cbDeltaMode->addItem( "отрицательная дельта" );
     this->ui->m_cbDeltaMode->setCurrentIndex( 0 );
