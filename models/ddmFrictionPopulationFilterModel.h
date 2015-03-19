@@ -28,7 +28,6 @@ public:
     double minFriction() const;
     double maxFriction() const;
 
-
     double minPopBound() const;
     void setMinPopBound( double bound );
 
@@ -39,6 +38,8 @@ public:
 
     double minPopulation() const;
     double maxPopulation() const;
+
+    void valueChanged();
 
 
 protected:

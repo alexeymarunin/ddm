@@ -6,6 +6,8 @@ ddmMinMaxFrictionFilterWidget::ddmMinMaxFrictionFilterWidget( ddmMinMaxFrictionF
 {
     this->ui = new Ui::ddmMinMaxFrictionFilterWidget;
     this->ui->setupUi( this );
+    this->ui->gridLayout->setContentsMargins( 0,0,0,0 );
+    this->setContentsMargins( 0,0,0,0 );
 
     QObject::connect( this->spinMinValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
     QObject::connect( this->spinMaxValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );

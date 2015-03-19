@@ -8,6 +8,7 @@ ddmPosNegDeltaFilterWidget::ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* fi
     this->ui = new Ui::ddmPosNegDeltaFilterWidget;
     this->ui->setupUi( this );
     this->ui->verticalLayout_2->setContentsMargins( 0,0,0,0 );
+    this->setContentsMargins( 0,0,0,0 );
     this->ui->m_cbDeltaMode->addItem( "положительная дельта" );
     this->ui->m_cbDeltaMode->addItem( "отрицательная дельта" );
     QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SLOT( slotApplyFilter() ) );

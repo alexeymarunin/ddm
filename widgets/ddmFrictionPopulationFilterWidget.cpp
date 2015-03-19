@@ -8,6 +8,8 @@ ddmFrictionPopulationFilterWidget::ddmFrictionPopulationFilterWidget( ddmFrictio
 {
     this->ui = new Ui::ddmFrictionPopulationFilterWidget;
     this->ui->setupUi( this );
+    this->ui->verticalLayout_2->setContentsMargins( 0,0,0,0 );
+    this->setContentsMargins( 0,0,0,0 );
 
     QObject::connect( this->spinMinFrValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
     QObject::connect( this->spinMaxFrValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
