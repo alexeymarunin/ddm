@@ -6,12 +6,13 @@
 #include "ddmApplication.h"
 
 #include "filters/ddmEmptyFilter.h"
-#include "filters/ddmCountyFilter.h"
+#include "filters/ddmCountyInfoFilter.h"
 #include "filters/ddmMinMaxFrictionFilter.h"
 #include "filters/ddmPosNegDeltaFilter.h"
 #include "filters/ddmFrictionDeltaFilter.h"
 #include "filters/ddmFrictionPopulationFilter.h"
 #include "filters/ddmDeltaPopulationFilter.h"
+#include "filters/ddmNeighborCountyFilter.h"
 
 /**
  * @Конструктор класса
@@ -51,13 +52,16 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     this->mainWindow()->setCentralWidget( centralWidget );
 
     // Фильтры
-    centralWidget->appendFilter( "<выберите фильтр>",       new ddmEmptyFilter( this ) );
-    centralWidget->appendFilter( "Информация о графстве",   new ddmCountyFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений",         new ddmMinMaxFrictionFilter( this ) );
-    centralWidget->appendFilter( "Центры миграции",         new ddmPosNegDeltaFilter( this ) );
+
+    centralWidget->appendFilter( "<выберите фильтр>",                   new ddmEmptyFilter( this ) );
+    centralWidget->appendFilter( "Информация о графстве",               new ddmCountyInfoFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений",                     new ddmMinMaxFrictionFilter( this ) );
+    centralWidget->appendFilter( "Центры миграции",                     new ddmPosNegDeltaFilter( this ) );
     centralWidget->appendFilter( "Диапазон трений по центрам миграции", new ddmFrictionDeltaFilter( this ) );
-    centralWidget->appendFilter( "Диапазон трений и населения", new ddmFrictionPopulationFilter( this ) );
-    centralWidget->appendFilter( "Процент дельты от населения",  new ddmDeltaPopulationFilter( this ) );
+    centralWidget->appendFilter( "Диапазон трений и населения",         new ddmFrictionPopulationFilter( this ) );
+    centralWidget->appendFilter( "Процент дельты от населения",         new ddmDeltaPopulationFilter( this ) );
+    centralWidget->appendFilter( "Соседи 1-го порядка",                 new ddmNeighborCountyFilter( this ) );
+
 
     //centralWidget->setCurrentFilter( 0 );
     ddmSettings* settings = ddmSettings::instance();

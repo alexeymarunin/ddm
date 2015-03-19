@@ -1,15 +1,15 @@
 #include <QSqlRecord>
 
-#include "models/ddmCountyFilterModel.h"
+#include "models/ddmBaseCountyFilterModel.h"
 
 /**
  * Конструктор класса
  *
  * @param   parent Владелец модели
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-ddmCountyFilterModel::ddmCountyFilterModel( QObject* parent ) : ddmFilterModel( parent ),
+ddmBaseCountyFilterModel::ddmBaseCountyFilterModel( QObject* parent ) : ddmFilterModel( parent ),
     m_currentState( NULL ), m_currentCounty( NULL )
 {
     this->updateStateNames();
@@ -22,9 +22,9 @@ ddmCountyFilterModel::ddmCountyFilterModel( QObject* parent ) : ddmFilterModel( 
  * Загружает данные из БД
  *
  * @author  Марунин А.В.
- * @since   2.3
+ * @since   2.8
  */
-void ddmCountyFilterModel::reloadData()
+void ddmBaseCountyFilterModel::reloadData()
 {
     if ( this->currentState() )
     {
@@ -44,9 +44,9 @@ void ddmCountyFilterModel::reloadData()
  *
  * @return  Указатель на объект типа ddmState или NULL
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-ddmState* ddmCountyFilterModel::currentState() const
+ddmState* ddmBaseCountyFilterModel::currentState() const
 {
     return this->m_currentState;
 }
@@ -58,9 +58,9 @@ ddmState* ddmCountyFilterModel::currentState() const
  *
  * @param   id Идентификатор штата
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentState( int state_id )
+void ddmBaseCountyFilterModel::setCurrentState( int state_id )
 {
     Q_ASSERT( state_id > 0 );
     ddmState* state = this->findState( state_id );
@@ -78,9 +78,9 @@ void ddmCountyFilterModel::setCurrentState( int state_id )
  *
  * @param   geographicName Географическое название штат
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentState( const QString& geographicName )
+void ddmBaseCountyFilterModel::setCurrentState( const QString& geographicName )
 {
     ddmState* state = this->findState( geographicName );
     if ( !state )
@@ -100,9 +100,9 @@ void ddmCountyFilterModel::setCurrentState( const QString& geographicName )
  *
  * @param   state Указатель на объект типа ddmState
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentState( ddmState* state )
+void ddmBaseCountyFilterModel::setCurrentState( ddmState* state )
 {
     if ( state )
     {
@@ -126,9 +126,9 @@ void ddmCountyFilterModel::setCurrentState( ddmState* state )
  *
  * @return  Объект типа QStringList
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-QStringList ddmCountyFilterModel::stateNames() const
+QStringList ddmBaseCountyFilterModel::stateNames() const
 {
     return QStringList( this->m_stateMap.values() );
 }
@@ -138,9 +138,9 @@ QStringList ddmCountyFilterModel::stateNames() const
  *
  * @return  Указатель на объект типа ddmCounty или NULL
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-ddmCounty* ddmCountyFilterModel::currentCounty() const
+ddmCounty* ddmBaseCountyFilterModel::currentCounty() const
 {
     return this->m_currentCounty;
 }
@@ -152,9 +152,9 @@ ddmCounty* ddmCountyFilterModel::currentCounty() const
  *
  * @param   id Идентификатор графства
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentCounty( int id )
+void ddmBaseCountyFilterModel::setCurrentCounty( int id )
 {
     bool found = false;
 
@@ -195,9 +195,9 @@ void ddmCountyFilterModel::setCurrentCounty( int id )
  *
  * @param   geographicName Название графства
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentCounty( const QString& geographicName )
+void ddmBaseCountyFilterModel::setCurrentCounty( const QString& geographicName )
 {
     bool found = false;
 
@@ -236,9 +236,9 @@ void ddmCountyFilterModel::setCurrentCounty( const QString& geographicName )
  *
  * @param   county Указатель на объект типа ddmCounty
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::setCurrentCounty( ddmCounty* county )
+void ddmBaseCountyFilterModel::setCurrentCounty( ddmCounty* county )
 {
     if ( county )
     {
@@ -264,9 +264,9 @@ void ddmCountyFilterModel::setCurrentCounty( ddmCounty* county )
  *
  * @return  Объект типа QStringList
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-QStringList ddmCountyFilterModel::countyNames() const
+QStringList ddmBaseCountyFilterModel::countyNames() const
 {
     return this->m_countyNames;
 }
@@ -278,7 +278,7 @@ QStringList ddmCountyFilterModel::countyNames() const
  * @author  Марунин А.В.
  * @since   2.3
  */
-ddmState* ddmCountyFilterModel::loadState( int state_id )
+ddmState* ddmBaseCountyFilterModel::loadState( int state_id )
 {
     ddmState* state = this->findState( state_id );
     if ( !state )
@@ -308,9 +308,9 @@ ddmState* ddmCountyFilterModel::loadState( int state_id )
  * Обновляет список штатов
  *
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::updateStateNames()
+void ddmBaseCountyFilterModel::updateStateNames()
 {
     this->m_stateMap.clear();
 
@@ -333,9 +333,9 @@ void ddmCountyFilterModel::updateStateNames()
  * Обновляет список имен графств текущего штата
  *
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-void ddmCountyFilterModel::updateCountyNames()
+void ddmBaseCountyFilterModel::updateCountyNames()
 {
     if ( this->currentState() )
     {
@@ -353,8 +353,8 @@ void ddmCountyFilterModel::updateCountyNames()
  * Деструктор класса
  *
  * @author  Марунин А.В.
- * @since   2.1
+ * @since   2.8
  */
-ddmCountyFilterModel::~ddmCountyFilterModel()
+ddmBaseCountyFilterModel::~ddmBaseCountyFilterModel()
 {
 }

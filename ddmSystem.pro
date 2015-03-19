@@ -23,11 +23,8 @@ SOURCES += main.cpp \
     models/ddmModel.cpp \
     models/ddmStateModel.cpp \
     models/ddmFilterModel.cpp \
-    models/ddmCountyFilterModel.cpp \
     filters/ddmFilter.cpp \
-    filters/ddmCountyFilter.cpp \
     widgets/ddmFilterWidget.cpp \
-    widgets/ddmCountyFilterWidget.cpp \
     widgets/ddmCentralWidget.cpp \
     ddmMapView.cpp \
     ddmMapViewPage.cpp \
@@ -54,7 +51,17 @@ SOURCES += main.cpp \
     ddmSettings.cpp \
     widgets/ddmDeltaPopulationFilterWidget.cpp \
     models/ddmDeltaPopulationFilterModel.cpp \
-    filters/ddmDeltaPopulationFilter.cpp
+    filters/ddmDeltaPopulationFilter.cpp \
+    models/ddmNeighborCountyFilterModel.cpp \
+    widgets/ddmNeighborCountyFilterWidget.cpp \
+    filters/ddmNeighborCountyFilter.cpp \
+    widgets/ddmBaseCountyFilterWidget.cpp \
+    filters/ddmBaseCountyFilter.cpp \
+    models/ddmBaseCountyFilterModel.cpp \
+    models/ddmCountyInfoFilterModel.cpp \
+    widgets/ddmCountyInfoFilterWidget.cpp \
+    widgets/panels/ddmCountyInfoFilterWidgetPanel.cpp \
+    filters/ddmCountyInfoFilter.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -66,11 +73,8 @@ HEADERS += \
     models/ddmModel.h \
     models/ddmStateModel.h \
     models/ddmFilterModel.h \
-    models/ddmCountyFilterModel.h \
     filters/ddmFilter.h \
-    filters/ddmCountyFilter.h \
     widgets/ddmFilterWidget.h \
-    widgets/ddmCountyFilterWidget.h \
     widgets/ddmCentralWidget.h \
     ddmMapView.h \
     ddmMapViewPage.h \
@@ -98,17 +102,30 @@ HEADERS += \
     ddmSettings.h \
     widgets/ddmDeltaPopulationFilterWidget.h \
     models/ddmDeltaPopulationFilterModel.h \
-    filters/ddmDeltaPopulationFilter.h
+    filters/ddmDeltaPopulationFilter.h \
+    models/ddmNeighborCountyFilterModel.h \
+    widgets/ddmNeighborCountyFilterWidget.h \
+    filters/ddmNeighborCountyFilter.h \
+    widgets/ddmBaseCountyFilterWidget.h \
+    filters/ddmBaseCountyFilter.h \
+    models/ddmBaseCountyFilterModel.h \
+    models/ddmCountyInfoFilterModel.h \
+    widgets/ddmCountyInfoFilterWidget.h \
+    widgets/panels/ddmCountyInfoFilterWidgetPanel.h \
+    filters/ddmCountyInfoFilter.h
 
 FORMS += ddmMainWindow.ui \
-    widgets/ddmCountyFilterWidget.ui \
     widgets/ddmCentralWidget.ui \
     widgets/ddmEmptyFilterWidget.ui \
     widgets/ddmMinMaxFrictionFilterWidget.ui \
     widgets/ddmPosNegDeltaFilterWidget.ui \
     widgets/ddmFrictionDeltaFilterWidget.ui \
     widgets/ddmFrictionPopulationFilterWidget.ui \
-    widgets/ddmDeltaPopulationFilterWidget.ui
+    widgets/ddmDeltaPopulationFilterWidget.ui \
+    widgets/ddmNeighborCountyFilterWidget.ui \
+    widgets/ddmBaseCountyFilterWidget.ui \
+    widgets/ddmCountyInfoFilterWidgetPanel.ui \
+    widgets/panels/ddmCountyInfoFilterWidgetPanel.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release

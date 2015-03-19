@@ -1,5 +1,5 @@
-﻿#ifndef DDM_COUNTY_FILTER_MODEL_H
-#define DDM_COUNTY_FILTER_MODEL_H
+﻿#ifndef DDM_BASE_COUNTY_FILTER_MODEL_H
+#define DDM_BASE_COUNTY_FILTER_MODEL_H
 
 #include <QStringList>
 
@@ -8,7 +8,7 @@
 #include "base/ddmCounty.h"
 
 /**
- * Класс ddmCountyFilterModel определяет модель фильтра ddmCountyFilter
+ * Класс ddmBaseCountyFilterModel определяет модель фильтра ddmBaseCountyFilter
  * Предоставляет доступ к данным одного конкретного графства
  *
  * Основными элементами модели являются:
@@ -23,13 +23,13 @@
  * @author  Марунин А.В.
  * @since   2.1
  */
-class ddmCountyFilterModel : public ddmFilterModel
+class ddmBaseCountyFilterModel : public ddmFilterModel
 {
     Q_OBJECT
 
 public:
 
-    ddmCountyFilterModel( QObject* parent = 0 );
+    ddmBaseCountyFilterModel( QObject* parent = 0 );
 
     virtual void reloadData();
 
@@ -44,7 +44,7 @@ public:
     QStringList stateNames() const;
     QStringList countyNames() const;
 
-    virtual ~ddmCountyFilterModel();
+    virtual ~ddmBaseCountyFilterModel();
 
 protected:
 
@@ -64,4 +64,4 @@ protected:
 
 };
 
-#endif // DDM_COUNTY_FILTER_MODEL_H
+#endif // DDM_BASE_COUNTY_FILTER_MODEL_H
