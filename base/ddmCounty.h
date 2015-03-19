@@ -72,6 +72,10 @@ public:
     void show();
     void hide();
 
+    bool isSelected() const;
+    void select( const QString& color = "" );
+    void unselect();
+
     virtual ~ddmCounty();
 
 Q_SIGNALS:
@@ -83,6 +87,8 @@ Q_SIGNALS:
 
     void shown();
     void hidden();
+    void selected();
+    void unselected();
     void repaint();
 
 protected Q_SLOTS:
@@ -112,17 +118,20 @@ protected:
     double  m_strokeOpacity;
 
     QString m_defaultFillColor;
+    QString m_defaultSelectColor;
     double  m_defaultFillOpacity;
     QString m_defaultStrokeColor;
     int     m_defaultStrokeWeight;
     double  m_defaultStrokeOpacity;
     QString m_defaultFillColorHover;
+    QString m_defaultSelectColorHover;
     double  m_defaultFillOpacityHover;
     QString m_defaultStrokeColorHover;
     int     m_defaultStrokeWeightHover;
     double  m_defaultStrokeOpacityHover;
 
     bool    m_visible;
+    bool    m_select;
 
     virtual void create( const QSqlRecord& record );
     void create( int id, const QString& geographicName,

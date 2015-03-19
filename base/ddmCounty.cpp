@@ -15,7 +15,7 @@
  * @since   2.1
  */
 ddmCounty::ddmCounty( int id, const QString& geographicName, QObject* parent ) : ddmMapObject( id, parent ),
-    m_visible( false )
+    m_visible( false ), m_select( false )
 {
     this->create( id, geographicName );
 }
@@ -29,7 +29,7 @@ ddmCounty::ddmCounty( int id, const QString& geographicName, QObject* parent ) :
  * @since   2.0
  */
 ddmCounty::ddmCounty( const QSqlRecord& record, QObject* parent ) : ddmMapObject( 0, parent ),
-    m_visible( false )
+    m_visible( false ), m_select( false )
 {
     this->create( record );
 }
@@ -98,12 +98,14 @@ void ddmCounty::create( int id, const QString& geographicName,
     ddmSettings* settings = ddmSettings::instance();
 
     this->m_defaultFillColor = settings->value( "palette/fillColor", "#FF0000" ).toString();
+    this->m_defaultSelectColor = settings->value( "palette/selectColor", "#00FFFF" ).toString();
     this->m_defaultFillOpacity = settings->value( "palette/fillOpacity", 0.35 ).toDouble();
     this->m_defaultStrokeColor = settings->value( "palette/strokeColor", this->m_defaultFillColor ).toString();
     this->m_defaultStrokeWeight = settings->value( "palette/strokeWeight", 2 ).toInt();
     this->m_defaultStrokeOpacity = settings->value( "palette/strokeOpacity", 0.7 ).toDouble();
 
     this->m_defaultFillColorHover = settings->value( "palette/fillColorHover", this->m_defaultFillColor ).toString();
+    this->m_defaultSelectColorHover = settings->value( "palette/selectColorHover", this->m_defaultSelectColor ).toString();
     this->m_defaultFillOpacityHover = settings->value( "palette/fillOpacityHover", 0.8 ).toDouble();
     this->m_defaultStrokeColorHover = settings->value( "palette/strokeColorHover", this->m_defaultStrokeColor ).toString();
     this->m_defaultStrokeWeightHover = settings->value( "palette/strokeWeightHover", 3 ).toInt();
@@ -416,6 +418,45 @@ void ddmCounty::hide()
 }
 
 /**
+ * Делает графство выделенным
+ *
+ * @param   color Цвет выделения
+ * @author  Марунин А.В.
+ * @since   2.8
+ */
+void ddmCounty::select( const QString& color )
+{
+    this->setProperty( "fillColor", color.isEmpty() ? this->m_defaultSelectColor : color );
+    this->m_select = true;
+    Q_EMIT selected();
+}
+
+/**
+ * Снимает выделение графства
+ *
+ * @author  Марунин А.В.
+ * @since   2.8
+ */
+void ddmCounty::unselect()
+{
+    this->setProperty( "fillColor", this->m_defaultFillColor );
+    this->m_select = false;
+    Q_EMIT unselected();
+}
+
+/**
+ * Определяет, выделено ли графство
+ *
+ * @return  true, если графство выделено
+ * @author  Марунин А.В.
+ * @since   2.8
+ */
+bool ddmCounty::isSelected() const
+{
+    return this->m_select;
+}
+
+/**
  * Слот для обработки сигнала mouseout
  * Вызывается, когда курсор входит в пределы графства
  *
@@ -424,7 +465,7 @@ void ddmCounty::hide()
  */
 void ddmCounty::slotMouseover()
 {
-    this->setProperty( "fillColor", this->m_defaultFillColorHover );
+    this->setProperty( "fillColor", this->isSelected() ? this->m_defaultSelectColorHover : this->m_defaultFillColorHover );
     this->setProperty( "fillOpacity", this->m_defaultFillOpacityHover );
     this->setProperty( "strokeColor", this->m_defaultStrokeColorHover );
     this->setProperty( "strokeWeight", this->m_defaultStrokeWeightHover );
@@ -440,7 +481,7 @@ void ddmCounty::slotMouseover()
  */
 void ddmCounty::slotMouseout()
 {
-    this->setProperty( "fillColor", this->m_defaultFillColor );
+    this->setProperty( "fillColor", this->isSelected() ? this->m_defaultSelectColor : this->m_defaultFillColor );
     this->setProperty( "fillOpacity", this->m_defaultFillOpacity );
     this->setProperty( "strokeColor", this->m_defaultStrokeColor );
     this->setProperty( "strokeWeight", this->m_defaultStrokeWeight );
