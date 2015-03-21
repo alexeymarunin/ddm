@@ -64,7 +64,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
-    void slotClicked( double x, double y );
+    virtual void slotClicked( double x, double y );
     void slotMouseMove( double x, double y );
 
 protected:

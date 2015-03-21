@@ -52,6 +52,7 @@ void ddmNeighborCountyFilter::updateSelection()
 
     ddmCounty* currentCounty = model->currentCounty();
     currentCounty->show();
+    currentCounty->unselect();
 
     foreach ( int county_id, model->neighbors() )
     {

@@ -28,6 +28,10 @@ public:
 
     virtual ~ddmNeighborCountyFilterModel();
 
+protected Q_SLOTS:
+
+    virtual void slotClicked( double x, double y );
+
 protected:
     QSet<int> m_neighbors;
 
