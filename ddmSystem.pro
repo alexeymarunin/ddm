@@ -124,7 +124,6 @@ FORMS += ddmMainWindow.ui \
     widgets/ddmDeltaPopulationFilterWidget.ui \
     widgets/ddmNeighborCountyFilterWidget.ui \
     widgets/ddmBaseCountyFilterWidget.ui \
-    widgets/ddmCountyInfoFilterWidgetPanel.ui \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.ui
 
 Debug:DESTDIR   = debug
