@@ -5,6 +5,8 @@
 #include "widgets/ddmFrictionDeltaFilterWidget.h"
 
 #include "ddmSettings.h"
+#include "ddmInfoLogger.h"
+
 
 ddmFrictionDeltaFilter::ddmFrictionDeltaFilter( QObject* parent ) : ddmFilter( parent )
 {
@@ -15,6 +17,9 @@ void ddmFrictionDeltaFilter::setup()
 {
     ddmFrictionDeltaFilterModel* model = new ddmFrictionDeltaFilterModel( this );
     ddmFrictionDeltaFilterWidget* widget = new ddmFrictionDeltaFilterWidget( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Диапазон трений по центрам миграции" );
+
 
     this->m_model = model;
     this->m_widget = widget;
@@ -62,6 +67,9 @@ void ddmFrictionDeltaFilter::updateSelection()
     ddmFilter::resetSelection();
     ddmFrictionDeltaFilterModel* model = this->model_cast<ddmFrictionDeltaFilterModel>();
     QVariantList counties = model->counties();
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    QString mode = model->deltaMode() == 0 ? "положительной": "отрицательной";
+    logger.writeInfo( QObject::tr( "Отобржаются графства с %1 дельтой и значениями трения от %2 до %3 " ).arg( mode ).arg( model->minBound() ).arg( model->maxBound() ) );
     bool needUpdate = false;
 
     foreach ( QVariant obj, counties )
@@ -76,6 +84,7 @@ void ddmFrictionDeltaFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
+    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
 }
 
 /**

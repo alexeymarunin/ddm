@@ -5,6 +5,7 @@
 #include "base/ddmCounty.h"
 
 #include "ddmSettings.h"
+#include "ddmInfoLogger.h"
 
 
 ddmDeltaPopulationFilter::ddmDeltaPopulationFilter( QObject *parent ) : ddmFilter( parent )
@@ -19,6 +20,8 @@ void ddmDeltaPopulationFilter::setup()
     ddmDeltaPopulationFilterModel* model = new ddmDeltaPopulationFilterModel( this );
     ddmDeltaPopulationFilterWidget* widget = new ddmDeltaPopulationFilterWidget( this );
 
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Процент дельты от населения" );
     this->m_model = model;
     this->m_widget = widget;
 
@@ -58,6 +61,9 @@ void ddmDeltaPopulationFilter::updateSelection()
     ddmFilter::resetSelection();
     ddmDeltaPopulationFilterModel* model = this->model_cast<ddmDeltaPopulationFilterModel>();
     QVariantList counties = model->counties();
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( QObject::tr( "Отобржаются графства процент дельты от населения в которых: %2%-%3%" ).arg( model->minBound() * 100 ).arg( model->maxBound() * 100 ) );
+    this->m_model = model;
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
     {
@@ -72,6 +78,7 @@ void ddmDeltaPopulationFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
+    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
 }
 
 

@@ -15,9 +15,19 @@ ddmPosNegDeltaFilterWidget::ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* fi
 }
 
 
-void ddmPosNegDeltaFilterWidget::setDeltaMode( int mode )
+void ddmPosNegDeltaFilterWidget::setDeltaMode( int mode, bool blockSignal )
 {
-    this->comboDeltaMode()->setCurrentIndex( mode );
+    if( blockSignal )
+    {
+        this->comboDeltaMode()->blockSignals( true );
+        this->comboDeltaMode()->setCurrentIndex( mode );
+        this->comboDeltaMode()->blockSignals( false );
+    }
+    else
+    {
+        this->comboDeltaMode()->setCurrentIndex( mode );
+    }
+
 }
 
 

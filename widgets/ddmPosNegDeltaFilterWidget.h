@@ -28,7 +28,7 @@ public:
 
     ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* filter, QWidget* parent = 0 );
 
-    void setDeltaMode( int mode );
+    void setDeltaMode( int mode, bool blockSignal = false );
 
     int deltaMode() const;
 

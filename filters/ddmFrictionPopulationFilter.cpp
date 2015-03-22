@@ -4,7 +4,8 @@
 
 #include <base/ddmCounty.h>
 
-#include <ddmSettings.h>
+#include "ddmSettings.h"
+#include "ddmInfoLogger.h"
 
 
 ddmFrictionPopulationFilter::ddmFrictionPopulationFilter( QObject *parent ) :
@@ -23,6 +24,8 @@ void ddmFrictionPopulationFilter::setup()
 {
     ddmFrictionPopulationFilterModel*  model = new ddmFrictionPopulationFilterModel( this );
     ddmFrictionPopulationFilterWidget* widget = new ddmFrictionPopulationFilterWidget( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Диапазон трений и населения");
 
     this->m_model = model;
     this->m_widget = widget;
@@ -75,9 +78,14 @@ void ddmFrictionPopulationFilter::updateData( bool fromWidget )
 
 void ddmFrictionPopulationFilter::updateSelection()
 {
+    int mult = 1000;
     ddmFilter::resetSelection();
     ddmFrictionPopulationFilterModel* model = this->model_cast<ddmFrictionPopulationFilterModel>();
     QVariantList counties = model->counties();
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( QObject::tr( "Отобржаются графства с диапозоном населения от %1 до %2 человек и значениями трения от %3 до %4 " )
+                     .arg( model->minPopBound() * mult ).arg( model->maxPopBound() * mult ).arg( model->minFrBound() ).arg( model->maxFrBound() ) );
+
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
     {
@@ -92,6 +100,7 @@ void ddmFrictionPopulationFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
+    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
 }
 
 

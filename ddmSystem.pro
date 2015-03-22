@@ -61,7 +61,8 @@ SOURCES += main.cpp \
     models/ddmCountyInfoFilterModel.cpp \
     widgets/ddmCountyInfoFilterWidget.cpp \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.cpp \
-    filters/ddmCountyInfoFilter.cpp
+    filters/ddmCountyInfoFilter.cpp \
+    ddmInfoLogger.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -112,7 +113,8 @@ HEADERS += \
     models/ddmCountyInfoFilterModel.h \
     widgets/ddmCountyInfoFilterWidget.h \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.h \
-    filters/ddmCountyInfoFilter.h
+    filters/ddmCountyInfoFilter.h \
+    ddmInfoLogger.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCentralWidget.ui \

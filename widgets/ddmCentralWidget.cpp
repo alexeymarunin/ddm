@@ -2,12 +2,15 @@
 #include <QWebFrame>
 #include <QComboBox>
 #include <QVBoxLayout>
+#include <QMenu>
 
 #include "ddmMapView.h"
 #include "widgets/ddmCentralWidget.h"
 #include "ui_ddmCentralWidget.h"
 #include "ddmSettings.h"
 #include "filters/ddmFilter.h"
+
+#include "ddmInfoLogger.h"
 
 /**
  * Конструктор класса
@@ -21,6 +24,13 @@ ddmCentralWidget::ddmCentralWidget( QWidget* parent ) : QWidget( parent ),
 {
     this->ui = new Ui::ddmCentralWidget;
     this->ui->setupUi( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.setOutputWidget( ui->m_InfoLog );
+
+    ui->m_InfoLog->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->m_InfoLog , SIGNAL( customContextMenuRequested( const QPoint & )),
+               this, SLOT( ShowContextMenu( const QPoint &) ) );
+
 
     this->loadSettings();
 
@@ -120,6 +130,23 @@ void ddmCentralWidget::reload()
     }
 }
 
+void ddmCentralWidget::ShowContextMenu( const QPoint& point )
+{
+    QMenu contextMenu(tr( "Context menu" ), ui->m_InfoLog );
+    ui->m_clearTextAction->setParent( ui->m_InfoLog );
+    connect( ui->m_clearTextAction, SIGNAL( triggered() ), this,
+             SLOT( slotClearText() ), Qt::UniqueConnection );
+    contextMenu.addAction( ui->m_clearTextAction );
+    contextMenu.exec( ui->m_InfoLog->mapToGlobal( point ) );
+
+}
+
+
+void ddmCentralWidget::slotClearText()
+{
+    ui->m_InfoLog->clear();
+}
+
 
 void ddmCentralWidget::increaseZoom()
 {
@@ -152,7 +179,7 @@ QVBoxLayout* ddmCentralWidget::mapLayout() const
  */
 void ddmCentralWidget::loadSettings()
 {
-    ddmSettings* settings = ddmSettings::instance();
+   ddmSettings* settings = ddmSettings::instance();
    QByteArray splitterState = settings->value( "panel/state", QByteArray() ).toByteArray();
    if ( splitterState.size() )
    {

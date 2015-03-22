@@ -54,6 +54,11 @@ public Q_SLOTS:
 
     void slotChangedFilter( int index );
 
+private Q_SLOTS:
+    void ShowContextMenu( const QPoint& point );
+
+    void slotClearText();
+
 protected:
 
     ddmFilter*  m_currentFilter;

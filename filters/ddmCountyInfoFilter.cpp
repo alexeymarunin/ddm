@@ -1,5 +1,6 @@
 #include "ddmMapView.h"
 #include "ddmSettings.h"
+#include "ddmInfoLogger.h"
 
 #include "models/ddmCountyInfoFilterModel.h"
 #include "widgets/ddmCountyInfoFilterWidget.h"
@@ -26,6 +27,8 @@ ddmCountyInfoFilter::ddmCountyInfoFilter( QObject* parent ) : ddmBaseCountyFilte
  */
 void ddmCountyInfoFilter::setup()
 {
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр информации по графствам..." );
 
     ddmCountyInfoFilterModel* model = new ddmCountyInfoFilterModel( this );
     ddmCountyInfoFilterWidget* widget = new ddmCountyInfoFilterWidget( this );
@@ -49,9 +52,12 @@ void ddmCountyInfoFilter::setup()
 void ddmCountyInfoFilter::updateSelection()
 {
     ddmCountyInfoFilterModel* model  = this->model_cast<ddmCountyInfoFilterModel>();
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
     this->resetSelection();
+
     model->currentCounty()->show();
     Q_EMIT selectionUpdated();
+    logger.writeInfo( QObject::tr( "Отображено графство: %1" ).arg( model->currentCounty()->geographicName() ) );
 }
 
 /**
@@ -63,7 +69,6 @@ void ddmCountyInfoFilter::updateSelection()
 void ddmCountyInfoFilter::slotWidgetChangedCounty()
 {
     ddmBaseCountyFilter::slotWidgetChangedCounty();
-
     this->updateInfo();
 }
 

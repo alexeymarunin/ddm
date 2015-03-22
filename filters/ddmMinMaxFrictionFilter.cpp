@@ -3,6 +3,7 @@
 #include "widgets/ddmMinMaxFrictionFilterWidget.h"
 #include "filters/ddmMinMaxFrictionFilter.h"
 #include "ddmSettings.h"
+#include "ddmInfoLogger.h"
 
 
 /**
@@ -25,6 +26,8 @@ void ddmMinMaxFrictionFilter::setup()
 {
     ddmMinMaxFrictionFilterModel* model = new ddmMinMaxFrictionFilterModel( this );
     ddmMinMaxFrictionFilterWidget* widget = new ddmMinMaxFrictionFilterWidget( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Диапазон трений" );
 
     this->m_model = model;
     this->m_widget = widget;
@@ -81,7 +84,8 @@ void ddmMinMaxFrictionFilter::updateSelection()
     QVariantList counties = model->counties();
     double minBound = model->minBound();
     double maxBound = model->maxBound();
-
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( QObject::tr( "Отобржаются графства c значениями трения от %1 до %2 " ).arg( minBound ).arg( maxBound ) );
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
     {
@@ -107,10 +111,10 @@ void ddmMinMaxFrictionFilter::updateSelection()
     }
 
     if ( needUpdate )
-    {
         Q_EMIT selectionUpdated();
-    }
+    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
 }
+
 
 /**
  * Загружает настройки фильтра

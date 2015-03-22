@@ -3,7 +3,8 @@
 #include "filters/ddmPosNegDeltaFilter.h"
 #include "widgets/ddmPosNegDeltaFilterWidget.h"
 #include "models/ddmPosNegDeltaFilterModel.h"
-#include <base/ddmCounty.h>
+#include "base/ddmCounty.h"
+#include "ddmInfoLogger.h"
 
 
 ddmPosNegDeltaFilter::ddmPosNegDeltaFilter( QObject *parent ) : ddmFilter( parent )
@@ -16,6 +17,8 @@ void ddmPosNegDeltaFilter::setup()
 {
     ddmPosNegDeltaFilterWidget* widget = new ddmPosNegDeltaFilterWidget( this );
     ddmPosNegDeltaFilterModel*  model  = new ddmPosNegDeltaFilterModel( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Центры миграции" );
 
     this->m_widget = widget;
     this->m_model  = model;
@@ -41,7 +44,7 @@ void ddmPosNegDeltaFilter::updateData( bool fromWidget )
         }
         else
         {
-            widget->setDeltaMode( model->deltaMode() );
+            widget->setDeltaMode( model->deltaMode(), true );
             this->saveSettings();
         }
     }
@@ -50,8 +53,12 @@ void ddmPosNegDeltaFilter::updateData( bool fromWidget )
 
 void ddmPosNegDeltaFilter::updateSelection()
 {
-    ddmFilter::resetSelection();
     ddmPosNegDeltaFilterModel* model = this->model_cast<ddmPosNegDeltaFilterModel>();
+
+    ddmFilter::resetSelection();
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    QString mode = model->deltaMode() == 0 ? "положительной": "отрицательной";
+    logger.writeInfo( QObject::tr( "Отобржаются графства с %1 дельтой" ).arg( mode ) );
     QVariantList counties = model->counties();
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
@@ -66,6 +73,7 @@ void ddmPosNegDeltaFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
+    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
 }
 
 

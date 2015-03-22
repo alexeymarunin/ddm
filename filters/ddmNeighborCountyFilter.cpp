@@ -4,6 +4,8 @@
 #include "ddmSettings.h"
 #include "widgets/ddmNeighborCountyFilterWidget.h"
 
+#include "ddmInfoLogger.h"
+
 /**
  * Конструктор класса
  *
@@ -28,6 +30,8 @@ void ddmNeighborCountyFilter::setup()
 
     ddmNeighborCountyFilterModel* model = new ddmNeighborCountyFilterModel( this );
     ddmNeighborCountyFilterWidget* widget = new ddmNeighborCountyFilterWidget( this );
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
+    logger.writeInfo( "Выбран фильтр: Соседи 1-го порядка" );
 
     this->m_model = model;
     this->m_widget = widget;
@@ -50,6 +54,7 @@ void ddmNeighborCountyFilter::updateSelection()
     ddmNeighborCountyFilterModel* model  = this->model_cast<ddmNeighborCountyFilterModel>();
     this->resetSelection();
 
+    ddmInfoLogger& logger = ddmInfoLogger::instance();
     ddmCounty* currentCounty = model->currentCounty();
     currentCounty->show();
     currentCounty->unselect();
@@ -60,6 +65,9 @@ void ddmNeighborCountyFilter::updateSelection()
         neighbor->show();
         neighbor->select();
     }
+
+    logger.writeInfo( QObject::tr( "Отображены соседи 1-го порядка для %1" ).arg( currentCounty->geographicName() ) );
+    logger.writeInfo( QObject::tr( "Количкство соседей: %1" ).arg( model->neighbors().size() ) );
     Q_EMIT selectionUpdated();
 }
 
