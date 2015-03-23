@@ -1,10 +1,7 @@
 #ifndef DDM_INFO_LOGGER_H
 #define DDM_INFO_LOGGER_H
 
-#include <QString>
-#include <QObject>
-
-class QTextEdit;
+#include <QTextEdit>
 
 
 class ddmInfoLogger: public QObject
@@ -25,7 +22,9 @@ public:
 
     void writeError( const QString& text );
 
-    void setOutputWidget( QTextEdit* outputWidget );
+    QTextEdit* outputWindow() const;
+    void setOutputWindow( QTextEdit* outputWindow );
+
 
 
 private:
@@ -33,6 +32,9 @@ private:
     static ddmInfoLogger* m_instance;
 
     explicit ddmInfoLogger();
+
+    void writeLog( const QString& icon, const QString& text );
+
     QString getCurrentTime();
 
     QString getCurrentPathToIcon();

@@ -67,7 +67,7 @@ void ddmNeighborCountyFilter::updateSelection()
     }
 
     logger.writeInfo( QObject::tr( "Отображены соседи 1-го порядка для %1" ).arg( currentCounty->geographicName() ) );
-    logger.writeInfo( QObject::tr( "Количкство соседей: %1" ).arg( model->neighbors().size() ) );
+    logger.writeInfo( QObject::tr( "Количество соседей: %1" ).arg( model->neighbors().size() ) );
     Q_EMIT selectionUpdated();
 }
 

@@ -25,7 +25,7 @@ ddmCentralWidget::ddmCentralWidget( QWidget* parent ) : QWidget( parent ),
     this->ui = new Ui::ddmCentralWidget;
     this->ui->setupUi( this );
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.setOutputWidget( ui->m_InfoLog );
+    logger.setOutputWindow( ui->m_InfoLog );
 
     ui->m_InfoLog->setContextMenuPolicy( Qt::CustomContextMenu );
     connect( ui->m_InfoLog , SIGNAL( customContextMenuRequested( const QPoint & )),

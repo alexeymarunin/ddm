@@ -102,7 +102,7 @@ void ddmNeighborCountyFilterModel::slotClicked( double x, double y )
 {
     Q_UNUSED( x );
     Q_UNUSED( y );
-    ddmCounty* county = qobject_cast<ddmCounty*>( sender() );
+    //ddmCounty* county = qobject_cast<ddmCounty*>( sender() );
     //this->setCurrentCounty( county );
 }
 

@@ -121,7 +121,7 @@ void ddmBaseCountyFilterWidget::setCountyNames( const QStringList& names )
  */
 void ddmBaseCountyFilterWidget::insertWidget( QWidget* widget )
 {
-    this->ui->verticalLayout->insertWidget( 4, widget );
+    this->ui->verticalLayout->insertWidget( 5, widget );
 }
 
 /**
