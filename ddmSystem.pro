@@ -141,3 +141,4 @@ UI_DIR      = $${DESTDIR}
 RESOURCES += \
     icons.qrc
 
+RC_FILE = ddmSystem.rc

@@ -9,5 +9,6 @@
         <file>icons/icon_zoom_out.png</file>
         <file>icons/table.png</file>
         <file>icons/accept.png</file>
+        <file>icons/ddm.png</file>
     </qresource>
 </RCC>
