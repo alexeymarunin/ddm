@@ -40,8 +40,8 @@ void ddmBaseCountyFilter::setup()
     widget->setCountyNames( model->currentState()->countyNames() );
     widget->setCurrentCounty( model->currentCounty()->geographicName() );
 
-    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ) );
-    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ) );
+    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ), Qt::UniqueConnection );
+    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ), Qt::UniqueConnection );
 
     ddmFilter::setup();
 
