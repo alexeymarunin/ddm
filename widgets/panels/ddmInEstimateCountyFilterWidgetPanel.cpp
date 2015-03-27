@@ -9,10 +9,6 @@ ddmInEstimateCountyFilterWidgetPanel::ddmInEstimateCountyFilterWidgetPanel(QWidg
     this->ui->verticalLayout->setContentsMargins( 0,0,0,0 );
 }
 
-ddmInEstimateCountyFilterWidgetPanel::~ddmInEstimateCountyFilterWidgetPanel()
-{
-
-}
 
 QDoubleSpinBox *ddmInEstimateCountyFilterWidgetPanel::spinMinPopValue()
 {
@@ -29,5 +25,11 @@ QDoubleSpinBox *ddmInEstimateCountyFilterWidgetPanel::spinMaxPopValue()
 QPushButton *ddmInEstimateCountyFilterWidgetPanel::applyButton()
 {
     return ui->buttonApply;
+}
+
+
+ddmInEstimateCountyFilterWidgetPanel::~ddmInEstimateCountyFilterWidgetPanel()
+{
+    delete ui;
 }
 

@@ -60,7 +60,7 @@ void ddmInEstimateCountyFilter::updateSelection()
     this->resetSelection();
     int mult = 1000;
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.writeInfo( QObject::tr( "Отобржаются графства  откудо приехало от %1 до %2 человек" )
+    logger.writeInfo( QObject::tr( "Отобржаются графства  из которых приехало от %1 до %2 человек" )
                      .arg( model->minPopBound() * mult ).arg( model->maxPopBound() * mult ) );
 
     ddmCounty* currentCounty = model->currentCounty();
@@ -94,7 +94,6 @@ void ddmInEstimateCountyFilter::saveSettings()
     ddmInEstimateCountyFilterModel* model  = this->model_cast<ddmInEstimateCountyFilterModel>();
     settings->setValue( "ddmInEstimateCountyFilter/min_population", model->minPopBound() );
     settings->setValue( "ddmInEstimateCountyFilter/max_population", model->maxPopBound() );
-
 }
 
 
