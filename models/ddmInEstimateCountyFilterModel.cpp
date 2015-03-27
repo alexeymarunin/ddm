@@ -134,7 +134,7 @@ void ddmInEstimateCountyFilterModel::updateMinMaxPopulation()
     Q_ASSERT( !db.hasErrors() );
 
     QSqlRecord record = query->record( 0 );
-    this->m_minPopulation = 0.0;
+    this->m_minPopulation = 0.001;
     this->m_maxPopulation = record.value( "max_population" ).toDouble();
     this->m_maxPopulation = this->m_maxPopulation * mult;
 }
