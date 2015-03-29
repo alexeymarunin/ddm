@@ -95,7 +95,6 @@ void ddmDeltaPopulationFilter::loadSettings()
    double minBound = settings->value( "ddmDeltaPopulationFilter/min_population", 0.05 ).toDouble();
    double maxBound = settings->value( "ddmDeltaPopulationFilter/max_population", 0.051 ).toDouble();
    model->setBounds( minBound, maxBound );
-
 }
 
 

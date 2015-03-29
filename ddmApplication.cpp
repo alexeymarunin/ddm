@@ -13,6 +13,9 @@
 #include "filters/ddmFrictionPopulationFilter.h"
 #include "filters/ddmDeltaPopulationFilter.h"
 #include "filters/ddmNeighborCountyFilter.h"
+#include "filters/ddmInEstimateCountyFilter.h"
+#include "filters/ddmOutEstimateCountyFilter.h"
+
 
 /**
  * @Конструктор класса
@@ -61,6 +64,8 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     centralWidget->appendFilter( "Диапазон трений и населения",         new ddmFrictionPopulationFilter( this ) );
     centralWidget->appendFilter( "Процент дельты от населения",         new ddmDeltaPopulationFilter( this ) );
     centralWidget->appendFilter( "Соседи 1-го порядка",                 new ddmNeighborCountyFilter( this ) );
+    centralWidget->appendFilter( "Миграция в графство",                 new ddmInEstimateCountyFilter( this ) );
+    centralWidget->appendFilter( "Миграция из графства",                new ddmOutEstimateCountyFilter( this ) );
 
 
     //centralWidget->setCurrentFilter( 0 );
