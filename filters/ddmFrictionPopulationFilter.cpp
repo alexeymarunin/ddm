@@ -83,7 +83,7 @@ void ddmFrictionPopulationFilter::updateSelection()
     ddmFrictionPopulationFilterModel* model = this->model_cast<ddmFrictionPopulationFilterModel>();
     QVariantList counties = model->counties();
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.writeInfo( QObject::tr( "Отобржаются графства с диапозоном населения от %1 до %2 человек и значениями трения от %3 до %4 " )
+    logger.writeInfo( QObject::tr( "Отображаются графства с диапозоном населения от %1 до %2 человек и значениями трения от %3 до %4 " )
                      .arg( model->minPopBound() * mult ).arg( model->maxPopBound() * mult ).arg( model->minFrBound() ).arg( model->maxFrBound() ) );
 
     bool needUpdate = false;
@@ -100,7 +100,7 @@ void ddmFrictionPopulationFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств(а)" ).arg( counties.size() ) );
 }
 
 

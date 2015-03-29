@@ -58,7 +58,7 @@ void ddmPosNegDeltaFilter::updateSelection()
     ddmFilter::resetSelection();
     ddmInfoLogger& logger = ddmInfoLogger::instance();
     QString mode = model->deltaMode() == 0 ? "положительной": "отрицательной";
-    logger.writeInfo( QObject::tr( "Отобржаются графства с %1 дельтой" ).arg( mode ) );
+    logger.writeInfo( QObject::tr( "Отображаются графства с %1 дельтой" ).arg( mode ) );
     QVariantList counties = model->counties();
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
@@ -73,7 +73,7 @@ void ddmPosNegDeltaFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств(а)" ).arg( counties.size() ) );
 }
 
 

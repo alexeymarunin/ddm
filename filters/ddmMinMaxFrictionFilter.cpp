@@ -85,7 +85,7 @@ void ddmMinMaxFrictionFilter::updateSelection()
     double minBound = model->minBound();
     double maxBound = model->maxBound();
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.writeInfo( QObject::tr( "Отобржаются графства c значениями трения от %1 до %2 " ).arg( minBound ).arg( maxBound ) );
+    logger.writeInfo( QObject::tr( "Отображаются графства c значениями трения от %1 до %2 " ).arg( minBound ).arg( maxBound ) );
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
     {
@@ -112,7 +112,7 @@ void ddmMinMaxFrictionFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств(а)" ).arg( counties.size() ) );
 }
 
 

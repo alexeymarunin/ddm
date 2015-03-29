@@ -69,7 +69,7 @@ void ddmFrictionDeltaFilter::updateSelection()
     QVariantList counties = model->counties();
     ddmInfoLogger& logger = ddmInfoLogger::instance();
     QString mode = model->deltaMode() == 0 ? "положительной": "отрицательной";
-    logger.writeInfo( QObject::tr( "Отобржаются графства с %1 дельтой и значениями трения от %2 до %3 " ).arg( mode ).arg( model->minBound() ).arg( model->maxBound() ) );
+    logger.writeInfo( QObject::tr( "Отображаются графства с %1 дельтой и значениями трения от %2 до %3 " ).arg( mode ).arg( model->minBound() ).arg( model->maxBound() ) );
     bool needUpdate = false;
 
     foreach ( QVariant obj, counties )
@@ -84,7 +84,7 @@ void ddmFrictionDeltaFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств(а)" ).arg( counties.size() ) );
 }
 
 /**

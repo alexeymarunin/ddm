@@ -62,7 +62,7 @@ void ddmDeltaPopulationFilter::updateSelection()
     ddmDeltaPopulationFilterModel* model = this->model_cast<ddmDeltaPopulationFilterModel>();
     QVariantList counties = model->counties();
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.writeInfo( QObject::tr( "Отобржаются графства процент дельты от населения в которых: %2%-%3%" ).arg( model->minBound() * 100 ).arg( model->maxBound() * 100 ) );
+    logger.writeInfo( QObject::tr( "Отображаются графства процент дельты от населения в которых: %2%-%3%" ).arg( model->minBound() * 100 ).arg( model->maxBound() * 100 ) );
     this->m_model = model;
     bool needUpdate = false;
     foreach ( QVariant obj, counties )
@@ -78,7 +78,7 @@ void ddmDeltaPopulationFilter::updateSelection()
 
     if ( needUpdate )
         Q_EMIT selectionUpdated();
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( counties.size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств(а)" ).arg( counties.size() ) );
 }
 
 
