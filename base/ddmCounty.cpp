@@ -97,8 +97,8 @@ void ddmCounty::create( int id, const QString& geographicName,
 
     ddmSettings* settings = ddmSettings::instance();
 
-    this->m_defaultFillColor = settings->value( "palette/fillColor", "#FF0000" ).toString();
-    this->m_defaultSelectColor = settings->value( "palette/selectColor", "#00FFFF" ).toString();
+    this->m_defaultFillColor = settings->value( "palette/fillColor", "#DD3333" ).toString();
+    this->m_defaultSelectColor = settings->value( "palette/selectColor", "#33AA33" ).toString();
     this->m_defaultFillOpacity = settings->value( "palette/fillOpacity", 0.35 ).toDouble();
     this->m_defaultStrokeColor = settings->value( "palette/strokeColor", this->m_defaultFillColor ).toString();
     this->m_defaultStrokeWeight = settings->value( "palette/strokeWeight", 2 ).toInt();
@@ -426,7 +426,9 @@ void ddmCounty::hide()
  */
 void ddmCounty::select( const QString& color )
 {
-    this->setProperty( "fillColor", color.isEmpty() ? this->m_defaultSelectColor : color );
+    QString selectColor = color.isEmpty() ? this->m_defaultSelectColor : color;
+    this->setProperty( "fillColor", selectColor );
+    this->setProperty( "strokeColor", selectColor );
     this->m_select = true;
     Q_EMIT selected();
 }
@@ -440,6 +442,7 @@ void ddmCounty::select( const QString& color )
 void ddmCounty::unselect()
 {
     this->setProperty( "fillColor", this->m_defaultFillColor );
+    this->setProperty( "strokeColor", this->m_defaultStrokeColor );
     this->m_select = false;
     Q_EMIT unselected();
 }
@@ -467,7 +470,7 @@ void ddmCounty::slotMouseover()
 {
     this->setProperty( "fillColor", this->isSelected() ? this->m_defaultSelectColorHover : this->m_defaultFillColorHover );
     this->setProperty( "fillOpacity", this->m_defaultFillOpacityHover );
-    this->setProperty( "strokeColor", this->m_defaultStrokeColorHover );
+    this->setProperty( "strokeColor", this->isSelected() ? this->m_defaultSelectColorHover : this->m_defaultStrokeColorHover );
     this->setProperty( "strokeWeight", this->m_defaultStrokeWeightHover );
     this->setProperty( "strokeOpacity", this->m_defaultStrokeOpacityHover );
 }
@@ -483,7 +486,7 @@ void ddmCounty::slotMouseout()
 {
     this->setProperty( "fillColor", this->isSelected() ? this->m_defaultSelectColor : this->m_defaultFillColor );
     this->setProperty( "fillOpacity", this->m_defaultFillOpacity );
-    this->setProperty( "strokeColor", this->m_defaultStrokeColor );
+    this->setProperty( "strokeColor", this->isSelected() ? this->m_defaultSelectColor : this->m_defaultStrokeColor );
     this->setProperty( "strokeWeight", this->m_defaultStrokeWeight );
     this->setProperty( "strokeOpacity", this->m_defaultStrokeOpacity );
 }
