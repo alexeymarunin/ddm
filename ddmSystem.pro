@@ -143,7 +143,6 @@ FORMS += ddmMainWindow.ui \
     widgets/ddmNeighborCountyFilterWidget.ui \
     widgets/ddmBaseCountyFilterWidget.ui \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.ui \
-    widgets/ddmInEstimateCountyFilterWidget.ui \
     widgets/panels/ddmInEstimateCountyFilterWidgetPanel.ui \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui
 
