@@ -2,11 +2,12 @@
 #include "ui_ddmInEstimateCountyFilterWidgetPanel.h"
 
 
-ddmInEstimateCountyFilterWidgetPanel::ddmInEstimateCountyFilterWidgetPanel(QWidget *parent)
+ddmInEstimateCountyFilterWidgetPanel::ddmInEstimateCountyFilterWidgetPanel( QWidget *parent ) :
+    QWidget( parent )
 {
     this->ui = new Ui::ddmInEstimateCountyFilterWidgetPanel;
     this->ui->setupUi( this );
-    this->ui->verticalLayout->setContentsMargins( 0,0,0,0 );
+    this->ui->gridLayout->setContentsMargins( 0,0,0,0 );
 }
 
 
