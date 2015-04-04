@@ -169,5 +169,3 @@ RESOURCES += \
     icons.qrc
 
 RC_FILE = ddmSystem.rc
-
-DISTFILES +=
