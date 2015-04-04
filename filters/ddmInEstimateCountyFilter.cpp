@@ -26,7 +26,6 @@ void ddmInEstimateCountyFilter::setup()
     this->loadSettings();
 
     ddmBaseCountyFilter::setup();
-
 }
 
 void ddmInEstimateCountyFilter::updateData( bool fromWidget )
@@ -50,7 +49,6 @@ void ddmInEstimateCountyFilter::updateData( bool fromWidget )
             this->saveSettings();        }
     }
     ddmBaseCountyFilter::updateData( fromWidget );
-
 }
 
 

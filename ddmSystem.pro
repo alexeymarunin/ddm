@@ -70,7 +70,11 @@ SOURCES += main.cpp \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.cpp \
     models/ddmOutEstimateCountyFilterModel.cpp \
     filters/ddmOutEstimateCountyFilter.cpp \
-    widgets/ddmOutEstimateCountyFilterWidget.cpp
+    widgets/ddmOutEstimateCountyFilterWidget.cpp \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.cpp \
+    widgets/ddmInEstimAndPopulFilterWidget.cpp \
+    filters/ddmInEstimAndPopulFilter.cpp \
+    models/ddmInEstimAndPopulFilterModel.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -130,7 +134,11 @@ HEADERS += \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.h \
     models/ddmOutEstimateCountyFilterModel.h \
     filters/ddmOutEstimateCountyFilter.h \
-    widgets/ddmOutEstimateCountyFilterWidget.h
+    widgets/ddmOutEstimateCountyFilterWidget.h \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.h \
+    widgets/ddmInEstimAndPopulFilterWidget.h \
+    filters/ddmInEstimAndPopulFilter.h \
+    models/ddmInEstimAndPopulFilterModel.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCentralWidget.ui \
@@ -144,7 +152,8 @@ FORMS += ddmMainWindow.ui \
     widgets/ddmBaseCountyFilterWidget.ui \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.ui \
     widgets/panels/ddmInEstimateCountyFilterWidgetPanel.ui \
-    widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui
+    widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release
@@ -160,3 +169,5 @@ RESOURCES += \
     icons.qrc
 
 RC_FILE = ddmSystem.rc
+
+DISTFILES +=
