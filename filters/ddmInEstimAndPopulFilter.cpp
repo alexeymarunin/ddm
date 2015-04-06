@@ -62,7 +62,7 @@ void ddmInEstimAndPopulFilter::updateSelection()
 
     ddmInfoLogger& logger = ddmInfoLogger::instance();
     logger.writeInfo( QObject::tr( "Численость графства: %1 человек" ).arg( population ) );
-    logger.writeInfo( QObject::tr( "Отобржаются графства откудо приехало от: %2% ( %3 человек(а) ) до %4% ( %5 человек(а) ) процентов от населения выбранного графства" )
+    logger.writeInfo( QObject::tr( "Отобржаются графства из которых приехало от: %2% ( %3 человек(а) ) до %4% ( %5 человек(а) ) процентов от населения выбранного графства" )
                       .arg( model->minPopBound() ).arg( qlonglong ( population * minPopBound ) ).arg( model->maxPopBound() )
                       .arg( qlonglong ( population * maxPopBound ) ) );
 
@@ -97,8 +97,8 @@ void ddmInEstimAndPopulFilter::loadSettings()
     ddmSettings* settings = ddmSettings::instance();
     ddmBaseCountyFilter::loadSettings();
     ddmInEstimAndPopulFilterModel* model  = this->model_cast<ddmInEstimAndPopulFilterModel>();
-    double minBound = settings->value( "ddmInEstimAndPopulFilte/min_population", 0.01 ).toDouble();
-    double maxBound = settings->value( "ddmInEstimAndPopulFilte/max_population", 0.1 ).toDouble();
+    double minBound = settings->value( "ddmInEstimAndPopulFilter/min_population", 0.01 ).toDouble();
+    double maxBound = settings->value( "ddmInEstimAndPopulFilter/max_population", 0.1 ).toDouble();
     model->setPopBounds( minBound, maxBound );
 }
 
