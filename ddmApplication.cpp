@@ -16,6 +16,7 @@
 #include "filters/ddmInEstimateCountyFilter.h"
 #include "filters/ddmOutEstimateCountyFilter.h"
 #include "filters/ddmInEstimAndPopulFilter.h"
+#include "filters/ddmOutEstimAndPopulFilter.h"
 
 
 /**
@@ -68,6 +69,7 @@ ddmApplication::ddmApplication( int& argc, char** argv ) : QApplication( argc, a
     centralWidget->appendFilter( "Миграция в графство",                 new ddmInEstimateCountyFilter( this ) );
     centralWidget->appendFilter( "Миграция из графства",                new ddmOutEstimateCountyFilter( this ) );
     centralWidget->appendFilter( "Миграция в графство относительно размеров графства", new ddmInEstimAndPopulFilter( this ) );
+    centralWidget->appendFilter( "Миграция из графства относительно размеров графства", new ddmOutEstimAndPopulFilter( this ) );
 
 
     //centralWidget->setCurrentFilter( 0 );
