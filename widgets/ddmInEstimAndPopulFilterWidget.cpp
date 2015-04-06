@@ -15,8 +15,8 @@ ddmInEstimAndPopulFilterWidget::ddmInEstimAndPopulFilterWidget( ddmInEstimAndPop
 
     QObject::connect( this->panel()->applyButton(), SIGNAL( clicked() ), this, SLOT( slotApplyFilter() ) );
 
-    spinMinPopValue()->setMinimum( 0.0 );
-    spinMaxPopValue()->setMinimum( 0.0 );
+    spinMinPopValue()->setMinimum( 0.0001 );
+    spinMaxPopValue()->setMinimum( 0.0001 );
 
     spinMinPopValue()->setMaximum( 100.0 );
     spinMaxPopValue()->setMaximum( 100.0 );
