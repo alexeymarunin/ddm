@@ -26,6 +26,9 @@ void ddmInEstimateCountyFilter::setup()
     this->loadSettings();
 
     ddmBaseCountyFilter::setup();
+
+    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ), Qt::UniqueConnection );
+    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ), Qt::UniqueConnection );
 }
 
 void ddmInEstimateCountyFilter::updateData( bool fromWidget )
@@ -72,14 +75,9 @@ void ddmInEstimateCountyFilter::updateSelection()
         county->select();
     }
 
+    this->fitSelection();
     logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( model->counties().size() ) );
     Q_EMIT selectionUpdated();
-}
-
-
-ddmInEstimateCountyFilter::~ddmInEstimateCountyFilter()
-{
-
 }
 
 
@@ -106,3 +104,35 @@ void ddmInEstimateCountyFilter::loadSettings()
     double maxBound = settings->value( "ddmInEstimateCountyFilter/max_population", 0.1 ).toDouble();
     model->setPopBounds( minBound, maxBound );
 }
+
+
+void ddmInEstimateCountyFilter::slotWidgetChangedState()
+{
+    ddmBaseCountyFilter::blockSignals( true );
+    ddmBaseCountyFilter::slotWidgetChangedState();
+    ddmBaseCountyFilter::blockSignals( false );
+}
+
+
+void ddmInEstimateCountyFilter::slotWidgetChangedCounty()
+{
+    ddmBaseCountyFilterWidget* widget = this->widget_cast<ddmBaseCountyFilterWidget>();
+    QString countyName = widget->currentCounty();
+    if ( !countyName.isEmpty() )
+    {
+        ddmBaseCountyFilterModel*  model  = this->model_cast<ddmBaseCountyFilterModel>();
+        model->blockSignals( true );
+        model->setCurrentCounty( countyName );
+        model->blockSignals( false );
+        ddmBaseCountyFilter::saveSettings();
+    }
+}
+
+
+ddmInEstimateCountyFilter::~ddmInEstimateCountyFilter()
+{
+
+}
+
+
+

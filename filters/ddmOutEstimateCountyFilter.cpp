@@ -27,6 +27,9 @@ void ddmOutEstimateCountyFilter::setup()
 
     ddmBaseCountyFilter::setup();
 
+    QObject::connect( widget, SIGNAL( changedState()  ), this, SLOT( slotWidgetChangedState()  ), Qt::UniqueConnection );
+    QObject::connect( widget, SIGNAL( changedCounty() ), this, SLOT( slotWidgetChangedCounty() ), Qt::UniqueConnection );
+
 }
 
 void ddmOutEstimateCountyFilter::updateData( bool fromWidget )
@@ -101,6 +104,29 @@ void ddmOutEstimateCountyFilter::loadSettings()
     double minBound = settings->value( "ddmOutEstimateCountyFilter/min_population", 0.001 ).toDouble();
     double maxBound = settings->value( "ddmOutEstimateCountyFilter/max_population", 0.1 ).toDouble();
     model->setPopBounds( minBound, maxBound );
+}
+
+
+void ddmOutEstimateCountyFilter::slotWidgetChangedState()
+{
+    ddmBaseCountyFilter::blockSignals( true );
+    ddmBaseCountyFilter::slotWidgetChangedState();
+    ddmBaseCountyFilter::blockSignals( false );
+}
+
+
+void ddmOutEstimateCountyFilter::slotWidgetChangedCounty()
+{
+    ddmBaseCountyFilterWidget* widget = this->widget_cast<ddmBaseCountyFilterWidget>();
+    QString countyName = widget->currentCounty();
+    if ( !countyName.isEmpty() )
+    {
+        ddmBaseCountyFilterModel*  model  = this->model_cast<ddmBaseCountyFilterModel>();
+        model->blockSignals( true );
+        model->setCurrentCounty( countyName );
+        model->blockSignals( false );
+        ddmBaseCountyFilter::saveSettings();
+    }
 }
 
 
