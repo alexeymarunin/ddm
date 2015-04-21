@@ -66,12 +66,7 @@ void ddmFilterModel::execQuery( const QString& sqlQuery )
     QTime timer;
     timer.start();
 
-    QString queryHash = QCryptographicHash::hash( sqlQuery.toStdString().c_str(), QCryptographicHash::Md5 ).toHex();
-    QString tempTable = QString( "temp_%1" ).arg( queryHash );
-    sql = QString( "CREATE TEMP TABLE IF NOT EXISTS %1 AS %2" ).arg( tempTable ).arg( sqlQuery );
-    db.exec( sql );
-    Q_ASSERT( !db.hasErrors() );
-
+    QString tempTable = this->createTempTable( sqlQuery );
     // @DEBUG qDebug() << sqlQuery;
 
     // Резервируем память
@@ -319,6 +314,38 @@ void ddmFilterModel::reserveBoundariesMemory( const QString& table_name )
     qDebug() << n << "boundaries";
 }
 
+/**
+ * Создает временную таблицу
+ *
+ * Создает временную таблицу в БД согласно указанному запросу.
+ * По окончании работы приложения таблица будет уничтожена.
+ *
+ * @param   sqlQuery SQL-запрос, по которому создается таблица
+ * @param   force Флаг, указывающий принудительно создать таблицу
+ *          в случае повторного вызова метода (по умолчанию таблица создается лишь при первом вызове)
+ * @return  Название таблицы.
+ */
+QString ddmFilterModel::createTempTable( const QString& sqlQuery, bool force )
+{
+    ddmDatabase& db = this->database();
+    QString sql;
+
+    QString queryHash = QCryptographicHash::hash( sqlQuery.toStdString().c_str(), QCryptographicHash::Md5 ).toHex();
+    QString tableName = QString( "temp_%1" ).arg( queryHash );
+
+    if ( force )
+    {
+        sql = QString( "DROP TABLE IF EXISTS %1" ).arg( tableName );
+        db.exec( sql );
+        Q_ASSERT( !db.hasErrors() );
+    }
+
+    sql = QString( "CREATE TEMP TABLE IF NOT EXISTS %1 AS %2" ).arg( tableName ).arg( sqlQuery );
+    db.exec( sql );
+    Q_ASSERT( !db.hasErrors() );
+
+    return tableName;
+}
 
 /**
  * @brief ddmFilterModel::~ddmFilterModel

@@ -7,7 +7,7 @@
 
 
 
-ddmOutEstimateCountyFilterWidget::ddmOutEstimateCountyFilterWidget( ddmOutEstimateCountyFilter *filter, QWidget *parent ):
+ddmOutEstimateCountyFilterWidget::ddmOutEstimateCountyFilterWidget( ddmOutEstimateCountyFilter* filter, QWidget* parent ):
     ddmBaseCountyFilterWidget( filter, parent )
 {
     this->m_panel = new ddmOutEstimateCountyFilterWidgetPanel( this );

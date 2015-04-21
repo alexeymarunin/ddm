@@ -17,7 +17,7 @@ class ddmInEstimateCountyFilterWidgetPanel : public QWidget
 
 public:
 
-    ddmInEstimateCountyFilterWidgetPanel(  QWidget* parent = NULL );
+    ddmInEstimateCountyFilterWidgetPanel( QWidget* parent = NULL );
 
     virtual ~ddmInEstimateCountyFilterWidgetPanel();
 

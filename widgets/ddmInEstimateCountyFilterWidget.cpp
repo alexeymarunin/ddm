@@ -7,7 +7,7 @@
 
 
 
-ddmInEstimateCountyFilterWidget::ddmInEstimateCountyFilterWidget( ddmInEstimateCountyFilter *filter, QWidget *parent ):
+ddmInEstimateCountyFilterWidget::ddmInEstimateCountyFilterWidget( ddmInEstimateCountyFilter* filter, QWidget* parent ):
     ddmBaseCountyFilterWidget( filter, parent )
 {
     this->m_panel = new ddmInEstimateCountyFilterWidgetPanel( this );
@@ -82,7 +82,7 @@ QDoubleSpinBox *ddmInEstimateCountyFilterWidget::spinMinPopValue() const
 
 QDoubleSpinBox *ddmInEstimateCountyFilterWidget::spinMaxPopValue() const
 {
-    return  panel()->spinMaxPopValue();
+    return this->panel()->spinMaxPopValue();
 }
 
 

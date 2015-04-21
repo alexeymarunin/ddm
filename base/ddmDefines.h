@@ -7,5 +7,13 @@ enum ddmDeltaViewMode
     DVM_NEGATIVE_DELTA
 };
 
+enum ddmNeighborType
+{
+    NT_ANY_NEIGHBOR     = 0,
+    NT_FIRST_NEIGHBOR   = 1,
+    NT_SECOND_NEIGHBOR  = 2,
+    NT_FAR_NEIGHBOR     = 3
+};
+
 #endif // DDM_DEFINES_H
 

@@ -70,7 +70,10 @@ SOURCES += main.cpp \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.cpp \
     models/ddmOutEstimateCountyFilterModel.cpp \
     filters/ddmOutEstimateCountyFilter.cpp \
-    widgets/ddmOutEstimateCountyFilterWidget.cpp
+    widgets/ddmOutEstimateCountyFilterWidget.cpp \
+    models/ddmMaxInOutNeighborFilterModel.cpp \
+    widgets/ddmMaxInOutNeighborFilterWidget.cpp \
+    filters/ddmMaxInOutNeighborFilter.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -130,7 +133,10 @@ HEADERS += \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.h \
     models/ddmOutEstimateCountyFilterModel.h \
     filters/ddmOutEstimateCountyFilter.h \
-    widgets/ddmOutEstimateCountyFilterWidget.h
+    widgets/ddmOutEstimateCountyFilterWidget.h \
+    models/ddmMaxInOutNeighborFilterModel.h \
+    widgets/ddmMaxInOutNeighborFilterWidget.h \
+    filters/ddmMaxInOutNeighborFilter.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCentralWidget.ui \
@@ -145,7 +151,8 @@ FORMS += ddmMainWindow.ui \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.ui \
     widgets/ddmInEstimateCountyFilterWidget.ui \
     widgets/panels/ddmInEstimateCountyFilterWidgetPanel.ui \
-    widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui
+    widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui \
+    widgets/ddmMaxInOutNeighborFilterWidget.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release

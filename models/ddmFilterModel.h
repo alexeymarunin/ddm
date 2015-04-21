@@ -47,6 +47,8 @@ protected:
     void reserveStatesMemory( const QString& table_name );
     void reserveCountiesMemory( const QString& table_name );
     void reserveBoundariesMemory( const QString& table_name );
+
+    QString createTempTable( const QString& sqlQuery, bool force = false );
 };
 
 #endif // DDM_FILTER_MODEL_H

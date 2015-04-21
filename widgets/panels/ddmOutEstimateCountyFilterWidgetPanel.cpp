@@ -2,7 +2,7 @@
 #include "ui_ddmOutEstimateCountyFilterWidgetPanel.h"
 
 
-ddmOutEstimateCountyFilterWidgetPanel::ddmOutEstimateCountyFilterWidgetPanel( QWidget *parent )
+ddmOutEstimateCountyFilterWidgetPanel::ddmOutEstimateCountyFilterWidgetPanel( QWidget* parent ) : QWidget( parent )
 {
     this->ui = new Ui::ddmOutEstimateCountyFilterWidgetPanel;
     this->ui->setupUi( this );

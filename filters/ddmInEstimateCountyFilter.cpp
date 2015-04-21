@@ -60,7 +60,7 @@ void ddmInEstimateCountyFilter::updateSelection()
     this->resetSelection();
     int mult = 1000;
     ddmInfoLogger& logger = ddmInfoLogger::instance();
-    logger.writeInfo( QObject::tr( "Отобржаются графства  из которых приехало от %1 до %2 человек" )
+    logger.writeInfo( QObject::tr( "Отображаются графства, из которых приехало от %1 до %2 человек" )
                      .arg( model->minPopBound() * mult ).arg( model->maxPopBound() * mult ) );
 
     ddmCounty* currentCounty = model->currentCounty();
@@ -74,7 +74,7 @@ void ddmInEstimateCountyFilter::updateSelection()
         county->select();
     }
 
-    logger.writeInfo( QObject::tr( "Отображено %1 графств" ).arg( model->counties().size() ) );
+    logger.writeInfo( QObject::tr( "Найдено %1 графств" ).arg( model->counties().size() ) );
     Q_EMIT selectionUpdated();
 }
 

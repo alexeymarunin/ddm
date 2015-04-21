@@ -9,6 +9,7 @@
       counties: {},
       selection: [],
       bounds: false,
+      popup: false,
       
       initialize: function() {
         // console.log( 'ddmMap.initialize' );
@@ -18,6 +19,9 @@
           zoom: 4,
           center: self._createPoint( 44.4024, -100.459 ),
           mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        
+        self.popup = new google.maps.InfoWindow({
         });
         
         ddmFilter = window.ddmFilter || {};
@@ -236,6 +240,15 @@
           var model = self.counties[county_id].model;
           model.clicked( p.lat(), p.lng() );
           self.click( p );
+          self.showPopup( p, 
+            '<dl>' + 
+              '<dt>' + model.name + '</dt>' + 
+              '<dd>Население: ' + model.population + ' чел.</dd>' + 
+              '<dd>Кол-во приехавших: ' + model.in_sum + ' чел.</dd>' + 
+              '<dd>Кол-во уехавших: ' + model.out_sum + ' чел.</dd>' + 
+              '<dd>Среднее трение: ' + Number( model.f_mid.toFixed( 2 ) ) + '</dd>' + 
+            '</dl>'
+          );
         });
         google.maps.event.addListener( polygon, 'mousemove', function( event ) {
           self.mousemove( event.latLng );
@@ -276,6 +289,13 @@
         polygon.setVisible( true );
         
         return self.counties[id];
+      },
+      
+      showPopup: function( pos, content ) {
+        var self = this;
+        self.popup.setPosition( pos );
+        self.popup.setContent( content );
+        self.popup.open( self.map );
       },
       
       _createPoint: function( lat, lng ) {
