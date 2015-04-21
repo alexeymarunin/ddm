@@ -73,7 +73,15 @@ SOURCES += main.cpp \
     widgets/ddmOutEstimateCountyFilterWidget.cpp \
     models/ddmMaxInOutNeighborFilterModel.cpp \
     widgets/ddmMaxInOutNeighborFilterWidget.cpp \
-    filters/ddmMaxInOutNeighborFilter.cpp
+    filters/ddmMaxInOutNeighborFilter.cpp \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.cpp \
+    widgets/ddmInEstimAndPopulFilterWidget.cpp \
+    filters/ddmInEstimAndPopulFilter.cpp \
+    models/ddmInEstimAndPopulFilterModel.cpp \
+    widgets/panels/ddmOutEstimAndPopulFilterWidgetPanel.cpp \
+    widgets/ddmOutEstimAndPopulFilterWidget.cpp \
+    models/ddmOutEstimAndPopulFilterModel.cpp \
+    filters/ddmOutEstimAndPopulFilter.cpp
 
 HEADERS += \
     ddmVersion.h \
@@ -136,7 +144,15 @@ HEADERS += \
     widgets/ddmOutEstimateCountyFilterWidget.h \
     models/ddmMaxInOutNeighborFilterModel.h \
     widgets/ddmMaxInOutNeighborFilterWidget.h \
-    filters/ddmMaxInOutNeighborFilter.h
+    filters/ddmMaxInOutNeighborFilter.h \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.h \
+    widgets/ddmInEstimAndPopulFilterWidget.h \
+    filters/ddmInEstimAndPopulFilter.h \
+    models/ddmInEstimAndPopulFilterModel.h \
+    widgets/panels/ddmOutEstimAndPopulFilterWidgetPanel.h \
+    models/ddmOutEstimAndPopulFilterModel.h \
+    widgets/ddmOutEstimAndPopulFilterWidget.h \
+    filters/ddmOutEstimAndPopulFilter.h
 
 FORMS += ddmMainWindow.ui \
     widgets/ddmCentralWidget.ui \
@@ -149,10 +165,11 @@ FORMS += ddmMainWindow.ui \
     widgets/ddmNeighborCountyFilterWidget.ui \
     widgets/ddmBaseCountyFilterWidget.ui \
     widgets/panels/ddmCountyInfoFilterWidgetPanel.ui \
-    widgets/ddmInEstimateCountyFilterWidget.ui \
     widgets/panels/ddmInEstimateCountyFilterWidgetPanel.ui \
     widgets/panels/ddmOutEstimateCountyFilterWidgetPanel.ui \
-    widgets/ddmMaxInOutNeighborFilterWidget.ui
+    widgets/ddmMaxInOutNeighborFilterWidget.ui \
+    widgets/panels/ddmInEstimAndPopulFilterWidgetPanel.ui \
+    widgets/panels/ddmOutEstimAndPopulFilterWidgetPanel.ui
 
 Debug:DESTDIR   = debug
 Release:DESTDIR = release

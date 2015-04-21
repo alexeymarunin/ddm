@@ -1,21 +1,22 @@
-#ifndef DDM_IN_ESTIMATE_COUNTY_FILTER_H
-#define DDM_IN_ESTIMATE_COUNTY_FILTER_H
+#ifndef DDM_OUT_ESTIM_AND_POPUL_FILTER_H
+#define DDM_OUT_ESTIM_AND_POPUL_FILTER_H
 
 #include "filters/ddmBaseCountyFilter.h"
 
 
-class ddmInEstimateCountyFilter : public ddmBaseCountyFilter
+class ddmOutEstimAndPopulFilter : public ddmBaseCountyFilter
 {
     Q_OBJECT
 
 public:
 
-    ddmInEstimateCountyFilter( QObject* parent = 0 );
+    ddmOutEstimAndPopulFilter( QObject* parent = 0 );
 
-    virtual ~ddmInEstimateCountyFilter();
+    virtual ~ddmOutEstimAndPopulFilter();
 
     virtual void saveSettings();
     virtual void loadSettings();
+
 
 protected Q_SLOTS:
 
@@ -27,8 +28,8 @@ protected:
     virtual void setup();
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
-
 };
 
-#endif // DDM_IN_ESTIMATE_COUNTY_FILTER_H
+
+#endif //DDM_OUT_ESTIM_AND_POPUL_FILTER_H
 

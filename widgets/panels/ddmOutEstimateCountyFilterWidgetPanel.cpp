@@ -6,7 +6,7 @@ ddmOutEstimateCountyFilterWidgetPanel::ddmOutEstimateCountyFilterWidgetPanel( QW
 {
     this->ui = new Ui::ddmOutEstimateCountyFilterWidgetPanel;
     this->ui->setupUi( this );
-    this->ui->verticalLayout->setContentsMargins( 0,0,0,0 );
+    this->ui->gridLayout->setContentsMargins( 0,0,0,0 );
 }
 
 

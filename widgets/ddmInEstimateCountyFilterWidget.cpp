@@ -13,6 +13,8 @@ ddmInEstimateCountyFilterWidget::ddmInEstimateCountyFilterWidget( ddmInEstimateC
     this->m_panel = new ddmInEstimateCountyFilterWidgetPanel( this );
     this->insertWidget( this->panel() );
 
+
+
     QObject::connect( this->panel()->applyButton(), SIGNAL( clicked() ), this, SLOT( slotApplyFilter() ) );
 }
 

@@ -116,7 +116,14 @@
       <widget class="QWidget" name="horizontalLayoutWidget_2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QTextEdit" name="m_InfoLog"/>
+         <widget class="QTextEdit" name="m_InfoLog">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

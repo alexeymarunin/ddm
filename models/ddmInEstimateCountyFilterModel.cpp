@@ -47,7 +47,6 @@ void ddmInEstimateCountyFilterModel::setMinPopBound( double bound )
         this->reloadData();
         Q_EMIT changed();
     }
-
 }
 
 
@@ -121,7 +120,6 @@ void ddmInEstimateCountyFilterModel::updateCounties()
             this->m_counties.insert( county_id );
         }
     }
-
 }
 
 
