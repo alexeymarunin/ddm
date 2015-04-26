@@ -6,6 +6,7 @@
 
 class ddmState;
 class ddmBoundary;
+class ddmCenterPoint;
 
 /**
  * Класс ddmBoundary описывает графство
@@ -66,6 +67,8 @@ public:
     int    f_in_sum()  const;
     double f_in_mid()  const;
     double f_mid()     const;
+
+    ddmCenterPoint* countyCenter() const;
 
     bool visible() const;
     void setVisible( bool visible );

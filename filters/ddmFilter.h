@@ -5,6 +5,7 @@
 #include "widgets/ddmFilterWidget.h"
 
 class ddmMapView;
+class ddmCenterPoint;
 
 /**
  * Класс ddmFilter является базовым классом для всех остальных фильтров
@@ -64,6 +65,7 @@ public:
 
     virtual void resetSelection();
     virtual QVariantList selection() const;
+    Q_INVOKABLE virtual void updateVisualzation();
 
     virtual void apply();
     void activate();
@@ -78,6 +80,8 @@ public:
 
     bool valid() const;
     bool isMapLoaded() const;
+
+    void drawArrow( ddmCenterPoint* begPoint, ddmCenterPoint* endPoint, double width );
 
     virtual ~ddmFilter();
 

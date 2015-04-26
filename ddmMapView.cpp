@@ -5,6 +5,8 @@
 #include <QWebFrame>
 #include <QWebElement>
 
+#include "base/ddmCenterPoint.h"
+
 #include "filters/ddmFilter.h"
 #include "ddmMapViewPage.h"
 #include "ddmMainWindow.h"
@@ -234,6 +236,22 @@ void ddmMapView::fitSelection()
         this->evaluateJavaScript( QString( "window.ddmMap.fitSelection();" ) );
     }
 }
+
+void ddmMapView::drawArrow( ddmCenterPoint *begPoint, ddmCenterPoint *endPoint, double width )
+{
+    if ( this->mapReady() )
+    {
+        double begLat = begPoint->x();
+        double begLng = begPoint->y();
+        double endLat = endPoint->x();
+        double endLng = endPoint->y();
+        QString str = QString( "window.ddmMap.drawArrow( %1, %2, %3, %4, %5 );" ).arg( begLat ).
+                arg( begLng ).arg( endLat ).arg( endLng ).arg( width );
+        this->evaluateJavaScript( str );
+    }
+
+}
+
 
 /**
  *

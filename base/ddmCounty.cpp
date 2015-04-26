@@ -363,6 +363,21 @@ double ddmCounty::f_mid() const
     return this->m_f_mid;
 }
 
+
+ddmCenterPoint* ddmCounty::countyCenter() const
+{
+    ddmCenterPoint* center;
+    QVariantList boundaries = this->boundaries();
+    if ( !boundaries.isEmpty() )
+    {
+        ddmBoundary* firstBoundary = this->boundaries().first().value<ddmBoundary*>();
+        center = firstBoundary->countyCenter();
+    }
+    return center;
+
+}
+
+
 /**
  * Возвращает видимость графства на карте
  *

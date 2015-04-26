@@ -41,6 +41,8 @@ public:
     double square() const;
     QVariantMap center() const;
 
+    ddmCenterPoint* countyCenter() const;
+
     virtual ~ddmBoundary();
 
 protected:

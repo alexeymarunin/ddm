@@ -6,6 +6,7 @@
 #include <QVariantMap>
 
 class ddmFilter;
+class ddmCenterPoint;
 
 /**
  * Класс ddmMapView определяет мини-браузер, в котором отображается
@@ -39,6 +40,8 @@ public:
 
     void fitCounty( int county_id );
     void fitSelection();
+
+    void drawArrow( ddmCenterPoint* begPoint, ddmCenterPoint* endPoint, double width );
 
     bool mapReady() const;
 

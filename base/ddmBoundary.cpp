@@ -167,6 +167,21 @@ QVariantMap ddmBoundary::center() const
     return center;
 }
 
+
+/**
+ * Возвращает центр контура
+ * Используется при работе на уровне С++
+ *
+ * @return  Объект типа ddmCenterPoint с двумя элементами - x и y
+ * @author  Цалко Т.В.
+ * @since   2.11
+ */
+
+ddmCenterPoint* ddmBoundary::countyCenter() const
+{
+    return this->m_center;
+}
+
 /**
  * Деструктор класса
  *

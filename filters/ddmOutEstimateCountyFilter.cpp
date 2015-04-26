@@ -2,6 +2,8 @@
 #include "models/ddmOutEstimateCountyFilterModel.h"
 #include "widgets/ddmOutEstimateCountyFilterWidget.h"
 
+#include "ddmMapView.h"
+
 #include "ddmInfoLogger.h"
 #include "ddmSettings.h"
 
@@ -71,14 +73,28 @@ void ddmOutEstimateCountyFilter::updateSelection()
     currentCounty->unselect();
 
     foreach ( int county_id, model->counties() )
-    {
+    {  
         ddmCounty* county = model->county( county_id );
+        this->drawArrow( currentCounty->countyCenter(), county->countyCenter(), 3.0 );
         county->show();
         county->select();
     }
 
     logger.writeInfo( QObject::tr( "Найдено %1 графств" ).arg( model->counties().size() ) );
     Q_EMIT selectionUpdated();
+}
+
+
+void ddmOutEstimateCountyFilter::updateVisualzation()
+{
+    ddmOutEstimateCountyFilterModel* model  = this->model_cast<ddmOutEstimateCountyFilterModel>();
+    ddmCounty* currentCounty = model->currentCounty();
+
+    foreach ( int county_id, model->counties() )
+    {
+        ddmCounty* county = model->county( county_id );
+        this->drawArrow( currentCounty->countyCenter(), county->countyCenter(), 0.1 );
+    }
 }
 
 

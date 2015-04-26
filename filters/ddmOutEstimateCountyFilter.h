@@ -16,6 +16,7 @@ public:
 
     virtual void saveSettings();
     virtual void loadSettings();
+    virtual void updateVisualzation();
 
 protected Q_SLOTS:
 
@@ -27,7 +28,6 @@ protected:
     virtual void setup();
     virtual void updateData( bool fromWidget = true );
     virtual void updateSelection();
-
 };
 
 #endif // DDM_OUT_ESTIMATE_COUNTY_FILTER_H

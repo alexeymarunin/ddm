@@ -12,7 +12,7 @@
       popup: false,
       
       initialize: function() {
-        // console.log( 'ddmMap.initialize' );
+        //console.log( 'ddmMap.initialize' );
         var self = this;
         self.el = document.getElementById( 'map_canvas' ); 
         self.map = new google.maps.Map( self.el, {
@@ -54,7 +54,8 @@
         }
         
         self.bounds = new google.maps.LatLngBounds();
-        
+                
+        //window.ddmMap.drawArrow( 37.772323, -122.214897 , 21.291982, -157.821856, 0.2 )
         return this;
       },
       
@@ -112,11 +113,11 @@
       update: function() {
         // console.log( 'ddmMap.update' );
         var self = this;
-        
+                
         for ( var id in self.counties ) {
           self.hide( id );
         }
-
+        
         var selection = _.result( ddmFilter, 'selection', [] ) || [];
         //console.log( 'ddmMap.update selection.length=' + selection.length );
         var bounds = new google.maps.LatLngBounds();
@@ -136,6 +137,8 @@
         self.selection = selection;
         self.bounds = bounds;
         // console.log( bounds.toString() );
+                
+        ddmFilter.updateVisualzation();
         self.fitSelection();
         return this;
       },
@@ -305,10 +308,70 @@
       _createMVCArray: function() {
         return new google.maps.MVCArray();
       },
+          
+      drawArrow: function( beginX, beginY, endX, endY, width ) {
+        var self = this;
+        var len = self._calc_distance( beginX, beginY, endX, endY );
+        var h = 0.1 * len;
+        var inv_len = 1./len;
+                        
+        var ex = ( endX - beginX ) * inv_len;
+        var ey = ( endY - beginY ) * inv_len;
+                
+        var ox = endX - ex * h;
+        var oy = endY - ey * h;
+        var nx = beginY - endY;  
+        var ny = endX - beginX;
+        var inv_len_nx = 1./ Math.sqrt( ( ( endX - beginX ) * ( endX - beginX ) + ( endY - beginY ) * ( endY - beginY ) ) );
+        nx = nx * inv_len_nx;
+        ny = ny * inv_len_nx; 
+
+        var arrowX1 = width * nx + ox;
+        var arrowY1 = width * ny + oy;
+        var arrowX2 = -width * nx + ox;
+        var arrowY2 = -width * ny + oy;                         
+                     
+        var flightPlanCoordinates = [];
+        flightPlanCoordinates.push( new google.maps.LatLng( beginX, beginY ) );
+        flightPlanCoordinates.push( new google.maps.LatLng( ox, oy) );
+        flightPlanCoordinates.push( new google.maps.LatLng( arrowX1, arrowY1) );
+        flightPlanCoordinates.push( new google.maps.LatLng( endX, endY ) );
+        flightPlanCoordinates.push( new google.maps.LatLng( arrowX2, arrowY2) );
+        flightPlanCoordinates.push( new google.maps.LatLng( ox, oy) );
+        flightPlanCoordinates.push( new google.maps.LatLng( arrowX1, arrowY1) );
+        var polylineOptions = { path: flightPlanCoordinates, strokeWeight: 0.5 };
+        var flightPath = new google.maps.Polyline( polylineOptions ); 
+        flightPath.setMap( self.map );
+      },
       
+        _calc_distance:function(  x1, y1, x2, y2 ) {
+          
+          pi = Math.PI.toFixed( 20 );  //3.14159265358979311600
+          lat1  = x1 * pi / 180.0;
+          long1 = y1 * pi / 180.0;
+          sinl1 = Math.sin( lat1 );
+          cosl1 = Math.cos( lat1 );
+                
+          lat2  = x2 * pi / 180.0;
+          long2 = y2 * pi / 180.0;
+          sinl2 = Math.sin( lat2 );
+          cosl2 = Math.cos( lat2 );
+                
+          dl    = long2 - long1;
+          sindl = Math.sin( dl );
+          cosdl = Math.cos( dl );
+                
+          a = cosl2 * sindl;
+          b = cosl1 * sinl2 - sinl1 * cosl2 * cosdl;
+          y = Math.sqrt( a*a + b*b );
+          x = sinl1 * sinl2 + cosl1 * cosl2 * cosdl;
+          d = Math.atan2( y, x ) * 6372795; // радиус Земли
+          return d;
+        },
       dummy: 1
       
     }; // window.ddmMap
+        
     
     window.ddmMap.initialize();
 }

@@ -71,6 +71,12 @@ void ddmFilter::updateSelection()
 {
 }
 
+
+void ddmFilter::updateVisualzation()
+{
+}
+
+
 /**
  * Активирует фильтр
  *
@@ -221,6 +227,18 @@ bool ddmFilter::isMapLoaded() const
 {
     return this->mapView()->mapReady();
 }
+
+
+void ddmFilter::drawArrow( ddmCenterPoint* begPoint, ddmCenterPoint* endPoint, double width )
+{
+    if ( this->valid() )
+    {
+        mapView()->drawArrow( begPoint, endPoint, width );
+    }
+
+
+}
+
 
 /**
  * Обработчик изменений в моделе фильтра
