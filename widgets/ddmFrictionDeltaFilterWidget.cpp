@@ -17,7 +17,7 @@ ddmFrictionDeltaFilterWidget::ddmFrictionDeltaFilterWidget( ddmFrictionDeltaFilt
 
     QObject::connect( this->spinMinValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
     QObject::connect( this->spinMaxValue(), SIGNAL( valueChanged(double) ), this, SIGNAL( changed() ) );
-    QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SLOT( slotApplyFilter() ) );
+    QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SLOT( changed() ) );
     QObject::connect( this->ui->buttonApply, SIGNAL( clicked() ), this, SLOT( slotApplyFilter() ) );
 }
 
@@ -102,6 +102,7 @@ QDoubleSpinBox *ddmFrictionDeltaFilterWidget::spinMaxValue() const
 {
     return ui->spinMaxValue;
 }
+
 
 ddmFrictionDeltaFilterWidget::~ddmFrictionDeltaFilterWidget()
 {
