@@ -11,7 +11,8 @@ ddmPosNegDeltaFilterWidget::ddmPosNegDeltaFilterWidget( ddmPosNegDeltaFilter* fi
     this->setContentsMargins( 0,0,0,0 );
     this->ui->m_cbDeltaMode->addItem( "положительная дельта" );
     this->ui->m_cbDeltaMode->addItem( "отрицательная дельта" );
-    QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SLOT( slotApplyFilter() ) );
+    QObject::connect( this->ui->m_cbDeltaMode, SIGNAL( currentIndexChanged(int) ), this, SIGNAL( changed() ) );
+    QObject::connect( this->ui->buttonApply, SIGNAL( clicked() ), this, SLOT( slotApplyFilter() ) );
 }
 
 
