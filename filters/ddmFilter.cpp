@@ -35,15 +35,16 @@ void ddmFilter::setup()
     Q_ASSERT( this->model() != NULL );
     Q_ASSERT( this->widget() != NULL );
 
-    this->model()->reloadData();
     this->updateData( false );
 
     QObject::connect( this->model(),  SIGNAL( changed() ), this, SLOT( slotModelChanged()  ) );
     QObject::connect( this->widget(), SIGNAL( changed() ), this, SLOT( slotWidgetChanged() ) );
 
+
     ddmMapView* mapView = this->mapView();
     QObject::connect( mapView, SIGNAL( javaScriptWindowObjectCleared() ), this, SLOT( slotJavaScriptWindowObjectCleared() ) );
     QObject::connect( mapView, SIGNAL( loaded() ), this, SLOT( slotMapLoaded() ) );
+    QObject::connect( mapView, SIGNAL( updateVisualization() ), this, SLOT( updateVisualzation() ) );
 
 }
 
@@ -83,7 +84,7 @@ void ddmFilter::updateVisualzation()
  * @author  Марунин А.В.
  * @since   2.0
  */
-void ddmFilter::activate()
+void ddmFilter::activate( bool autoApplay /*= false */ )
 {
     bool valid = this->valid();
     if ( !valid )
@@ -95,7 +96,7 @@ void ddmFilter::activate()
     this->mapView()->show();
 
     // При первом запуске сразу делаем автоматический Apply
-    if ( !valid )
+    if ( !valid && autoApplay )
     {
         this->apply();
     }

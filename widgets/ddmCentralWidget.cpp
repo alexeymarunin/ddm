@@ -9,6 +9,7 @@
 #include "ui_ddmCentralWidget.h"
 #include "ddmSettings.h"
 #include "filters/ddmFilter.h"
+#include "filters/ddmCountyInfoFilter.h"
 
 #include "ddmInfoLogger.h"
 
@@ -103,7 +104,10 @@ void ddmCentralWidget::slotChangedFilter( int index )
         if ( filter )
         {
             this->m_currentFilter = filter;
-            filter->activate();
+            if ( qobject_cast<ddmCountyInfoFilter*>( filter ) )
+                filter->activate( true );
+            else
+                filter->activate();
         }
     }
 }

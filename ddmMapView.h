@@ -54,6 +54,7 @@ Q_SIGNALS:
     void mousemove( double lat, double lng );
     void resized( int width, int height );
     void loaded();
+    void updateVisualization();
 
     void javaScriptWindowObjectCleared();
     void reloadMap();

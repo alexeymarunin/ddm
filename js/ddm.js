@@ -27,6 +27,7 @@
         ddmFilter = window.ddmFilter || {};
         ddmMapView = window.ddmMapView || {};
         
+        self.updateVisualzation = window.ddmFilter.updateVisualzation;
         google.maps.event.addListener( self.map, 'idle', function() {
           // console.log( 'self.map.idle' );
           if ( !self.loaded ) {
@@ -48,14 +49,13 @@
         if ( _.has( ddmFilter, 'selectionUpdated' ) ) {
           ddmFilter.selectionUpdated.connect( self, self.update );
         }
-        
+
         if ( _.has( ddmMapView, 'resized' ) ) {
           ddmMapView.resized.connect( self, self.resize );
         }
         
         self.bounds = new google.maps.LatLngBounds();
-                
-        //window.ddmMap.drawArrow( 37.772323, -122.214897 , 21.291982, -157.821856, 0.2 )
+            
         return this;
       },
       
@@ -137,8 +137,10 @@
         self.selection = selection;
         self.bounds = bounds;
         // console.log( bounds.toString() );
-                
-        ddmFilter.updateVisualzation();
+             
+        if ( _.has( ddmMapView, 'updateVisualization' ) ) {
+            ddmMapView.updateVisualization();
+        }
         self.fitSelection();
         return this;
       },

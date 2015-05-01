@@ -65,10 +65,9 @@ public:
 
     virtual void resetSelection();
     virtual QVariantList selection() const;
-    Q_INVOKABLE virtual void updateVisualzation();
 
     virtual void apply();
-    void activate();
+    void activate( bool autoApplay = false );
     void deactivate();
 
     ddmFilterModel*  model() const;
@@ -85,6 +84,7 @@ public:
 
     virtual ~ddmFilter();
 
+
 Q_SIGNALS:
 
     void modelChanged();
@@ -93,6 +93,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
+    virtual void updateVisualzation();
     virtual void slotModelChanged();
     virtual void slotWidgetChanged();
 

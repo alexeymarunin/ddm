@@ -90,6 +90,9 @@ void ddmOutEstimateCountyFilter::updateVisualzation()
     ddmOutEstimateCountyFilterModel* model  = this->model_cast<ddmOutEstimateCountyFilterModel>();
     ddmCounty* currentCounty = model->currentCounty();
 
+    if ( !currentCounty->visible() )
+        return;
+
     foreach ( int county_id, model->counties() )
     {
         ddmCounty* county = model->county( county_id );

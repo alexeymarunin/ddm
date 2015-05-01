@@ -16,12 +16,13 @@ public:
 
     virtual void saveSettings();
     virtual void loadSettings();
-    virtual void updateVisualzation();
+
 
 protected Q_SLOTS:
 
     virtual void slotWidgetChangedState();
     virtual void slotWidgetChangedCounty();
+    virtual void updateVisualzation();
 
 protected:
 
