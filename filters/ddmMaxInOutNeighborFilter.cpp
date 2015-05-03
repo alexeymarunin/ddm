@@ -41,6 +41,7 @@ void ddmMaxInOutNeighborFilter::setup()
 
     //QObject::connect( this->countryList(),  SIGNAL( itemSelectionChanged() ), this, SLOT( changeCounty() ) );
 
+    model->reloadData();
     // Обязательно вызываем метод из базового класса!
     ddmFilter::setup();
 

@@ -4,12 +4,16 @@
 #include <QVBoxLayout>
 #include <QMenu>
 
+#include <filters/ddmMaxInOutNeighborFilter.h>
+
 #include "ddmMapView.h"
 #include "widgets/ddmCentralWidget.h"
 #include "ui_ddmCentralWidget.h"
 #include "ddmSettings.h"
 #include "filters/ddmFilter.h"
+
 #include "filters/ddmCountyInfoFilter.h"
+#include "filters/ddmNeighborCountyFilter.h"
 
 #include "ddmInfoLogger.h"
 
@@ -103,11 +107,17 @@ void ddmCentralWidget::slotChangedFilter( int index )
         }
         if ( filter )
         {
-            this->m_currentFilter = filter;
-            if ( qobject_cast<ddmCountyInfoFilter*>( filter ) )
+            this->m_currentFilter = filter; 
+            if ( qobject_cast<ddmCountyInfoFilter*>( filter ) ||
+                 qobject_cast<ddmNeighborCountyFilter*> ( filter ) ||
+                 qobject_cast<ddmMaxInOutNeighborFilter*> ( filter ) )
+            {
                 filter->activate( true );
+            }
             else
+            {
                 filter->activate();
+            }
         }
     }
 }
