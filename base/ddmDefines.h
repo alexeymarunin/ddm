@@ -5,7 +5,7 @@ enum ddmDeltaViewMode
 {
     DVM_INITIAL_STATE = -1,
     DVM_POSITIVE_DELTA = 0,
-    DVM_NEGATIVE_DELTA = 2
+    DVM_NEGATIVE_DELTA = 1
 };
 
 enum ddmNeighborType
