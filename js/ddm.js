@@ -313,9 +313,12 @@
           
       drawArrow: function( beginX, beginY, endX, endY, width ) {
         var self = this;
+        var max_length = 6e5; // получено опытным путем
         var len = self._calc_distance( beginX, beginY, endX, endY );
         var h = 0.075 * len;
-        var inv_len = 1./len;
+        if ( h >= max_length )
+             h = h * 0.25;
+        var inv_len = 1. / len;
                         
         var ex = ( endX - beginX ) * inv_len;
         var ey = ( endY - beginY ) * inv_len;
@@ -346,7 +349,7 @@
         flightPath.setMap( self.map );
       },
       
-        _calc_distance:function(  x1, y1, x2, y2 ) {
+      _calc_distance:function(  x1, y1, x2, y2 ) {
           
           pi = Math.PI.toFixed( 20 );  //3.14159265358979311600
           lat1  = x1 * pi / 180.0;
