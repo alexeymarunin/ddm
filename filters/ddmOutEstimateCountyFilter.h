@@ -22,7 +22,7 @@ protected Q_SLOTS:
 
     virtual void slotWidgetChangedState();
     virtual void slotWidgetChangedCounty();
-    virtual void updateVisualzation();
+    virtual void slotUpdateVisualzation();
 
 protected:
 

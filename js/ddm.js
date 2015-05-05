@@ -314,7 +314,7 @@
       drawArrow: function( beginX, beginY, endX, endY, width ) {
         var self = this;
         var len = self._calc_distance( beginX, beginY, endX, endY );
-        var h = 0.1 * len;
+        var h = 0.075 * len;
         var inv_len = 1./len;
                         
         var ex = ( endX - beginX ) * inv_len;

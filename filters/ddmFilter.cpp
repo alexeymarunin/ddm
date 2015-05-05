@@ -44,7 +44,7 @@ void ddmFilter::setup()
     ddmMapView* mapView = this->mapView();
     QObject::connect( mapView, SIGNAL( javaScriptWindowObjectCleared() ), this, SLOT( slotJavaScriptWindowObjectCleared() ) );
     QObject::connect( mapView, SIGNAL( loaded() ), this, SLOT( slotMapLoaded() ) );
-    QObject::connect( mapView, SIGNAL( updateVisualization() ), this, SLOT( updateVisualzation() ) );
+    QObject::connect( mapView, SIGNAL( updateVisualization() ), this, SLOT( slotUpdateVisualzation() ) );
 
 }
 
@@ -73,7 +73,7 @@ void ddmFilter::updateSelection()
 }
 
 
-void ddmFilter::updateVisualzation()
+void ddmFilter::slotUpdateVisualzation()
 {
 }
 

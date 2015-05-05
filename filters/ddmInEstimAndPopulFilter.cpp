@@ -130,6 +130,22 @@ void ddmInEstimAndPopulFilter::slotWidgetChangedCounty()
 }
 
 
+void ddmInEstimAndPopulFilter::slotUpdateVisualzation()
+{
+    ddmInEstimAndPopulFilterModel* model  = this->model_cast<ddmInEstimAndPopulFilterModel>();
+    ddmCounty* currentCounty = model->currentCounty();
+
+    if ( !currentCounty->visible() )
+        return;
+
+    foreach ( int county_id, model->counties() )
+    {
+        ddmCounty* county = model->county( county_id );
+        this->drawArrow( county->countyCenter(), currentCounty->countyCenter(), 0.1 );
+    }
+}
+
+
 ddmInEstimAndPopulFilter::~ddmInEstimAndPopulFilter()
 {
 

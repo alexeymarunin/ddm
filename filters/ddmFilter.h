@@ -93,7 +93,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 
-    virtual void updateVisualzation();
+    virtual void slotUpdateVisualzation();
     virtual void slotModelChanged();
     virtual void slotWidgetChanged();
 

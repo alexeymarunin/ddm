@@ -85,7 +85,7 @@ void ddmOutEstimateCountyFilter::updateSelection()
 }
 
 
-void ddmOutEstimateCountyFilter::updateVisualzation()
+void ddmOutEstimateCountyFilter::slotUpdateVisualzation()
 {
     ddmOutEstimateCountyFilterModel* model  = this->model_cast<ddmOutEstimateCountyFilterModel>();
     ddmCounty* currentCounty = model->currentCounty();
