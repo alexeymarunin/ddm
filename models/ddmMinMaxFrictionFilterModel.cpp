@@ -74,15 +74,9 @@ double ddmMinMaxFrictionFilterModel::maxFriction() const
 
 void ddmMinMaxFrictionFilterModel::updateMinMaxFrictions()
 {
-    ddmDatabase& db = this->database();
-    QString sql = "SELECT MIN(f_mid) AS min_friction, MAX(f_mid) AS max_friction FROM ddm_frictions";
-    QSqlQueryModel* query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    this->m_minFriction = query->data( query->index( 0, 0 ) ).toDouble();
-    this->m_maxFriction = query->data( query->index( 0, 1 ) ).toDouble();
-    qDebug() << "minFriction:" << this->m_minFriction;
-    qDebug() << "maxFriction:" << this->m_maxFriction;
+    using namespace std;
+    this->m_minFriction = 0.0;
+    this->m_maxFriction = 9.0e+9;
 }
 
 /**

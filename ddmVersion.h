@@ -3,6 +3,6 @@
 
 #define DDM_MAJOR_VERSION 2
 #define DDM_MINOR_VERSION 11
-#define DDM_BUILD_NUMBER  762
+#define DDM_BUILD_NUMBER  790
 
 #endif // DDM_VERSION_H

@@ -1,5 +1,7 @@
 #include "models/ddmOutEstimateCountyFilterModel.h"
 
+#include <limits>
+
 
 
 ddmOutEstimateCountyFilterModel::ddmOutEstimateCountyFilterModel( QObject *parent ) : ddmBaseCountyFilterModel( parent )
@@ -126,16 +128,9 @@ void ddmOutEstimateCountyFilterModel::updateCounties()
 
 void ddmOutEstimateCountyFilterModel::updateMinMaxPopulation()
 {
-    double mult = 0.001;
-    ddmDatabase& db = this->database();
-    QString sql = "SELECT MAX(popul_est) AS max_population FROM ddm_residences";
-    QSqlQueryModel* query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    QSqlRecord record = query->record( 0 );
-    this->m_minPopulation = 0.001;
-    this->m_maxPopulation = record.value( "max_population" ).toDouble();
-    this->m_maxPopulation = this->m_maxPopulation * mult;
+    using namespace std;
+    this->m_minPopulation = 0.0;
+    this->m_maxPopulation = 9.0e+9;
 }
 
 

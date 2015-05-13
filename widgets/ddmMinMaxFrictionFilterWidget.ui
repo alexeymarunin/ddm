@@ -47,7 +47,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="spinMinValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.010000000000000</double>
@@ -64,7 +67,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="spinMaxValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.010000000000000</double>

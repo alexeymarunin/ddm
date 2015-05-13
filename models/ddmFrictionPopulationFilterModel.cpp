@@ -1,5 +1,7 @@
 #include "models/ddmFrictionPopulationFilterModel.h"
 
+#include <limits>
+
 
 ddmFrictionPopulationFilterModel::ddmFrictionPopulationFilterModel( QObject *parent ):
     ddmFilterModel( parent )
@@ -104,37 +106,17 @@ void ddmFrictionPopulationFilterModel::setPopBounds( double minBound, double max
 
 void ddmFrictionPopulationFilterModel::updateMinMaxFrictions()
 {
-    ddmDatabase& db = this->database();
-    QString sql = "SELECT MIN(f_mid) AS min_friction, MAX(f_mid) AS max_friction FROM ddm_frictions";
-    QSqlQueryModel* query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    QSqlRecord record = query->record( 0 );
-    this->m_minFriction = record.value( "min_friction" ).toDouble();
-    this->m_maxFriction = record.value( "max_friction" ).toDouble();
-
-    qDebug() << "minFriction:" << this->m_minFriction;
-    qDebug() << "maxFriction:" << this->m_maxFriction;
+    using namespace std;
+    this->m_minFriction = 0.0;
+    this->m_maxFriction = 9.0e+9;
 }
 
 
 void ddmFrictionPopulationFilterModel::updateMinMaxPopulation()
 {
-    double mult = 0.001;
-    ddmDatabase& db = this->database();
-    QString sql = "SELECT MIN(popul_est) AS min_population, MAX(popul_est) AS max_population FROM ddm_residences";
-    QSqlQueryModel* query = db.select( sql );
-    Q_ASSERT( !db.hasErrors() );
-
-    QSqlRecord record = query->record( 0 );
-    this->m_minPopulation = record.value( "min_population" ).toDouble();
-    this->m_maxPopulation = record.value( "max_population" ).toDouble();
-
-    this->m_minPopulation = this->m_minPopulation * mult;
-    this->m_maxPopulation = this->m_maxPopulation * mult;
-
-    qDebug() << "minPopulation:" << this->m_minPopulation;
-    qDebug() << "maxPopulation:" << this->m_maxPopulation;
+    using namespace std;
+    this->m_minPopulation = 0.0;
+    this->m_maxPopulation = 9.0e+9;
 }
 
 

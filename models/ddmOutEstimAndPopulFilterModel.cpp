@@ -79,13 +79,13 @@ void ddmOutEstimAndPopulFilterModel::setPopBounds( double minBound, double maxBo
 
 double ddmOutEstimAndPopulFilterModel::minPopulation() const
 {
-    return 0.0001; // исчисляется в процентах
+    return 0.000; // исчисляется в процентах
 }
 
 
 double ddmOutEstimAndPopulFilterModel::maxPopulation() const
 {
-    return 100; // исчисляется в процентах
+    return 100.0; // исчисляется в процентах
 }
 
 

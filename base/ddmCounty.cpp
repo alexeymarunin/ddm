@@ -366,14 +366,13 @@ double ddmCounty::f_mid() const
 
 ddmCenterPoint* ddmCounty::countyCenter() const
 {
-    ddmCenterPoint* center;
     QVariantList boundaries = this->boundaries();
     if ( !boundaries.isEmpty() )
     {
         ddmBoundary* firstBoundary = this->boundaries().first().value<ddmBoundary*>();
-        center = firstBoundary->countyCenter();
+        return firstBoundary->countyCenter();
     }
-    return center;
+    return new ddmCenterPoint( 0.0, 0.0 );;
 
 }
 

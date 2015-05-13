@@ -79,7 +79,7 @@ void ddmInEstimAndPopulFilterModel::setPopBounds( double minBound, double maxBou
 
 double ddmInEstimAndPopulFilterModel::minPopulation() const
 {
-    return 0.0001; // исчисляется в процентах
+    return 0.000; // исчисляется в процентах
 }
 
 

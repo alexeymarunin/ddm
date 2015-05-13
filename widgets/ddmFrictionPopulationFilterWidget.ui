@@ -39,7 +39,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="m_spFrMinValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -53,7 +56,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="m_spFrMaxValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -77,7 +83,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="m_spPopMinValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -91,7 +100,10 @@
      <item>
       <widget class="QDoubleSpinBox" name="m_spPopMaxValue">
        <property name="decimals">
-        <number>5</number>
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <double>999999999.000000000000000</double>
        </property>
       </widget>
      </item>
